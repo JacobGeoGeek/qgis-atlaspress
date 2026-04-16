@@ -3,12 +3,22 @@ from qgis.gui import QgisInterface, QgsLayoutDesignerInterface
 from typing_extensions import Final
 
 from . import resources  # noqa: F401  Needed to register Qt resources
-from .core.LayoutDesignerController import LayoutDesignerController
+from .core.config.config import load_config_file
+from .core.config.http_client import HttpClient
+from .core.layout_designer_controller import LayoutDesignerController
+from .core.upload.upload_repository import UploadRepository
+from .core.upload.upload_service import UploadService
 
 
 class AtlasPress:
     def __init__(self, iface: QgisInterface):
+        self._config = load_config_file()
         self._iface: Final[QgisInterface] = iface
+        self._upload_service: Final[UploadService] = UploadService(
+            UploadRepository(
+                HttpClient(self._config["supabase"]["baseUrl"], self._config["supabase"]["anonKey"])
+            )
+        )
         self._layer_desiner_controllers_by_desiner: Final[
             dict[QgsLayoutDesignerInterface, LayoutDesignerController]
         ] = {}
@@ -44,7 +54,9 @@ class AtlasPress:
             "AtlasPress",
             level=Qgis.Info,
         )
-        controller: Final[LayoutDesignerController] = LayoutDesignerController(designer)
+        controller: Final[LayoutDesignerController] = LayoutDesignerController(
+            designer, self._upload_service
+        )
 
         controller.add_export_to_atlas_actions()
         self._layer_desiner_controllers_by_desiner[designer] = controller
@@ -62,5 +74,4 @@ class AtlasPress:
                 level=Qgis.Info,
             )
 
-            del self._layer_desiner_controllers_by_desiner[designer]
             del self._layer_desiner_controllers_by_desiner[designer]
