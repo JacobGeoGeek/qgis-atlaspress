@@ -1,0 +1,6 @@
+{
+    "supabase": {
+        "baseUrl": "https://your-supabase-url.supabase.co",
+        "anonKey": "your-anon-key"
+    }
+}

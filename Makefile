@@ -40,7 +40,8 @@ PACKAGE_EXCLUDES := \
 	--exclude "pyproject.toml" \
 	--exclude ".flake8" \
 	--exclude ".env" \
-	--exclude ".python-version"
+	--exclude ".python-version" \
+	--exclude "config.example.json" \
 
 .PHONY: help install-dev format lint scan check designer resources clean-dist package
 
