@@ -2,6 +2,20 @@
 
 QGIS plugin for AtlasPress layout export and publishing workflows.
 
+## UI Design
+
+Open Qt Designer with:
+
+```bash
+make designer
+```
+
+The `Makefile` uses `DESIGNER=/opt/homebrew/bin/designer` by default. Developers with a different installation path can override it per command:
+
+```bash
+make designer DESIGNER=/path/to/designer
+```
+
 ## Resources
 
 This plugin uses a Qt resource file at [resources.qrc](/resources.qrc). When icons are added or renamed, regenerate [`resources.py`](/resources.py) with:
