@@ -5,10 +5,13 @@ from qgis.gui import QgsLayoutDesignerInterface
 from qgis.PyQt.QtGui import QAction, QIcon
 from qgis.PyQt.QtWidgets import QMenu, QToolBar
 
+from .upload import UploadService
+
 
 class LayoutDesignerController:
-    def __init__(self, designer: QgsLayoutDesignerInterface):
+    def __init__(self, designer: QgsLayoutDesignerInterface, upload_service: UploadService):
         self._designer: QgsLayoutDesignerInterface = designer
+        self._upload_service: UploadService = upload_service
         self._designer_id: Final[int] = id(self._designer)
 
         self._pdf_export_action_name_toolbar: Final[str] = "mActionExportAsPDF"
@@ -20,6 +23,7 @@ class LayoutDesignerController:
             parent=self._designer,
             objectName="actionExportToAtlasPress",
         )
+        self._atlas_press_action.triggered.connect(self._upload_layout_file)
 
     def add_export_to_atlas_actions(self):
         QgsMessageLog.logMessage(
@@ -134,3 +138,6 @@ class LayoutDesignerController:
             "AtlasPress",
             level=Qgis.Info,
         )
+
+    def _upload_layout_file(self, checked: bool = False):
+        self._upload_service.upload_layout_file(self._designer)
