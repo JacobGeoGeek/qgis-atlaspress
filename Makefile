@@ -7,6 +7,7 @@ FLAKE8 := $(VENV)/bin/flake8
 BANDIT := $(VENV)/bin/bandit
 DETECT_SECRETS := $(VENV)/bin/detect-secrets
 RCC ?= rcc
+DESIGNER ?= /opt/homebrew/bin/designer
 PLUGIN_NAME := AtlasPress
 DIST_DIR := dist
 PACKAGE_DIR := $(DIST_DIR)/$(PLUGIN_NAME)
@@ -41,7 +42,7 @@ PACKAGE_EXCLUDES := \
 	--exclude ".env" \
 	--exclude ".python-version"
 
-.PHONY: help install-dev format lint scan check resources clean-dist package
+.PHONY: help install-dev format lint scan check designer resources clean-dist package
 
 help:
 	@echo "Available targets:"
@@ -50,6 +51,7 @@ help:
 	@echo "  make lint         Run Flake8 checks"
 	@echo "  make scan         Run Bandit and detect-secrets"
 	@echo "  make check        Run format, lint, and scan steps"
+	@echo "  make designer     Open Qt Designer"
 	@echo "  make resources    Compile Qt resources into resources.py"
 	@echo "  make package      Build a QGIS plugin zip in dist/"
 	@echo "  make clean-dist   Remove built package artifacts"
@@ -69,6 +71,9 @@ scan:
 	$(DETECT_SECRETS) scan --exclude-files '(^\.venv/|^dist/|^build/|^\.git/|^\.vscode/|\.DS_Store$$)'
 
 check: format lint scan
+
+designer:
+	$(DESIGNER)
 
 resources: $(RESOURCES_PY)
 
