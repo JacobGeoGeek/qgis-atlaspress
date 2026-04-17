@@ -37,7 +37,7 @@ class HttpClient:
 
     def get(self, endpoint: str, params: dict = None):
         # Implement GET request logic here
-        pass
+        raise NotImplementedError("HttpClient.get() is not implemented yet")
 
     def post(self, endpoint: str, payload: dict = None) -> HttpResponse:
         url: Final[QUrl] = self._build_url(endpoint)
@@ -88,4 +88,4 @@ class HttpClient:
 
     def delete(self, endpoint: str, params: dict = None):
         # Implement DELETE request logic here
-        pass
+        raise NotImplementedError("HttpClient.delete() is not implemented yet")
