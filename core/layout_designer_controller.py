@@ -85,7 +85,10 @@ class LayoutDesignerController:
             )
             return
 
-        layout_toolbar.insertAction(actions_toolbar[target_index], self._atlas_press_action)
+        if target_index == len(actions_toolbar):
+            layout_toolbar.addAction(self._atlas_press_action)
+        else:
+            layout_toolbar.insertAction(actions_toolbar[target_index], self._atlas_press_action)
 
         QgsMessageLog.logMessage(
             f"Inserted AtlasPress action into layout toolbar in {self._designer_id}.",
@@ -131,7 +134,10 @@ class LayoutDesignerController:
             )
             return
 
-        atlas_menu.insertAction(actions_atlas_menu[target_index], self._atlas_press_action)
+        if target_index >= len(actions_atlas_menu):
+            atlas_menu.addAction(self._atlas_press_action)
+        else:
+            atlas_menu.insertAction(actions_atlas_menu[target_index], self._atlas_press_action)
 
         QgsMessageLog.logMessage(
             f"Inserted AtlasPress action into atlas menu in {self._designer_id}.",
