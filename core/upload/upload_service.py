@@ -86,7 +86,7 @@ class UploadService:
             size_bytes: Final[int] = len(file_bytes)
 
             metadata_asset: Final[MetadataAssetRequest] = MetadataAssetRequest(
-                filename=f"{file_name.strip().replace(" ", "_")}.png",
+                filename=f"{file_name.strip().replace(' ', '_')}.png",
                 content_type="image/png",
                 width_px=width_px,
                 height_px=height_px,
