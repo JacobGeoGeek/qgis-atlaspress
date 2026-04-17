@@ -19,7 +19,7 @@ class AtlasPress:
                 HttpClient(self._config["supabase"]["baseUrl"], self._config["supabase"]["anonKey"])
             )
         )
-        self._layer_desiner_controllers_by_desiner: Final[
+        self._layout_designer_controllers_by_designer: Final[
             dict[QgsLayoutDesignerInterface, LayoutDesignerController]
         ] = {}
 
@@ -43,10 +43,10 @@ class AtlasPress:
         self._iface.layoutDesignerOpened.disconnect(self._on_layout_designer_opened)
         self._iface.layoutDesignerWillBeClosed.disconnect(self._on_layout_designer_closed)
 
-        for controller in self._layer_desiner_controllers_by_desiner.values():
+        for controller in self._layout_designer_controllers_by_designer.values():
             controller.remove_export_to_atlas_actions()
 
-        self._layer_desiner_controllers_by_desiner.clear()
+        self._layout_designer_controllers_by_designer.clear()
 
     def _on_layout_designer_opened(self, designer: QgsLayoutDesignerInterface):
         QgsMessageLog.logMessage(
@@ -59,11 +59,11 @@ class AtlasPress:
         )
 
         controller.add_export_to_atlas_actions()
-        self._layer_desiner_controllers_by_desiner[designer] = controller
+        self._layout_designer_controllers_by_designer[designer] = controller
 
     def _on_layout_designer_closed(self, designer: QgsLayoutDesignerInterface):
         controller: Final[LayoutDesignerController | None] = (
-            self._layer_desiner_controllers_by_desiner.get(designer)
+            self._layout_designer_controllers_by_designer.get(designer)
         )
 
         if controller is not None:
@@ -74,4 +74,4 @@ class AtlasPress:
                 level=Qgis.Info,
             )
 
-            del self._layer_desiner_controllers_by_desiner[designer]
+            del self._layout_designer_controllers_by_designer[designer]
