@@ -1,0 +1,5 @@
+<RCC>
+    <qresource prefix="/plugins/atlas_press">
+        <file>resources/icons/atlas_press.svg</file>
+    </qresource>
+</RCC>

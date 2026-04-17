@@ -1,0 +1,23 @@
+{
+  "python.defaultInterpreterPath": "${workspaceFolder}/.venv/bin/python",
+  "python.analysis.extraPaths": [
+    "/Applications/QGIS-final-4_0_1.app/Contents/Frameworks/lib/python3.12/site-packages"
+  ],
+  "python.analysis.importFormat": "relative",
+  "editor.formatOnSave": true,
+  "editor.codeActionsOnSave": {
+    "source.organizeImports": "explicit"
+  },
+  "[python]": {
+    "editor.defaultFormatter": "ms-python.black-formatter"
+  },
+  "isort.args": [
+    "--settings-path",
+    "${workspaceFolder}/pyproject.toml"
+  ],
+  "flake8.args": [
+    "--config",
+    "${workspaceFolder}/.flake8"
+  ],
+  "makefile.configureOnOpen": true
+}

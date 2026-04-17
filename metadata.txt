@@ -1,0 +1,17 @@
+[general]
+name=Atlas Press
+qgisMinimumVersion=4.0
+qgisMaximumVersion=4.99
+description=Create posters and canvas print exports from QGIS maps for AtlasPress and Printful workflows.
+version=0.1.0
+author=Jacob Chaar
+email=atlaspress@example.com
+about=Atlas Press is a QGIS plugin that allows users to create posters and canvas prints from their QGIS maps. 
+   It provides an export workflow that lets users print their maps through Printful and Atlas Press services. 
+category=Web
+tags=atlas, print, poster, canvas, export
+repository=https://github.com/JacobGeoGeek/qgis-atlaspress
+tracker=https://github.com/JacobGeoGeek/qgis-atlaspress/issues
+icon=
+experimental=True
+deprecated=False
