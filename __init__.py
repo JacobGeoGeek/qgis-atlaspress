@@ -1,5 +1,5 @@
 def classFactory(iface):
-    """Load AtlasPressPlugin from file atlas_press_plugin."""
+    """Load AtlasPress from file atlas_press."""
     from .atlas_press import AtlasPress
 
     return AtlasPress(iface)
