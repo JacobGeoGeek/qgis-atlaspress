@@ -126,9 +126,20 @@ class UploadService:
                     )
                     return
 
+                complete_response = self._upload_repository.complete_upload(
+                    metadata_response.asset_id
+                )
+
+                if complete_response.error:
+                    designer.messageBar().pushCritical(
+                        "AtlasPress",
+                        f"Failed to complete upload: {complete_response.error.message}",
+                    )
+                    return
+
                 designer.messageBar().pushSuccess(
                     "AtlasPress",
-                    f"File uploaded successfully with key: {file_uploaded.key}",
+                    "File uploaded successfully",
                 )
 
             except Exception as exc:
