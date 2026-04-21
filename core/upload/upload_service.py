@@ -126,6 +126,13 @@ class UploadService:
                     )
                     return
 
+                if not metadata_response.asset_id:
+                    designer.messageBar().pushCritical(
+                        "AtlasPress",
+                        "Unexpected error: upload completed but no asset ID was returned.",
+                    )
+                    return
+
                 complete_response = self._upload_repository.complete_upload(
                     metadata_response.asset_id
                 )
