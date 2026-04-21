@@ -3,6 +3,7 @@ from typing import Final
 from ..config import HttpClient
 from ..config.model import HttpResponse, HttpResponseError
 from .models.metadata_asset import MetadataAssetRequest, MetadataAssetResponse
+from .models.upload_complete import UploadCompleteResponse
 from .models.upload_file import UploadFileResponse
 
 
@@ -50,3 +51,19 @@ class UploadRepository:
 
         data: Final[dict] = response.content_json() or {}
         return UploadFileResponse(key=data.get("Key", ""), error=None)
+
+    def complete_upload(self, asset_id: str) -> UploadCompleteResponse:
+        response: Final[HttpResponse] = self._http_client.post(
+            endpoint=f"/functions/v1/uploads/{asset_id}/complete"
+        )
+
+        if not response.is_success():
+            error: Final[HttpResponseError] = HttpResponseError.from_response(response)
+            return UploadCompleteResponse(asset_id=asset_id, message="", error=error)
+
+        data: Final[dict] = response.content_json() or {}
+        return UploadCompleteResponse(
+            asset_id=asset_id,
+            message=data.get("message", ""),
+            error=None,
+        )
