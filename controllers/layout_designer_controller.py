@@ -1,18 +1,31 @@
 from typing import Final
 
-from qgis.core import Qgis, QgsMessageLog
+from qgis.core import Qgis, QgsLayout, QgsLayoutItem, QgsLayoutItemPage, QgsMessageLog
 from qgis.gui import QgsLayoutDesignerInterface
 from qgis.PyQt.QtGui import QAction, QIcon
 from qgis.PyQt.QtWidgets import QMenu, QToolBar
 
-from .upload import UploadService
+from ..core.product.product_service import ProductService
+from ..core.upload import UploadService
+from ..ui.product import ProductDialog
 
 
 class LayoutDesignerController:
-    def __init__(self, designer: QgsLayoutDesignerInterface, upload_service: UploadService):
+    def __init__(
+        self,
+        designer: QgsLayoutDesignerInterface,
+        upload_service: UploadService,
+        product_service: ProductService,
+    ):
         self._designer: QgsLayoutDesignerInterface = designer
-        self._upload_service: UploadService = upload_service
         self._designer_id: Final[int] = id(self._designer)
+
+        self._upload_service: UploadService = upload_service
+        self._product_service: ProductService = product_service
+
+        self._product_dialog: Final[ProductDialog] = ProductDialog(
+            self._product_service, self._upload_service, self._designer
+        )
 
         self._pdf_export_action_name_toolbar: Final[str] = "mActionExportAsPDF"
         self._pdf_export_action_atlas_menu: Final[str] = "mActionExportAtlasAsPDF"
@@ -146,4 +159,45 @@ class LayoutDesignerController:
         )
 
     def _upload_layout_file(self, checked: bool = False):
-        self._upload_service.upload_layout_file(self._designer)
+        if not self._validate_designer_layout(self._designer):
+            return
+
+        self._product_dialog.show()
+
+    def _validate_designer_layout(self, designer: QgsLayoutDesignerInterface) -> bool:
+        layout: Final[QgsLayout] = designer.layout()
+
+        if not layout:
+            designer.messageBar().pushWarning("AtlasPress", "No layout found to export.")
+            return False
+
+        page_count: Final[int] = layout.pageCollection().pageCount()
+
+        if page_count != 1:
+            designer.messageBar().pushWarning(
+                "AtlasPress",
+                (
+                    f"Layout has {page_count} pages. "
+                    "Please ensure the layout has exactly one page before exporting."
+                ),
+            )
+            return False
+
+        content_items: Final[list[QgsLayoutItem]] = list(
+            filter(
+                lambda item: not isinstance(item, QgsLayoutItemPage),
+                layout.pageCollection().itemsOnPage(0),
+            )
+        )
+
+        if len(content_items) == 0:
+            designer.messageBar().pushWarning(
+                "AtlasPress",
+                (
+                    "Layout has no items on the first page. "
+                    "Please ensure the layout has at least one item before exporting."
+                ),
+            )
+            return False
+
+        return True
