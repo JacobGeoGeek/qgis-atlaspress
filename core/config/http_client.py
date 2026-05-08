@@ -35,9 +35,22 @@ class HttpClient:
             reply=reply,
         )
 
-    def get(self, endpoint: str, params: dict = None):
-        # Implement GET request logic here
-        raise NotImplementedError("HttpClient.get() is not implemented yet")
+    def get(self, endpoint: str) -> HttpResponse:
+        url = self._build_url(endpoint)
+
+        request: Final[QNetworkRequest] = QNetworkRequest(url)
+
+        request.setHeader(
+            QNetworkRequest.KnownHeaders.ContentTypeHeader,
+            "application/json",
+        )
+
+        self._apply_auth(request)
+
+        reply: Final[QgsBlockingNetworkRequest] = QgsBlockingNetworkRequest()
+        error_code: Final[QgsBlockingNetworkRequest.ErrorCode] = reply.get(request)
+
+        return self._build_response(reply, error_code)
 
     def post(self, endpoint: str, payload: dict = None) -> HttpResponse:
         url: Final[QUrl] = self._build_url(endpoint)
