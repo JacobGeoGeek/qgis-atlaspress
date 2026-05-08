@@ -3,22 +3,29 @@ from qgis.gui import QgisInterface, QgsLayoutDesignerInterface
 from typing_extensions import Final
 
 from . import resources  # noqa: F401  Needed to register Qt resources
-from .core.config.config import load_config_file
-from .core.config.http_client import HttpClient
-from .core.layout_designer_controller import LayoutDesignerController
-from .core.upload.upload_repository import UploadRepository
-from .core.upload.upload_service import UploadService
+from .controllers import LayoutDesignerController
+from .core.config import HttpClient, load_config_file
+from .core.product.product_repository import ProductRepository
+from .core.product.product_service import ProductService
+from .core.upload import UploadRepository, UploadService
 
 
 class AtlasPress:
     def __init__(self, iface: QgisInterface):
         self._config = load_config_file()
         self._iface: Final[QgisInterface] = iface
-        self._upload_service: Final[UploadService] = UploadService(
-            UploadRepository(
-                HttpClient(self._config["supabase"]["baseUrl"], self._config["supabase"]["anonKey"])
-            )
+
+        self._http_client: Final[HttpClient] = HttpClient(
+            self._config["supabase"]["baseUrl"], self._config["supabase"]["anonKey"]
         )
+
+        self._upload_service: Final[UploadService] = UploadService(
+            UploadRepository(self._http_client)
+        )
+        self._product_service: Final[ProductService] = ProductService(
+            ProductRepository(self._http_client)
+        )
+
         self._layout_designer_controllers_by_designer: Final[
             dict[QgsLayoutDesignerInterface, LayoutDesignerController]
         ] = {}
@@ -55,7 +62,7 @@ class AtlasPress:
             level=Qgis.Info,
         )
         controller: Final[LayoutDesignerController] = LayoutDesignerController(
-            designer, self._upload_service
+            designer, self._upload_service, self._product_service
         )
 
         controller.add_export_to_atlas_actions()
