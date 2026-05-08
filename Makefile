@@ -7,6 +7,7 @@ FLAKE8 := $(VENV)/bin/flake8
 BANDIT := $(VENV)/bin/bandit
 DETECT_SECRETS := $(VENV)/bin/detect-secrets
 RCC ?= rcc
+PYUIC ?= pyuic6
 DESIGNER ?= /opt/homebrew/bin/designer
 PLUGIN_NAME := AtlasPress
 DIST_DIR := dist
@@ -15,6 +16,8 @@ ZIP_PATH := $(DIST_DIR)/$(PLUGIN_NAME).zip
 RSYNC := rsync
 RESOURCES_QRC := resources.qrc
 RESOURCES_PY := resources.py
+UI_FILES := $(shell find ui -name "*.ui")
+UI_PY_FILES := $(UI_FILES:.ui=_ui.py)
 
 PACKAGE_EXCLUDES := \
 	--exclude ".DS_Store" \
@@ -43,7 +46,7 @@ PACKAGE_EXCLUDES := \
 	--exclude ".python-version" \
 	--exclude "config.example.json" \
 
-.PHONY: help install-dev format lint scan check designer resources clean-dist package
+.PHONY: help install-dev format lint scan check designer resources ui clean-dist package
 
 help:
 	@echo "Available targets:"
@@ -54,6 +57,7 @@ help:
 	@echo "  make check        Run format, lint, and scan steps"
 	@echo "  make designer     Open Qt Designer"
 	@echo "  make resources    Compile Qt resources into resources.py"
+	@echo "  make ui           Compile Qt Designer .ui files into Python"
 	@echo "  make package      Build a QGIS plugin zip in dist/"
 	@echo "  make clean-dist   Remove built package artifacts"
 
@@ -81,10 +85,15 @@ resources: $(RESOURCES_PY)
 $(RESOURCES_PY): $(RESOURCES_QRC)
 	$(RCC) -g python -o $(RESOURCES_PY) $(RESOURCES_QRC)
 
+ui: $(UI_PY_FILES)
+
+%_ui.py: %.ui
+	$(PYUIC) $< -o $@
+
 clean-dist:
 	rm -rf $(DIST_DIR)
 
-package: clean-dist resources
+package: clean-dist resources ui
 	mkdir -p $(PACKAGE_DIR)
 	$(RSYNC) -a ./ $(PACKAGE_DIR)/ $(PACKAGE_EXCLUDES)
 	cd $(DIST_DIR) && zip -r $(PLUGIN_NAME).zip $(PLUGIN_NAME) \
