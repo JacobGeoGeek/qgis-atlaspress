@@ -1,7 +1,7 @@
 from typing import Final
 
-from ..config import HttpClient
-from ..config.model import HttpResponse, HttpResponseError
+from ..config.http_client import HttpClient
+from ..config.model.http_response import HttpResponse, HttpResponseError
 from .models.metadata_asset import MetadataAssetRequest, MetadataAssetResponse
 from .models.upload_complete import UploadCompleteResponse
 from .models.upload_file import UploadFileResponse
