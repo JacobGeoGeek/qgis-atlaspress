@@ -130,16 +130,4 @@ class UploadService:
                     "An error has occurred while finalizing the upload. Please try again."
                 )
 
-            complete_response = self._upload_repository.complete_upload(metadata_response.asset_id)
-
-            if complete_response.error:
-                QgsMessageLog.logMessage(
-                    f"Failed to complete upload: {complete_response.error.message}",
-                    "AtlasPress",
-                    level=Qgis.Critical,
-                )
-                raise Exception(
-                    "An error has occurred while finalizing the upload. Please try again."
-                )
-
             return complete_response.asset_id
