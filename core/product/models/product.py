@@ -1,7 +1,12 @@
 from dataclasses import dataclass
+from enum import Enum
 
 from ...config.model.http_response import HttpResponseError
-from .productType import ProductType
+
+
+class ProductType(Enum):
+    POSTER = "poster"
+    CANVAS = "canvas"
 
 
 @dataclass

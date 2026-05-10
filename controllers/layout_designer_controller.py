@@ -5,8 +5,7 @@ from qgis.gui import QgsLayoutDesignerInterface
 from qgis.PyQt.QtGui import QAction, QIcon
 from qgis.PyQt.QtWidgets import QMenu, QToolBar
 
-from ..core.product.product_service import ProductService
-from ..core.upload import UploadService
+from ..core import CoreServices, ProductService, UploadService
 from ..ui.product import ProductDialog
 
 
@@ -14,14 +13,13 @@ class LayoutDesignerController:
     def __init__(
         self,
         designer: QgsLayoutDesignerInterface,
-        upload_service: UploadService,
-        product_service: ProductService,
+        core_services: CoreServices,
     ):
         self._designer: QgsLayoutDesignerInterface = designer
         self._designer_id: Final[int] = id(self._designer)
 
-        self._upload_service: UploadService = upload_service
-        self._product_service: ProductService = product_service
+        self._upload_service: UploadService = core_services.upload_service
+        self._product_service: ProductService = core_services.product_service
 
         self._product_dialog: Final[ProductDialog] = ProductDialog(
             self._product_service, self._upload_service, self._designer

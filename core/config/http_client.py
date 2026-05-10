@@ -5,7 +5,7 @@ from qgis.core import QgsBlockingNetworkRequest
 from qgis.PyQt.QtCore import QByteArray, QUrl
 from qgis.PyQt.QtNetwork import QNetworkRequest
 
-from .model import HttpResponse
+from .model.http_response import HttpResponse
 
 
 class HttpClient:

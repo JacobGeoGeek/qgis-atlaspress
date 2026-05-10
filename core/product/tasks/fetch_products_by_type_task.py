@@ -1,6 +1,6 @@
 from qgis.core import Qgis, QgsMessageLog, QgsTask
 
-from ..models.productType import ProductType
+from ..models.product import ProductType
 from ..product_service import ProductService
 
 MESSAGE_CATEGORY = "ProductsByTypeTask"

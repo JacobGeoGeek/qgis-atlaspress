@@ -4,27 +4,13 @@ from typing_extensions import Final
 
 from . import resources  # noqa: F401  Needed to register Qt resources
 from .controllers import LayoutDesignerController
-from .core.config import HttpClient, load_config_file
-from .core.product.product_repository import ProductRepository
-from .core.product.product_service import ProductService
-from .core.upload import UploadRepository, UploadService
+from .core.services import CoreServices, create_core_services
 
 
 class AtlasPress:
     def __init__(self, iface: QgisInterface):
-        self._config = load_config_file()
         self._iface: Final[QgisInterface] = iface
-
-        self._http_client: Final[HttpClient] = HttpClient(
-            self._config["supabase"]["baseUrl"], self._config["supabase"]["anonKey"]
-        )
-
-        self._upload_service: Final[UploadService] = UploadService(
-            UploadRepository(self._http_client)
-        )
-        self._product_service: Final[ProductService] = ProductService(
-            ProductRepository(self._http_client)
-        )
+        self._services: Final[CoreServices] = create_core_services()
 
         self._layout_designer_controllers_by_designer: Final[
             dict[QgsLayoutDesignerInterface, LayoutDesignerController]
@@ -62,7 +48,8 @@ class AtlasPress:
             level=Qgis.Info,
         )
         controller: Final[LayoutDesignerController] = LayoutDesignerController(
-            designer, self._upload_service, self._product_service
+            designer,
+            self._services,
         )
 
         controller.add_export_to_atlas_actions()

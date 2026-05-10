@@ -1,7 +1,6 @@
 from typing import Final
 
-from .models.product import Product, ProductsResponse
-from .models.productType import ProductType
+from .models.product import Product, ProductsResponse, ProductType
 from .product_repository import ProductRepository
 
 

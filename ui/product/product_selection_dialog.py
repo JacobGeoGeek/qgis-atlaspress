@@ -5,11 +5,13 @@ from qgis.gui import QgsLayoutDesignerInterface
 from qgis.PyQt.QtCore import Qt
 from qgis.PyQt.QtWidgets import QDialog, QDialogButtonBox, QWidget
 
-from ...core.product.models.productType import ProductType
-from ...core.product.product_service import ProductService
-from ...core.product.tasks.fetch_products_by_type_task import FetchProductsByTypeTask
-from ...core.upload.tasks.upload_file_task import UploadFileTask
-from ...core.upload.upload_service import UploadService
+from ...core import (
+    FetchProductsByTypeTask,
+    ProductService,
+    ProductType,
+    UploadFileTask,
+    UploadService,
+)
 from ..common.spinner_widget import SpinnerWidget
 from .product_selection_ui import Ui_AtlassPressProductDialog
 from .size_product_card import SizeCard
