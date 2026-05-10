@@ -44,7 +44,6 @@ class ProductDialog(QDialog, Ui_AtlassPressProductDialog):
         self._set_ok_enabled(False)
         self.buttonsActions.accepted.disconnect(self.accept)
         self._ok_button.clicked.connect(self._upload_file)
-        self.buttonsActions.rejected.connect(self.reject)
         self._on_product_type_changed()  # trigger initial load
 
     def _on_product_type_changed(self):
