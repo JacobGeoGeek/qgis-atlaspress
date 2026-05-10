@@ -58,7 +58,18 @@ class SizeCard(QFrame):
 
     def _load_image(self, url: str):
         """Load image from a local path or remote URL into imageLabel."""
-        request = QNetworkRequest(QUrl(url))
+        if not url:
+            self._show_image_placeholder()
+            return
+
+        image_url = QUrl(url)
+
+        if not image_url.isValid() or image_url.scheme() == "":
+            self._show_image_placeholder()
+            return
+
+        request = QNetworkRequest(image_url)
+
         reply = self._network_manager.get(request)
         reply.finished.connect(lambda: self._on_image_loaded(reply))
 
@@ -103,6 +114,12 @@ class SizeCard(QFrame):
                     background: #f5f9ff;
                 }
             """)
+
+    def _show_image_placeholder(self):
+        self.imageLabel.setText("No\nimage")
+        self.imageLabel.setStyleSheet(
+            "color: #999999; font-size: 10px; border: 1px dashed #dddddd;"
+        )
 
     def set_active(self, active: bool):
         self._active = active
