@@ -9,16 +9,16 @@
 from qgis.PyQt import QtCore, QtGui, QtWidgets
 
 
-class Ui_AtlassPressProductDialog(object):
-    def setupUi(self, AtlassPressProductDialog):
-        AtlassPressProductDialog.setObjectName("AtlassPressProductDialog")
-        AtlassPressProductDialog.resize(594, 500)
-        AtlassPressProductDialog.setMinimumSize(QtCore.QSize(580, 480))
-        self.rootLayout = QtWidgets.QVBoxLayout(AtlassPressProductDialog)
+class Ui_AtlasPressProductDialog(object):
+    def setupUi(self, AtlasPressProductDialog):
+        AtlasPressProductDialog.setObjectName("AtlasPressProductDialog")
+        AtlasPressProductDialog.resize(594, 500)
+        AtlasPressProductDialog.setMinimumSize(QtCore.QSize(580, 480))
+        self.rootLayout = QtWidgets.QVBoxLayout(AtlasPressProductDialog)
         self.rootLayout.setContentsMargins(20, 18, 20, 16)
         self.rootLayout.setSpacing(14)
         self.rootLayout.setObjectName("rootLayout")
-        self.headerLabel = QtWidgets.QLabel(parent=AtlassPressProductDialog)
+        self.headerLabel = QtWidgets.QLabel(parent=AtlasPressProductDialog)
         font = QtGui.QFont()
         font.setPointSize(13)
         font.setBold(True)
@@ -26,16 +26,16 @@ class Ui_AtlassPressProductDialog(object):
         self.headerLabel.setAlignment(QtCore.Qt.AlignmentFlag.AlignCenter)
         self.headerLabel.setObjectName("headerLabel")
         self.rootLayout.addWidget(self.headerLabel)
-        self.subtitleLabel = QtWidgets.QLabel(parent=AtlassPressProductDialog)
+        self.subtitleLabel = QtWidgets.QLabel(parent=AtlasPressProductDialog)
         self.subtitleLabel.setAlignment(QtCore.Qt.AlignmentFlag.AlignCenter)
         self.subtitleLabel.setObjectName("subtitleLabel")
         self.rootLayout.addWidget(self.subtitleLabel)
-        self.dividerLine = QtWidgets.QFrame(parent=AtlassPressProductDialog)
+        self.dividerLine = QtWidgets.QFrame(parent=AtlasPressProductDialog)
         self.dividerLine.setFrameShape(QtWidgets.QFrame.Shape.HLine)
         self.dividerLine.setFrameShadow(QtWidgets.QFrame.Shadow.Sunken)
         self.dividerLine.setObjectName("dividerLine")
         self.rootLayout.addWidget(self.dividerLine)
-        self.productTypeGroupBox = QtWidgets.QGroupBox(parent=AtlassPressProductDialog)
+        self.productTypeGroupBox = QtWidgets.QGroupBox(parent=AtlasPressProductDialog)
         self.productTypeGroupBox.setObjectName("productTypeGroupBox")
         self.productGroupLayout = QtWidgets.QVBoxLayout(self.productTypeGroupBox)
         self.productGroupLayout.setSpacing(6)
@@ -60,7 +60,7 @@ class Ui_AtlassPressProductDialog(object):
         self.descriptionLabel.setObjectName("descriptionLabel")
         self.productGroupLayout.addWidget(self.descriptionLabel)
         self.rootLayout.addWidget(self.productTypeGroupBox)
-        self.sizeGroupBox = QtWidgets.QGroupBox(parent=AtlassPressProductDialog)
+        self.sizeGroupBox = QtWidgets.QGroupBox(parent=AtlasPressProductDialog)
         self.sizeGroupBox.setObjectName("sizeGroupBox")
         self.sizeGroupLayout = QtWidgets.QVBoxLayout(self.sizeGroupBox)
         self.sizeGroupLayout.setSpacing(10)
@@ -125,7 +125,7 @@ class Ui_AtlassPressProductDialog(object):
         self.sizeStackedWidget.addWidget(self.sizeErrorPage)
         self.sizeGroupLayout.addWidget(self.sizeStackedWidget)
         self.rootLayout.addWidget(self.sizeGroupBox)
-        self.priceNoteLabel = QtWidgets.QLabel(parent=AtlassPressProductDialog)
+        self.priceNoteLabel = QtWidgets.QLabel(parent=AtlasPressProductDialog)
         self.priceNoteLabel.setWordWrap(True)
         self.priceNoteLabel.setObjectName("priceNoteLabel")
         self.rootLayout.addWidget(self.priceNoteLabel)
@@ -133,7 +133,7 @@ class Ui_AtlassPressProductDialog(object):
             20, 8, QtWidgets.QSizePolicy.Policy.Minimum, QtWidgets.QSizePolicy.Policy.Expanding
         )
         self.rootLayout.addItem(spacerItem3)
-        self.buttonsActions = QtWidgets.QDialogButtonBox(parent=AtlassPressProductDialog)
+        self.buttonsActions = QtWidgets.QDialogButtonBox(parent=AtlasPressProductDialog)
         self.buttonsActions.setOrientation(QtCore.Qt.Orientation.Horizontal)
         self.buttonsActions.setStandardButtons(
             QtWidgets.QDialogButtonBox.StandardButton.Cancel
@@ -142,88 +142,85 @@ class Ui_AtlassPressProductDialog(object):
         self.buttonsActions.setObjectName("buttonsActions")
         self.rootLayout.addWidget(self.buttonsActions)
 
-        self.retranslateUi(AtlassPressProductDialog)
+        self.retranslateUi(AtlasPressProductDialog)
         self.sizeStackedWidget.setCurrentIndex(0)
-        self.buttonsActions.accepted.connect(AtlassPressProductDialog.accept)  # type: ignore
-        self.buttonsActions.rejected.connect(AtlassPressProductDialog.reject)  # type: ignore
-        QtCore.QMetaObject.connectSlotsByName(AtlassPressProductDialog)
+        self.buttonsActions.accepted.connect(AtlasPressProductDialog.accept)  # type: ignore
+        self.buttonsActions.rejected.connect(AtlasPressProductDialog.reject)  # type: ignore
+        QtCore.QMetaObject.connectSlotsByName(AtlasPressProductDialog)
 
-    def retranslateUi(self, AtlassPressProductDialog):
+    def retranslateUi(self, AtlasPressProductDialog):
         _translate = QtCore.QCoreApplication.translate
-        AtlassPressProductDialog.setWindowTitle(
-            _translate("AtlassPressProductDialog", "Atlas Press — Choose Product")
+        AtlasPressProductDialog.setWindowTitle(
+            _translate("AtlasPressProductDialog", "Atlas Press — Choose Product")
         )
-        self.headerLabel.setText(
-            _translate("AtlassPressProductDialog", "🗺️  Print & Order Your Map")
-        )
+        self.headerLabel.setText(_translate("AtlasPressProductDialog", "🗺️ Print & Order Your Map"))
         self.subtitleLabel.setStyleSheet(
-            _translate("AtlassPressProductDialog", "color: #666666; font-size: 11px;")
+            _translate("AtlasPressProductDialog", "color: #666666; font-size: 11px;")
         )
         self.subtitleLabel.setText(
-            _translate("AtlassPressProductDialog", "Select a product type, then pick a size.")
+            _translate("AtlasPressProductDialog", "Select a product type, then pick a size.")
         )
-        self.dividerLine.setStyleSheet(_translate("AtlassPressProductDialog", "color: #dddddd;"))
+        self.dividerLine.setStyleSheet(_translate("AtlasPressProductDialog", "color: #dddddd;"))
         self.productTypeGroupBox.setStyleSheet(
-            _translate("AtlassPressProductDialog", "QGroupBox { font-weight: bold; }")
+            _translate("AtlasPressProductDialog", "QGroupBox { font-weight: bold; }")
         )
-        self.productTypeGroupBox.setTitle(_translate("AtlassPressProductDialog", "Product Type"))
-        self.radioCanvas.setText(_translate("AtlassPressProductDialog", "Canvas Print"))
-        self.radioPoster.setText(_translate("AtlassPressProductDialog", "Poster Print"))
+        self.productTypeGroupBox.setTitle(_translate("AtlasPressProductDialog", "Product Type"))
+        self.radioCanvas.setText(_translate("AtlasPressProductDialog", "Canvas Print"))
+        self.radioPoster.setText(_translate("AtlasPressProductDialog", "Poster Print"))
         self.descriptionLabel.setStyleSheet(
-            _translate("AtlassPressProductDialog", "color: #555555; font-size: 11px;")
+            _translate("AtlasPressProductDialog", "color: #555555; font-size: 11px;")
         )
         self.descriptionLabel.setText(
-            _translate("AtlassPressProductDialog", "Premium gallery-wrapped canvas, ready to hang.")
+            _translate("AtlasPressProductDialog", "Premium gallery-wrapped canvas, ready to hang.")
         )
         self.sizeGroupBox.setStyleSheet(
-            _translate("AtlassPressProductDialog", "QGroupBox { font-weight: bold; }")
+            _translate("AtlasPressProductDialog", "QGroupBox { font-weight: bold; }")
         )
-        self.sizeGroupBox.setTitle(_translate("AtlassPressProductDialog", "Size"))
+        self.sizeGroupBox.setTitle(_translate("AtlasPressProductDialog", "Size"))
         self.loadingTextLabel.setStyleSheet(
-            _translate("AtlassPressProductDialog", "color: #888888; font-size: 11px;")
+            _translate("AtlasPressProductDialog", "color: #888888; font-size: 11px;")
         )
-        self.loadingTextLabel.setText(_translate("AtlassPressProductDialog", "Fetching products…"))
+        self.loadingTextLabel.setText(_translate("AtlasPressProductDialog", "Fetching products…"))
         self.selectionSizeLabel.setStyleSheet(
             _translate(
-                "AtlassPressProductDialog",
-                "color: #3a7ebf; font-weight: bold; font-size: 12px; margin-top: 2px;",
+                "AtlasPressProductDialog",
+                "color: #3a7ebf; font-weight: bold; font-size: 12px; margin-top:\n"
+                "                            2px;",
             )
         )
-        self.selectionSizeLabel.setText(_translate("AtlassPressProductDialog", "No size selected"))
-        self.errorIconLabel.setStyleSheet(
-            _translate("AtlassPressProductDialog", "font-size: 22px;")
-        )
-        self.errorIconLabel.setText(_translate("AtlassPressProductDialog", "⚠️"))
+        self.selectionSizeLabel.setText(_translate("AtlasPressProductDialog", "No size selected"))
+        self.errorIconLabel.setStyleSheet(_translate("AtlasPressProductDialog", "font-size: 22px;"))
+        self.errorIconLabel.setText(_translate("AtlasPressProductDialog", "⚠️"))
         self.errorMessageLabel.setStyleSheet(
-            _translate("AtlassPressProductDialog", "color: #cc4444; font-size: 11px;")
+            _translate("AtlasPressProductDialog", "color: #cc4444; font-size: 11px;")
         )
         self.errorMessageLabel.setText(
             _translate(
-                "AtlassPressProductDialog", "Could not load products. Please check your connection."
+                "AtlasPressProductDialog", "Could not load products. Please check your connection."
             )
         )
         self.retryButton.setStyleSheet(
             _translate(
-                "AtlassPressProductDialog",
+                "AtlasPressProductDialog",
                 "\n"
-                "                QPushButton {\n"
-                "                  background: #3a7ebf;\n"
-                "                  color: white;\n"
-                "                  border: none;\n"
-                "                  border-radius: 4px;\n"
-                "                  padding: 4px 16px;\n"
-                "                  font-size: 11px;\n"
-                "                }\n"
-                "                QPushButton:hover { background: #2e6aaa; }\n"
-                "               ",
+                "                                QPushButton {\n"
+                "                                background: #3a7ebf;\n"
+                "                                color: white;\n"
+                "                                border: none;\n"
+                "                                border-radius: 4px;\n"
+                "                                padding: 4px 16px;\n"
+                "                                font-size: 11px;\n"
+                "                                }\n"
+                "                                QPushButton:hover { background: #2e6aaa; }\n"
+                "                              ",
             )
         )
-        self.retryButton.setText(_translate("AtlassPressProductDialog", "Retry"))
+        self.retryButton.setText(_translate("AtlasPressProductDialog", "Retry"))
         self.priceNoteLabel.setStyleSheet(
-            _translate("AtlassPressProductDialog", "color: #999999; font-size: 10px;")
+            _translate("AtlasPressProductDialog", "color: #999999; font-size: 10px;")
         )
         self.priceNoteLabel.setText(
             _translate(
-                "AtlassPressProductDialog", "ℹ️  Prices are base prices and exclude shipping & tax."
+                "AtlasPressProductDialog", "ℹ️ Prices are base prices and exclude shipping & tax."
             )
         )

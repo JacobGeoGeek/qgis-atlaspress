@@ -13,11 +13,11 @@ from ...core import (
     UploadService,
 )
 from ..common.spinner_widget import SpinnerWidget
-from .product_selection_ui import Ui_AtlassPressProductDialog
+from .product_selection_ui import Ui_AtlasPressProductDialog
 from .size_product_card import SizeCard
 
 
-class ProductDialog(QDialog, Ui_AtlassPressProductDialog):
+class ProductDialog(QDialog, Ui_AtlasPressProductDialog):
     def __init__(
         self,
         product_service: ProductService,
