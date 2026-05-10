@@ -27,8 +27,10 @@ class FetchProductsByTypeTask(QgsTask):
             self._products = self._product_service.get_products_by_type(self._product_type)
             return True
         except Exception as e:
+            import traceback
+
             QgsMessageLog.logMessage(
-                f"Error fetching products of type {self._product_type}: {e}",
+                f"Error fetching products of type {self._product_type}: {e}\n{traceback.format_exc()}",
                 MESSAGE_CATEGORY,
                 level=Qgis.Critical,
             )
