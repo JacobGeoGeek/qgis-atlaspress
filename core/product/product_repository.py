@@ -1,8 +1,12 @@
 from typing_extensions import Final
 
+from qgis.core import Qgis, QgsMessageLog
+
 from ..config.http_client import HttpClient
 from ..config.model.http_response import HttpResponse, HttpResponseError
-from .models.product import Product, ProductsResponse
+from .models.product import Product, ProductsResponse, ProductType
+
+MESSAGE_CATEGORY = "AtlasPress"
 
 
 class ProductRepository:
@@ -23,12 +27,22 @@ class ProductRepository:
         products = []
 
         for product_data in products_data:
+            product_type = self._parse_product_type(product_data.get("type", ""))
+
+            if product_type is None:
+                QgsMessageLog.logMessage(
+                    f"Skipping product with unknown type: {product_data.get('type', '')}",
+                    MESSAGE_CATEGORY,
+                    level=Qgis.Warning,
+                )
+                continue
+
             products.append(
                 Product(
                     id=product_data.get("id", ""),
                     sku=product_data.get("sku", ""),
                     name=product_data.get("name", ""),
-                    type=product_data.get("type", ""),
+                    type=product_type,
                     width_in=product_data.get("widthIn", 0.0),
                     height_in=product_data.get("heightIn", 0.0),
                     dpi=product_data.get("dpi", 0),
@@ -39,3 +53,9 @@ class ProductRepository:
             )
 
         return ProductsResponse(products=products, error=None)
+
+    def _parse_product_type(self, value: str) -> ProductType | None:
+        try:
+            return ProductType(value)
+        except ValueError:
+            return None
