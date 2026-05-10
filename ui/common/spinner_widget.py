@@ -6,7 +6,7 @@ from qgis.PyQt.QtWidgets import QWidget
 
 
 class SpinnerWidget(QWidget):
-    def __init__(self, parent=None, color="#93b023", size=32, speed_ms=40):
+    def __init__(self, parent=None, color="#93b023", size=32):
         super().__init__(parent)
         self._angle = 0
         self._color = QColor(color)

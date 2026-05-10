@@ -33,7 +33,7 @@ class ProductDialog(QDialog, Ui_AtlassPressProductDialog):
         self.radioCanvas.toggled.connect(self._on_product_type_changed)
         self.radioPoster.toggled.connect(self._on_product_type_changed)
 
-        self._spinner = SpinnerWidget(color="#93b023", size=32)
+        self._spinner = SpinnerWidget()
         self.loadingPageLayout.insertWidget(
             0, self._spinner, alignment=Qt.AlignmentFlag.AlignCenter
         )
