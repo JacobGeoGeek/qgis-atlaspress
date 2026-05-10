@@ -129,8 +129,8 @@ class ProductDialog(QDialog, Ui_AtlassPressProductDialog):
 
     def _on_product_selected(self, card: SizeCard):
         if self._selected_product:
-            self._selected_product._apply_style(False)
-        card._apply_style(True)
+            self._selected_product.set_active(False)
+        card.set_active(True)
 
         self._selected_product = card
         self.selectionSizeLabel.setText(card.display_product_info())
