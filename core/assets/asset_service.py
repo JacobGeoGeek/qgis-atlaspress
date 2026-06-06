@@ -13,12 +13,12 @@ from qgis.gui import QgsLayoutDesignerInterface
 from qgis.PyQt.QtGui import QImage
 
 from .models.metadata_asset import MetadataAssetRequest, MetadataAssetResponse
-from .upload_repository import UploadRepository
+from .asset_repository import AssetRepository
 
 
-class UploadService:
-    def __init__(self, upload_repository: UploadRepository):
-        self._upload_repository: Final[UploadRepository] = upload_repository
+class AssetService:
+    def __init__(self, asset_repository: AssetRepository):
+        self._asset_repository: Final[AssetRepository] = asset_repository
 
     def upload_layout_file(self, designer: QgsLayoutDesignerInterface) -> str:
         layout: Final[QgsLayout] = designer.layout()
@@ -73,7 +73,7 @@ class UploadService:
             )
 
             metadata_response: Final[MetadataAssetResponse] = (
-                self._upload_repository.create_metadata_asset(metadata_asset)
+                self._asset_repository.create_metadata_asset(metadata_asset)
             )
 
             if metadata_response.error:
@@ -98,7 +98,7 @@ class UploadService:
 
             url_parts = urlsplit(metadata_response.signed_upload_url)
 
-            file_uploaded = self._upload_repository.upload_file(
+            file_uploaded = self._asset_repository.upload_file(
                 file=file_bytes, upload_url=f"{url_parts.path}?{url_parts.query}"
             )
 
@@ -118,7 +118,7 @@ class UploadService:
                 )
                 raise Exception("An error has occurred during file upload. Please try again.")
 
-            complete_response = self._upload_repository.complete_upload(metadata_response.asset_id)
+            complete_response = self._asset_repository.complete_upload(metadata_response.asset_id)
 
             if complete_response.error:
                 QgsMessageLog.logMessage(
