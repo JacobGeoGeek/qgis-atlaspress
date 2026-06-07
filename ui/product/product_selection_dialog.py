@@ -5,13 +5,11 @@ from qgis.gui import QgsLayoutDesignerInterface
 from qgis.PyQt.QtCore import Qt
 from qgis.PyQt.QtWidgets import QDialog, QDialogButtonBox, QWidget
 
-from ...core import (
-    FetchProductsByTypeTask,
-    ProductService,
-    ProductType,
-    UploadFileTask,
-    UploadService,
-)
+from ...core.assets.asset_service import AssetService
+from ...core.assets.tasks.upload_file_task import UploadFileTask
+from ...core.product.models.product import ProductType
+from ...core.product.product_service import ProductService
+from ...core.product.tasks.fetch_products_by_type_task import FetchProductsByTypeTask
 from ..common.spinner_widget import SpinnerWidget
 from .product_selection_ui import Ui_AtlasPressProductDialog
 from .size_product_card import SizeCard
@@ -21,15 +19,17 @@ class ProductDialog(QDialog, Ui_AtlasPressProductDialog):
     def __init__(
         self,
         product_service: ProductService,
-        upload_service: UploadService,
+        asset_service: AssetService,
         designer: QgsLayoutDesignerInterface,
+        on_product_uploaded: callable,
         parent=None,
     ):
         super().__init__(parent)
         self.setupUi(self)
         self._product_service = product_service
-        self._upload_service = upload_service
+        self._asset_service = asset_service
         self._designer = designer
+        self._on_product_uploaded = on_product_uploaded
         self.radioCanvas.toggled.connect(self._on_product_type_changed)
         self.radioPoster.toggled.connect(self._on_product_type_changed)
 
@@ -41,6 +41,8 @@ class ProductDialog(QDialog, Ui_AtlasPressProductDialog):
         self._products_size_cards: Final[list[SizeCard]] = []
         self._selected_product: SizeCard | None = None
         self._ok_button = self.buttonsActions.button(QDialogButtonBox.StandardButton.Ok)
+        if self._ok_button is not None:
+            self._ok_button.setText("Next")
         self._set_ok_enabled(False)
         self.buttonsActions.accepted.disconnect(self.accept)
         self._ok_button.clicked.connect(self._upload_file)
@@ -84,12 +86,18 @@ class ProductDialog(QDialog, Ui_AtlasPressProductDialog):
             self._hide_loading_state(self.sizeErrorPage)
             return
 
+        if self._selected_product is None or not asset_id:
+            self._hide_loading_state(self.sizeErrorPage)
+            return
+
         QgsMessageLog.logMessage(
             f"Layout file uploaded successfully with asset ID: {asset_id}",
             "AtlasPress",
             level=Qgis.Info,
         )
         self._hide_loading_state(self.sizeCardsPage)
+        self._on_product_uploaded(self._selected_product.product, asset_id)
+        self.accept()
 
     def _populate_product_cards(self, products):
         self._clear_cards_layout()
@@ -145,7 +153,7 @@ class ProductDialog(QDialog, Ui_AtlasPressProductDialog):
             self._show_loading_state("Uploading layout file...")
             QgsApplication.taskManager().addTask(
                 UploadFileTask(
-                    self._upload_service,
+                    self._asset_service,
                     self._designer,
                     self._on_file_uploaded,
                 )
