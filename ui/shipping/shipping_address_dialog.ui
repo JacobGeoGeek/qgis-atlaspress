@@ -1,0 +1,925 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>AtlasPressShippingDialog</class>
+ <widget class="QDialog" name="AtlasPressShippingDialog">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>560</width>
+    <height>640</height>
+   </rect>
+  </property>
+  <property name="minimumSize">
+   <size>
+    <width>540</width>
+    <height>600</height>
+   </size>
+  </property>
+  <property name="windowTitle">
+   <string>Atlas Press — Shipping Information</string>
+  </property>
+  <layout class="QVBoxLayout" name="rootLayout">
+   <property name="spacing">
+    <number>14</number>
+   </property>
+   <property name="leftMargin">
+    <number>20</number>
+   </property>
+   <property name="topMargin">
+    <number>18</number>
+   </property>
+   <property name="rightMargin">
+    <number>20</number>
+   </property>
+   <property name="bottomMargin">
+    <number>16</number>
+   </property>
+   <item>
+    <widget class="QLabel" name="headerLabel">
+     <property name="font">
+      <font>
+       <pointsize>13</pointsize>
+       <bold>true</bold>
+      </font>
+     </property>
+     <property name="text">
+      <string>🗺️  Print &amp; Order Your Map</string>
+     </property>
+     <property name="alignment">
+      <set>Qt::AlignmentFlag::AlignCenter</set>
+     </property>
+    </widget>
+   </item>
+   <item>
+    <widget class="QLabel" name="stepIndicatorLabel">
+     <property name="styleSheet">
+      <string>color: #666666; font-size: 11px;</string>
+     </property>
+     <property name="text">
+      <string>Step 2 of 3 — Shipping Information</string>
+     </property>
+     <property name="alignment">
+      <set>Qt::AlignmentFlag::AlignCenter</set>
+     </property>
+    </widget>
+   </item>
+
+   <item>
+    <widget class="QFrame" name="dividerLine">
+     <property name="styleSheet">
+      <string>color: #dddddd;</string>
+     </property>
+     <property name="frameShape">
+      <enum>QFrame::Shape::HLine</enum>
+     </property>
+     <property name="frameShadow">
+      <enum>QFrame::Shadow::Sunken</enum>
+     </property>
+    </widget>
+   </item>
+   <item>
+    <widget class="QStackedWidget" name="dialogStackedWidget">
+     <property name="currentIndex">
+      <number>1</number>
+     </property>
+     <widget class="QWidget" name="dialogLoadingPage">
+      <layout class="QVBoxLayout" name="dialogLoadingLayout">
+       <property name="spacing">
+        <number>12</number>
+       </property>
+       <item>
+        <spacer name="loadingTopSpacer">
+         <property name="orientation">
+          <enum>Qt::Orientation::Vertical</enum>
+         </property>
+         <property name="sizeHint" stdset="0">
+          <size>
+           <width>20</width>
+           <height>40</height>
+          </size>
+         </property>
+        </spacer>
+       </item>
+       <item>
+        <widget class="QLabel" name="dialogLoadingSpinnerLabel">
+         <property name="minimumSize">
+          <size>
+           <width>0</width>
+           <height>36</height>
+          </size>
+         </property>
+         <property name="text">
+          <string/>
+         </property>
+         <property name="alignment">
+          <set>Qt::AlignmentFlag::AlignCenter</set>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QLabel" name="dialogLoadingTextLabel">
+         <property name="styleSheet">
+          <string>color: #888888; font-size: 12px;</string>
+         </property>
+         <property name="text">
+          <string>Loading shipping countries…</string>
+         </property>
+         <property name="alignment">
+          <set>Qt::AlignmentFlag::AlignCenter</set>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <spacer name="loadingBottomSpacer">
+         <property name="orientation">
+          <enum>Qt::Orientation::Vertical</enum>
+         </property>
+         <property name="sizeHint" stdset="0">
+          <size>
+           <width>20</width>
+           <height>40</height>
+          </size>
+         </property>
+        </spacer>
+       </item>
+      </layout>
+     </widget>
+     <widget class="QWidget" name="dialogFormPage">
+      <layout class="QVBoxLayout" name="dialogFormLayout">
+       <property name="spacing">
+        <number>0</number>
+       </property>
+       <property name="leftMargin">
+        <number>0</number>
+       </property>
+       <property name="topMargin">
+        <number>0</number>
+       </property>
+       <property name="rightMargin">
+        <number>0</number>
+       </property>
+       <property name="bottomMargin">
+        <number>0</number>
+       </property>
+       <item>
+        <widget class="QScrollArea" name="formScrollArea">
+         <property name="frameShape">
+          <enum>QFrame::Shape::NoFrame</enum>
+         </property>
+         <property name="widgetResizable">
+          <bool>true</bool>
+         </property>
+         <widget class="QWidget" name="formScrollContents">
+          <property name="geometry">
+           <rect>
+            <x>0</x>
+            <y>0</y>
+            <width>503</width>
+            <height>479</height>
+           </rect>
+          </property>
+          <layout class="QVBoxLayout" name="formScrollLayout">
+           <property name="spacing">
+            <number>14</number>
+           </property>
+           <property name="leftMargin">
+            <number>0</number>
+           </property>
+           <property name="topMargin">
+            <number>2</number>
+           </property>
+           <property name="rightMargin">
+            <number>4</number>
+           </property>
+           <property name="bottomMargin">
+            <number>4</number>
+           </property>
+           <item>
+            <widget class="QGroupBox" name="recipientGroupBox">
+             <property name="styleSheet">
+              <string>QGroupBox { font-weight: bold; }</string>
+             </property>
+             <property name="title">
+              <string>Recipient</string>
+             </property>
+             <layout class="QVBoxLayout" name="recipientLayout">
+              <property name="spacing">
+               <number>8</number>
+              </property>
+              <item>
+               <layout class="QVBoxLayout" name="nameFieldLayout">
+                <property name="spacing">
+                 <number>2</number>
+                </property>
+                <item>
+                 <layout class="QHBoxLayout">
+                  <item>
+                   <widget class="QLabel" name="nameLabel">
+                    <property name="styleSheet">
+                     <string>font-size: 11px; font-weight: 600;</string>
+                    </property>
+                    <property name="text">
+                     <string>Full Name</string>
+                    </property>
+                   </widget>
+                  </item>
+                  <item>
+                   <widget class="QLabel" name="nameRequiredMark">
+                    <property name="styleSheet">
+                     <string>color: #cc4444; font-weight: bold;</string>
+                    </property>
+                    <property name="text">
+                     <string>*</string>
+                    </property>
+                   </widget>
+                  </item>
+                  <item>
+                   <spacer name="nameHeaderSpacer">
+                    <property name="orientation">
+                     <enum>Qt::Orientation::Horizontal</enum>
+                    </property>
+                    <property name="sizeHint" stdset="0">
+                     <size>
+                      <width>40</width>
+                      <height>20</height>
+                     </size>
+                    </property>
+                   </spacer>
+                  </item>
+                 </layout>
+                </item>
+                <item>
+                 <widget class="QLineEdit" name="nameLineEdit">
+                  <property name="placeholderText">
+                   <string>e.g. Jane Smith</string>
+                  </property>
+                 </widget>
+                </item>
+                <item>
+                 <widget class="QLabel" name="nameErrorLabel">
+                  <property name="visible">
+                   <bool>false</bool>
+                  </property>
+                  <property name="styleSheet">
+                   <string>color: #cc4444; font-size: 10px;</string>
+                  </property>
+                  <property name="text">
+                   <string>Full name is required.</string>
+                  </property>
+                 </widget>
+                </item>
+               </layout>
+              </item>
+              <item>
+               <layout class="QVBoxLayout" name="emailFieldLayout">
+                <property name="spacing">
+                 <number>2</number>
+                </property>
+                <item>
+                 <layout class="QHBoxLayout">
+                  <item>
+                   <widget class="QLabel" name="emailLabel">
+                    <property name="styleSheet">
+                     <string>font-size: 11px; font-weight: 600;</string>
+                    </property>
+                    <property name="text">
+                     <string>Email</string>
+                    </property>
+                   </widget>
+                  </item>
+                  <item>
+                   <widget class="QLabel" name="emailRequiredMark">
+                    <property name="styleSheet">
+                     <string>color: #cc4444; font-weight: bold;</string>
+                    </property>
+                    <property name="text">
+                     <string>*</string>
+                    </property>
+                   </widget>
+                  </item>
+                  <item>
+                   <spacer name="emailHeaderSpacer">
+                    <property name="orientation">
+                     <enum>Qt::Orientation::Horizontal</enum>
+                    </property>
+                    <property name="sizeHint" stdset="0">
+                     <size>
+                      <width>40</width>
+                      <height>20</height>
+                     </size>
+                    </property>
+                   </spacer>
+                  </item>
+                 </layout>
+                </item>
+                <item>
+                 <widget class="QLineEdit" name="emailLineEdit">
+                  <property name="placeholderText">
+                   <string>e.g. jane@example.com</string>
+                  </property>
+                 </widget>
+                </item>
+                <item>
+                 <widget class="QLabel" name="emailErrorLabel">
+                  <property name="visible">
+                   <bool>false</bool>
+                  </property>
+                  <property name="styleSheet">
+                   <string>color: #cc4444; font-size: 10px;</string>
+                  </property>
+                  <property name="text">
+                   <string>A valid email address is required.</string>
+                  </property>
+                 </widget>
+                </item>
+               </layout>
+              </item>
+             </layout>
+            </widget>
+           </item>
+           <item>
+            <widget class="QGroupBox" name="addressGroupBox">
+             <property name="styleSheet">
+              <string>QGroupBox { font-weight: bold; }</string>
+             </property>
+             <property name="title">
+              <string>Shipping Address</string>
+             </property>
+             <layout class="QVBoxLayout" name="addressLayout">
+              <property name="spacing">
+               <number>8</number>
+              </property>
+              <item>
+               <layout class="QVBoxLayout" name="countryFieldLayout">
+                <property name="spacing">
+                 <number>2</number>
+                </property>
+                <item>
+                 <layout class="QHBoxLayout">
+                  <item>
+                   <widget class="QLabel" name="countryLabel">
+                    <property name="styleSheet">
+                     <string>font-size: 11px; font-weight: 600;</string>
+                    </property>
+                    <property name="text">
+                     <string>Country</string>
+                    </property>
+                   </widget>
+                  </item>
+                  <item>
+                   <widget class="QLabel" name="countryRequiredMark">
+                    <property name="styleSheet">
+                     <string>color: #cc4444; font-weight: bold;</string>
+                    </property>
+                    <property name="text">
+                     <string>*</string>
+                    </property>
+                   </widget>
+                  </item>
+                  <item>
+                   <spacer name="countryHeaderSpacer">
+                    <property name="orientation">
+                     <enum>Qt::Orientation::Horizontal</enum>
+                    </property>
+                    <property name="sizeHint" stdset="0">
+                     <size>
+                      <width>40</width>
+                      <height>20</height>
+                     </size>
+                    </property>
+                   </spacer>
+                  </item>
+                 </layout>
+                </item>
+                <item>
+                 <widget class="QComboBox" name="countryComboBox">
+                  <property name="editable">
+                   <bool>true</bool>
+                  </property>
+                 </widget>
+                </item>
+                <item>
+                 <widget class="QLabel" name="countryErrorLabel">
+                  <property name="visible">
+                   <bool>false</bool>
+                  </property>
+                  <property name="styleSheet">
+                   <string>color: #cc4444; font-size: 10px;</string>
+                  </property>
+                  <property name="text">
+                   <string>Please select a supported country.</string>
+                  </property>
+                 </widget>
+                </item>
+               </layout>
+              </item>
+              <item>
+               <layout class="QVBoxLayout" name="address1FieldLayout">
+                <property name="spacing">
+                 <number>2</number>
+                </property>
+                <item>
+                 <layout class="QHBoxLayout">
+                  <item>
+                   <widget class="QLabel" name="address1Label">
+                    <property name="styleSheet">
+                     <string>font-size: 11px; font-weight: 600;</string>
+                    </property>
+                    <property name="text">
+                     <string>Address Line 1</string>
+                    </property>
+                   </widget>
+                  </item>
+                  <item>
+                   <widget class="QLabel" name="address1RequiredMark">
+                    <property name="styleSheet">
+                     <string>color: #cc4444; font-weight: bold;</string>
+                    </property>
+                    <property name="text">
+                     <string>*</string>
+                    </property>
+                   </widget>
+                  </item>
+                  <item>
+                   <spacer name="address1HeaderSpacer">
+                    <property name="orientation">
+                     <enum>Qt::Orientation::Horizontal</enum>
+                    </property>
+                    <property name="sizeHint" stdset="0">
+                     <size>
+                      <width>40</width>
+                      <height>20</height>
+                     </size>
+                    </property>
+                   </spacer>
+                  </item>
+                 </layout>
+                </item>
+                <item>
+                 <widget class="QLineEdit" name="address1LineEdit">
+                  <property name="placeholderText">
+                   <string>e.g. 123 Main Street</string>
+                  </property>
+                 </widget>
+                </item>
+                <item>
+                 <widget class="QLabel" name="address1ErrorLabel">
+                  <property name="visible">
+                   <bool>false</bool>
+                  </property>
+                  <property name="styleSheet">
+                   <string>color: #cc4444; font-size: 10px;</string>
+                  </property>
+                  <property name="text">
+                   <string>Address line 1 is required.</string>
+                  </property>
+                 </widget>
+                </item>
+               </layout>
+              </item>
+              <item>
+               <layout class="QVBoxLayout" name="address2FieldLayout">
+                <property name="spacing">
+                 <number>2</number>
+                </property>
+                <item>
+                 <layout class="QHBoxLayout">
+                  <item>
+                   <widget class="QLabel" name="address2Label">
+                    <property name="styleSheet">
+                     <string>font-size: 11px; font-weight: 600;</string>
+                    </property>
+                    <property name="text">
+                     <string>Address Line 2</string>
+                    </property>
+                   </widget>
+                  </item>
+                  <item>
+                   <widget class="QLabel" name="address2OptionalLabel">
+                    <property name="styleSheet">
+                     <string>color: #999999; font-size: 10px;</string>
+                    </property>
+                    <property name="text">
+                     <string>optional</string>
+                    </property>
+                   </widget>
+                  </item>
+                  <item>
+                   <spacer name="address2HeaderSpacer">
+                    <property name="orientation">
+                     <enum>Qt::Orientation::Horizontal</enum>
+                    </property>
+                    <property name="sizeHint" stdset="0">
+                     <size>
+                      <width>40</width>
+                      <height>20</height>
+                     </size>
+                    </property>
+                   </spacer>
+                  </item>
+                 </layout>
+                </item>
+                <item>
+                 <widget class="QLineEdit" name="address2LineEdit">
+                  <property name="placeholderText">
+                   <string>e.g. Apt 4B, Suite 100</string>
+                  </property>
+                 </widget>
+                </item>
+               </layout>
+              </item>
+              <item>
+               <layout class="QHBoxLayout" name="cityPostalLayout">
+                <property name="spacing">
+                 <number>12</number>
+                </property>
+                <item>
+                 <layout class="QVBoxLayout" name="cityFieldLayout">
+                  <property name="spacing">
+                   <number>2</number>
+                  </property>
+                  <item>
+                   <layout class="QHBoxLayout">
+                    <item>
+                     <widget class="QLabel" name="cityLabel">
+                      <property name="styleSheet">
+                       <string>font-size: 11px; font-weight: 600;</string>
+                      </property>
+                      <property name="text">
+                       <string>City</string>
+                      </property>
+                     </widget>
+                    </item>
+                    <item>
+                     <widget class="QLabel" name="cityRequiredMark">
+                      <property name="styleSheet">
+                       <string>color: #cc4444; font-weight: bold;</string>
+                      </property>
+                      <property name="text">
+                       <string>*</string>
+                      </property>
+                     </widget>
+                    </item>
+                    <item>
+                     <spacer name="cityHeaderSpacer">
+                      <property name="orientation">
+                       <enum>Qt::Orientation::Horizontal</enum>
+                      </property>
+                      <property name="sizeHint" stdset="0">
+                       <size>
+                        <width>20</width>
+                        <height>20</height>
+                       </size>
+                      </property>
+                     </spacer>
+                    </item>
+                   </layout>
+                  </item>
+                  <item>
+                   <widget class="QLineEdit" name="cityLineEdit">
+                    <property name="placeholderText">
+                     <string>e.g. Montreal</string>
+                    </property>
+                   </widget>
+                  </item>
+                  <item>
+                   <widget class="QLabel" name="cityErrorLabel">
+                    <property name="visible">
+                     <bool>false</bool>
+                    </property>
+                    <property name="styleSheet">
+                     <string>color: #cc4444; font-size: 10px;</string>
+                    </property>
+                    <property name="text">
+                     <string>City is required.</string>
+                    </property>
+                   </widget>
+                  </item>
+                 </layout>
+                </item>
+                <item>
+                 <layout class="QVBoxLayout" name="postalFieldLayout">
+                  <property name="spacing">
+                   <number>2</number>
+                  </property>
+                  <item>
+                   <layout class="QHBoxLayout">
+                    <item>
+                     <widget class="QLabel" name="postalLabel">
+                      <property name="styleSheet">
+                       <string>font-size: 11px; font-weight: 600;</string>
+                      </property>
+                      <property name="text">
+                       <string>Postal / ZIP Code</string>
+                      </property>
+                     </widget>
+                    </item>
+                    <item>
+                     <widget class="QLabel" name="postalRequiredMark">
+                      <property name="styleSheet">
+                       <string>color: #cc4444; font-weight: bold;</string>
+                      </property>
+                      <property name="text">
+                       <string>*</string>
+                      </property>
+                     </widget>
+                    </item>
+                    <item>
+                     <spacer name="postalHeaderSpacer">
+                      <property name="orientation">
+                       <enum>Qt::Orientation::Horizontal</enum>
+                      </property>
+                      <property name="sizeHint" stdset="0">
+                       <size>
+                        <width>20</width>
+                        <height>20</height>
+                       </size>
+                      </property>
+                     </spacer>
+                    </item>
+                   </layout>
+                  </item>
+                  <item>
+                   <widget class="QLineEdit" name="postalLineEdit">
+                    <property name="placeholderText">
+                     <string>e.g. H2X 1Y4</string>
+                    </property>
+                   </widget>
+                  </item>
+                  <item>
+                   <widget class="QLabel" name="postalErrorLabel">
+                    <property name="visible">
+                     <bool>false</bool>
+                    </property>
+                    <property name="styleSheet">
+                     <string>color: #cc4444; font-size: 10px;</string>
+                    </property>
+                    <property name="text">
+                     <string>Postal code is required.</string>
+                    </property>
+                   </widget>
+                  </item>
+                 </layout>
+                </item>
+               </layout>
+              </item>
+              <item>
+               <layout class="QVBoxLayout" name="stateFieldLayout">
+                <property name="spacing">
+                 <number>2</number>
+                </property>
+                <item>
+                 <layout class="QHBoxLayout">
+                  <item>
+                   <widget class="QLabel" name="stateLabel">
+                    <property name="visible">
+                     <bool>false</bool>
+                    </property>
+                    <property name="styleSheet">
+                     <string>font-size: 11px; font-weight: 600;</string>
+                    </property>
+                    <property name="text">
+                     <string>State / Province</string>
+                    </property>
+                   </widget>
+                  </item>
+                  <item>
+                   <widget class="QLabel" name="stateRequiredMark">
+                    <property name="visible">
+                     <bool>false</bool>
+                    </property>
+                    <property name="styleSheet">
+                     <string>color: #cc4444; font-weight: bold;</string>
+                    </property>
+                    <property name="text">
+                     <string>*</string>
+                    </property>
+                   </widget>
+                  </item>
+                  <item>
+                   <spacer name="stateHeaderSpacer">
+                    <property name="orientation">
+                     <enum>Qt::Orientation::Horizontal</enum>
+                    </property>
+                    <property name="sizeHint" stdset="0">
+                     <size>
+                      <width>40</width>
+                      <height>20</height>
+                     </size>
+                    </property>
+                   </spacer>
+                  </item>
+                 </layout>
+                </item>
+                <item>
+                 <widget class="QComboBox" name="stateComboBox">
+                  <property name="visible">
+                   <bool>false</bool>
+                  </property>
+                  <property name="editable">
+                   <bool>true</bool>
+                  </property>
+                 </widget>
+                </item>
+                <item>
+                 <widget class="QLabel" name="stateErrorLabel">
+                  <property name="visible">
+                   <bool>false</bool>
+                  </property>
+                  <property name="styleSheet">
+                   <string>color: #cc4444; font-size: 10px;</string>
+                  </property>
+                  <property name="text">
+                   <string>Please select a state / province.</string>
+                  </property>
+                 </widget>
+                </item>
+               </layout>
+              </item>
+             </layout>
+            </widget>
+           </item>
+           <item>
+            <widget class="QLabel" name="requiredNoteLabel">
+             <property name="styleSheet">
+              <string>color: #999999; font-size: 10px;</string>
+             </property>
+             <property name="text">
+              <string>* Required fields</string>
+             </property>
+            </widget>
+           </item>
+          </layout>
+         </widget>
+        </widget>
+       </item>
+      </layout>
+     </widget>
+     <widget class="QWidget" name="dialogErrorPage">
+      <layout class="QVBoxLayout" name="dialogErrorLayout">
+       <property name="spacing">
+        <number>10</number>
+       </property>
+       <item>
+        <spacer name="errorTopSpacer">
+         <property name="orientation">
+          <enum>Qt::Orientation::Vertical</enum>
+         </property>
+         <property name="sizeHint" stdset="0">
+          <size>
+           <width>20</width>
+           <height>40</height>
+          </size>
+         </property>
+        </spacer>
+       </item>
+       <item>
+        <widget class="QLabel" name="dialogErrorIconLabel">
+         <property name="styleSheet">
+          <string>font-size: 28px;</string>
+         </property>
+         <property name="text">
+          <string>⚠️</string>
+         </property>
+         <property name="alignment">
+          <set>Qt::AlignmentFlag::AlignCenter</set>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QLabel" name="dialogErrorTitleLabel">
+         <property name="styleSheet">
+          <string>font-size: 13px; font-weight: bold; color: #333;</string>
+         </property>
+         <property name="text">
+          <string>Could not load shipping countries</string>
+         </property>
+         <property name="alignment">
+          <set>Qt::AlignmentFlag::AlignCenter</set>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QLabel" name="dialogErrorMessageLabel">
+         <property name="styleSheet">
+          <string>color: #666666; font-size: 11px;</string>
+         </property>
+         <property name="text">
+          <string>Please check your connection and try again.</string>
+         </property>
+         <property name="alignment">
+          <set>Qt::AlignmentFlag::AlignCenter</set>
+         </property>
+         <property name="wordWrap">
+          <bool>true</bool>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <layout class="QHBoxLayout" name="dialogRetryLayout">
+         <item>
+          <spacer name="dialogRetrySpacerLeft">
+           <property name="orientation">
+            <enum>Qt::Orientation::Horizontal</enum>
+           </property>
+           <property name="sizeHint" stdset="0">
+            <size>
+             <width>40</width>
+             <height>20</height>
+            </size>
+           </property>
+          </spacer>
+         </item>
+         <item>
+          <widget class="QPushButton" name="dialogRetryButton">
+           <property name="styleSheet">
+            <string>QPushButton { background: #3a7ebf; color: white; border: none;
+              border-radius: 4px; padding: 6px 24px; font-size: 12px; }
+            QPushButton:hover { background: #2e6aaa; }</string>
+           </property>
+           <property name="text">
+            <string>Retry</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <spacer name="dialogRetrySpacerRight">
+           <property name="orientation">
+            <enum>Qt::Orientation::Horizontal</enum>
+           </property>
+           <property name="sizeHint" stdset="0">
+            <size>
+             <width>40</width>
+             <height>20</height>
+            </size>
+           </property>
+          </spacer>
+         </item>
+        </layout>
+       </item>
+       <item>
+        <spacer name="errorBottomSpacer">
+         <property name="orientation">
+          <enum>Qt::Orientation::Vertical</enum>
+         </property>
+         <property name="sizeHint" stdset="0">
+          <size>
+           <width>20</width>
+           <height>40</height>
+          </size>
+         </property>
+        </spacer>
+       </item>
+      </layout>
+     </widget>
+    </widget>
+   </item>
+   <item>
+    <widget class="QDialogButtonBox" name="buttonsActions">
+     <property name="orientation">
+      <enum>Qt::Orientation::Horizontal</enum>
+     </property>
+     <property name="standardButtons">
+      <set>QDialogButtonBox::StandardButton::Cancel|QDialogButtonBox::StandardButton::Ok</set>
+     </property>
+    </widget>
+   </item>
+  </layout>
+ </widget>
+ <resources/>
+ <connections>
+  <connection>
+   <sender>buttonsActions</sender>
+   <signal>accepted()</signal>
+   <receiver>AtlasPressShippingDialog</receiver>
+   <slot>accept()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>248</x>
+     <y>630</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>157</x>
+     <y>630</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>buttonsActions</sender>
+   <signal>rejected()</signal>
+   <receiver>AtlasPressShippingDialog</receiver>
+   <slot>reject()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>316</x>
+     <y>630</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>286</x>
+     <y>630</y>
+    </hint>
+   </hints>
+  </connection>
+ </connections>
+</ui>
