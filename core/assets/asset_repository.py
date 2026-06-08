@@ -7,13 +7,13 @@ from .models.upload_complete import UploadCompleteResponse
 from .models.upload_file import UploadFileResponse
 
 
-class UploadRepository:
+class AssetRepository:
     def __init__(self, http_client: HttpClient):
         self._http_client: Final[HttpClient] = http_client
 
     def create_metadata_asset(self, metadata_asset: MetadataAssetRequest) -> MetadataAssetResponse:
         response: Final[HttpResponse] = self._http_client.post(
-            endpoint="/functions/v1/uploads", payload=metadata_asset.to_json()
+            endpoint="/functions/v1/assets", payload=metadata_asset.to_json()
         )
 
         if not response.is_success():
@@ -54,7 +54,7 @@ class UploadRepository:
 
     def complete_upload(self, asset_id: str) -> UploadCompleteResponse:
         response: Final[HttpResponse] = self._http_client.post(
-            endpoint=f"/functions/v1/uploads/{asset_id}/complete"
+            endpoint=f"/functions/v1/assets/{asset_id}/complete"
         )
 
         if not response.is_success():

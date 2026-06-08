@@ -4,15 +4,18 @@ from .config.config import load_config_file
 from .config.http_client import HttpClient
 from .product.product_repository import ProductRepository
 from .product.product_service import ProductService
-from .upload.upload_repository import UploadRepository
-from .upload.upload_service import UploadService
+from .assets.asset_repository import AssetRepository
+from .assets.asset_service import AssetService
+from .shipping.shipping_repository import ShippingRepository
+from .shipping.shipping_service import ShippingService
 
 
 @dataclass(frozen=True)
 class CoreServices:
     http_client: HttpClient
     product_service: ProductService
-    upload_service: UploadService
+    asset_service: AssetService
+    shipping_service: ShippingService
 
 
 def create_core_services() -> CoreServices:
@@ -25,5 +28,6 @@ def create_core_services() -> CoreServices:
     return CoreServices(
         http_client=http_client,
         product_service=ProductService(ProductRepository(http_client)),
-        upload_service=UploadService(UploadRepository(http_client)),
+        asset_service=AssetService(AssetRepository(http_client)),
+        shipping_service=ShippingService(ShippingRepository(http_client)),
     )

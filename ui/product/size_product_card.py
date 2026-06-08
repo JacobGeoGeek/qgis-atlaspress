@@ -56,6 +56,10 @@ class SizeCard(QFrame):
     def display_product_info(self):
         return f'{self._product.width_in}" x {self._product.height_in}" - ${self._product.retail_price:.2f}'
 
+    @property
+    def product(self) -> Product:
+        return self._product
+
     def _load_image(self, url: str):
         """Load image from a local path or remote URL into imageLabel."""
         if not url:

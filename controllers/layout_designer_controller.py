@@ -5,8 +5,11 @@ from qgis.gui import QgsLayoutDesignerInterface
 from qgis.PyQt.QtGui import QAction, QIcon
 from qgis.PyQt.QtWidgets import QMenu, QToolBar
 
-from ..core import CoreServices, ProductService, UploadService
+from ..core import AssetService, CoreServices, OrderState, ProductService, ShippingService
+from ..core.product.models.product import Product
+from ..core.shipping.models import ShippingAddress
 from ..ui.product import ProductDialog
+from ..ui.shipping import ShippingAddressDialog
 
 
 class LayoutDesignerController:
@@ -18,12 +21,13 @@ class LayoutDesignerController:
         self._designer: QgsLayoutDesignerInterface = designer
         self._designer_id: Final[int] = id(self._designer)
 
-        self._upload_service: UploadService = core_services.upload_service
+        self._asset_service: AssetService = core_services.asset_service
         self._product_service: ProductService = core_services.product_service
+        self._shipping_service: ShippingService = core_services.shipping_service
+        self._order_state: Final[OrderState] = OrderState()
+        self._shipping_dialog: ShippingAddressDialog | None = None
 
-        self._product_dialog: Final[ProductDialog] = ProductDialog(
-            self._product_service, self._upload_service, self._designer
-        )
+        self._product_dialog: ProductDialog | None = None
 
         self._pdf_export_action_name_toolbar: Final[str] = "mActionExportAsPDF"
         self._pdf_export_action_atlas_menu: Final[str] = "mActionExportAtlasAsPDF"
@@ -160,7 +164,34 @@ class LayoutDesignerController:
         if not self._validate_designer_layout(self._designer):
             return
 
+        self._product_dialog = ProductDialog(
+            self._product_service,
+            self._asset_service,
+            self._designer,
+            self._on_product_uploaded,
+        )
         self._product_dialog.show()
+
+    def _on_product_uploaded(self, product: Product, asset_id: str) -> None:
+        self._order_state.set_uploaded_product(product, asset_id)
+        self._shipping_dialog = ShippingAddressDialog(
+            self._shipping_service,
+            self._on_shipping_address_completed,
+            self._on_shipping_back_requested,
+        )
+        self._shipping_dialog.show()
+
+    def _on_shipping_address_completed(self, shipping_address: ShippingAddress) -> None:
+        self._order_state.set_shipping_address(shipping_address)
+        QgsMessageLog.logMessage(
+            f"Shipping information captured for asset ID: {self._order_state.asset_id}",
+            "AtlasPress",
+            level=Qgis.Info,
+        )
+
+    def _on_shipping_back_requested(self) -> None:
+        if self._product_dialog is not None:
+            self._product_dialog.show()
 
     def _validate_designer_layout(self, designer: QgsLayoutDesignerInterface) -> bool:
         layout: Final[QgsLayout] = designer.layout()

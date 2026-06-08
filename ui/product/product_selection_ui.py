@@ -12,8 +12,8 @@ from qgis.PyQt import QtCore, QtGui, QtWidgets
 class Ui_AtlasPressProductDialog(object):
     def setupUi(self, AtlasPressProductDialog):
         AtlasPressProductDialog.setObjectName("AtlasPressProductDialog")
-        AtlasPressProductDialog.resize(594, 500)
-        AtlasPressProductDialog.setMinimumSize(QtCore.QSize(580, 480))
+        AtlasPressProductDialog.resize(712, 580)
+        AtlasPressProductDialog.setMinimumSize(QtCore.QSize(680, 580))
         self.rootLayout = QtWidgets.QVBoxLayout(AtlasPressProductDialog)
         self.rootLayout.setContentsMargins(20, 18, 20, 16)
         self.rootLayout.setSpacing(14)
@@ -30,6 +30,10 @@ class Ui_AtlasPressProductDialog(object):
         self.subtitleLabel.setAlignment(QtCore.Qt.AlignmentFlag.AlignCenter)
         self.subtitleLabel.setObjectName("subtitleLabel")
         self.rootLayout.addWidget(self.subtitleLabel)
+        self.instructionLabel = QtWidgets.QLabel(parent=AtlasPressProductDialog)
+        self.instructionLabel.setAlignment(QtCore.Qt.AlignmentFlag.AlignCenter)
+        self.instructionLabel.setObjectName("instructionLabel")
+        self.rootLayout.addWidget(self.instructionLabel)
         self.dividerLine = QtWidgets.QFrame(parent=AtlasPressProductDialog)
         self.dividerLine.setFrameShape(QtWidgets.QFrame.Shape.HLine)
         self.dividerLine.setFrameShadow(QtWidgets.QFrame.Shadow.Sunken)
@@ -88,6 +92,13 @@ class Ui_AtlasPressProductDialog(object):
         self.sizeCardsLayout.setSpacing(10)
         self.sizeCardsLayout.setObjectName("sizeCardsLayout")
         self.cardsPageLayout.addLayout(self.sizeCardsLayout)
+        spacerItem1 = QtWidgets.QSpacerItem(
+            20,
+            40,
+            QtWidgets.QSizePolicy.Policy.Minimum,
+            QtWidgets.QSizePolicy.Policy.MinimumExpanding,
+        )
+        self.cardsPageLayout.addItem(spacerItem1)
         self.selectionSizeLabel = QtWidgets.QLabel(parent=self.sizeCardsPage)
         self.selectionSizeLabel.setAlignment(QtCore.Qt.AlignmentFlag.AlignCenter)
         self.selectionSizeLabel.setObjectName("selectionSizeLabel")
@@ -110,17 +121,17 @@ class Ui_AtlasPressProductDialog(object):
         self.errorPageLayout.addWidget(self.errorMessageLabel)
         self.retryButtonLayout = QtWidgets.QHBoxLayout()
         self.retryButtonLayout.setObjectName("retryButtonLayout")
-        spacerItem1 = QtWidgets.QSpacerItem(
-            40, 20, QtWidgets.QSizePolicy.Policy.Expanding, QtWidgets.QSizePolicy.Policy.Minimum
-        )
-        self.retryButtonLayout.addItem(spacerItem1)
-        self.retryButton = QtWidgets.QPushButton(parent=self.sizeErrorPage)
-        self.retryButton.setObjectName("retryButton")
-        self.retryButtonLayout.addWidget(self.retryButton)
         spacerItem2 = QtWidgets.QSpacerItem(
             40, 20, QtWidgets.QSizePolicy.Policy.Expanding, QtWidgets.QSizePolicy.Policy.Minimum
         )
         self.retryButtonLayout.addItem(spacerItem2)
+        self.retryButton = QtWidgets.QPushButton(parent=self.sizeErrorPage)
+        self.retryButton.setObjectName("retryButton")
+        self.retryButtonLayout.addWidget(self.retryButton)
+        spacerItem3 = QtWidgets.QSpacerItem(
+            40, 20, QtWidgets.QSizePolicy.Policy.Expanding, QtWidgets.QSizePolicy.Policy.Minimum
+        )
+        self.retryButtonLayout.addItem(spacerItem3)
         self.errorPageLayout.addLayout(self.retryButtonLayout)
         self.sizeStackedWidget.addWidget(self.sizeErrorPage)
         self.sizeGroupLayout.addWidget(self.sizeStackedWidget)
@@ -129,10 +140,10 @@ class Ui_AtlasPressProductDialog(object):
         self.priceNoteLabel.setWordWrap(True)
         self.priceNoteLabel.setObjectName("priceNoteLabel")
         self.rootLayout.addWidget(self.priceNoteLabel)
-        spacerItem3 = QtWidgets.QSpacerItem(
+        spacerItem4 = QtWidgets.QSpacerItem(
             20, 8, QtWidgets.QSizePolicy.Policy.Minimum, QtWidgets.QSizePolicy.Policy.Expanding
         )
-        self.rootLayout.addItem(spacerItem3)
+        self.rootLayout.addItem(spacerItem4)
         self.buttonsActions = QtWidgets.QDialogButtonBox(parent=AtlasPressProductDialog)
         self.buttonsActions.setOrientation(QtCore.Qt.Orientation.Horizontal)
         self.buttonsActions.setStandardButtons(
@@ -143,7 +154,7 @@ class Ui_AtlasPressProductDialog(object):
         self.rootLayout.addWidget(self.buttonsActions)
 
         self.retranslateUi(AtlasPressProductDialog)
-        self.sizeStackedWidget.setCurrentIndex(0)
+        self.sizeStackedWidget.setCurrentIndex(1)
         self.buttonsActions.accepted.connect(AtlasPressProductDialog.accept)  # type: ignore
         self.buttonsActions.rejected.connect(AtlasPressProductDialog.reject)  # type: ignore
         QtCore.QMetaObject.connectSlotsByName(AtlasPressProductDialog)
@@ -158,6 +169,12 @@ class Ui_AtlasPressProductDialog(object):
             _translate("AtlasPressProductDialog", "color: #666666; font-size: 11px;")
         )
         self.subtitleLabel.setText(
+            _translate("AtlasPressProductDialog", "Step 1 of 3 — Choose Product")
+        )
+        self.instructionLabel.setStyleSheet(
+            _translate("AtlasPressProductDialog", "color: #666666; font-size: 11px;")
+        )
+        self.instructionLabel.setText(
             _translate("AtlasPressProductDialog", "Select a product type, then pick a size.")
         )
         self.dividerLine.setStyleSheet(_translate("AtlasPressProductDialog", "color: #dddddd;"))
