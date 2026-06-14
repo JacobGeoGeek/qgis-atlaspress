@@ -1,0 +1,512 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>AtlasPressQuoteDialog</class>
+ <widget class="QDialog" name="AtlasPressQuoteDialog">
+  <property name="geometry">
+   <rect><x>0</x><y>0</y><width>700</width><height>680</height></rect>
+  </property>
+  <property name="minimumSize">
+   <size><width>680</width><height>640</height></size>
+  </property>
+  <property name="windowTitle">
+   <string>Atlas Press — Your Quote</string>
+  </property>
+
+  <layout class="QVBoxLayout" name="rootLayout">
+   <property name="spacing"><number>14</number></property>
+   <property name="leftMargin"><number>20</number></property>
+   <property name="topMargin"><number>18</number></property>
+   <property name="rightMargin"><number>20</number></property>
+   <property name="bottomMargin"><number>16</number></property>
+
+   <!-- ── Header (always visible) ── -->
+   <item>
+    <widget class="QLabel" name="headerLabel">
+     <property name="font"><font><pointsize>13</pointsize><bold>true</bold></font></property>
+     <property name="text"><string>🗺️  Print &amp; Order Your Map</string></property>
+     <property name="alignment"><set>Qt::AlignmentFlag::AlignCenter</set></property>
+    </widget>
+   </item>
+
+   <!-- Step indicator label only — no progress bar -->
+   <item>
+    <widget class="QLabel" name="stepIndicatorLabel">
+     <property name="text"><string>Step 3 of 3 — Review Your Quote</string></property>
+     <property name="alignment"><set>Qt::AlignmentFlag::AlignCenter</set></property>
+     <property name="styleSheet"><string>color: palette(text); font-size: 11px;</string></property>
+    </widget>
+   </item>
+
+   <item>
+    <widget class="QFrame" name="dividerLine">
+     <property name="styleSheet"><string>color: #dddddd;</string></property>
+     <property name="frameShape"><enum>QFrame::Shape::HLine</enum></property>
+     <property name="frameShadow"><enum>QFrame::Shadow::Sunken</enum></property>
+    </widget>
+   </item>
+
+   <!-- ══════════════════════════════════════════════════════════════
+        dialogStackedWidget pages:
+          0 — quoteLoadingPage   : spinner while POST /quotes is in flight
+          1 — quoteContentPage   : quote result (shipping options + price summary)
+          2 — quoteErrorPage     : error message + Retry button
+        Switch in Python:
+          self.dialogStackedWidget.setCurrentIndex(0 / 1 / 2)
+        ══════════════════════════════════════════════════════════════ -->
+   <item>
+    <widget class="QStackedWidget" name="dialogStackedWidget">
+     <property name="currentIndex"><number>0</number></property>
+
+     <!-- ── Page 0 : Loading ── -->
+     <widget class="QWidget" name="quoteLoadingPage">
+      <layout class="QVBoxLayout" name="quoteLoadingLayout">
+       <property name="spacing"><number>12</number></property>
+       <item>
+        <spacer name="loadingTopSpacer">
+         <property name="orientation"><enum>Qt::Orientation::Vertical</enum></property>
+         <property name="sizeHint" stdset="0"><size><width>20</width><height>40</height></size></property>
+        </spacer>
+       </item>
+       <item>
+        <!--
+          quoteLoadingSpinnerLabel: attach QMovie(spinner.gif) in Python.
+          self._spinner = QMovie(".../resources/spinner.gif")
+          self.quoteLoadingSpinnerLabel.setMovie(self._spinner)
+        -->
+        <widget class="QLabel" name="quoteLoadingSpinnerLabel">
+         <property name="text"><string/></property>
+         <property name="alignment"><set>Qt::AlignmentFlag::AlignCenter</set></property>
+         <property name="minimumSize"><size><width>0</width><height>36</height></size></property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QLabel" name="quoteLoadingTextLabel">
+         <property name="text"><string>Calculating your quote…</string></property>
+         <property name="alignment"><set>Qt::AlignmentFlag::AlignCenter</set></property>
+         <property name="styleSheet"><string>color: palette(text); font-size: 12px;</string></property>
+        </widget>
+       </item>
+       <item>
+        <spacer name="loadingBottomSpacer">
+         <property name="orientation"><enum>Qt::Orientation::Vertical</enum></property>
+         <property name="sizeHint" stdset="0"><size><width>20</width><height>40</height></size></property>
+        </spacer>
+       </item>
+      </layout>
+     </widget>
+
+     <!-- ── Page 1 : Content ── -->
+     <widget class="QWidget" name="quoteContentPage">
+      <layout class="QVBoxLayout" name="quoteContentLayout">
+       <property name="spacing"><number>14</number></property>
+       <property name="leftMargin"><number>0</number></property>
+       <property name="rightMargin"><number>0</number></property>
+       <property name="topMargin"><number>0</number></property>
+       <property name="bottomMargin"><number>0</number></property>
+
+       <!-- ── Selected product summary ── -->
+       <item>
+        <widget class="QGroupBox" name="productSummaryGroupBox">
+         <property name="title"><string>Selected Product</string></property>
+         <property name="styleSheet"><string>QGroupBox { color: palette(text); font-weight: bold; }</string></property>
+         <layout class="QHBoxLayout" name="productSummaryLayout">
+          <property name="spacing"><number>10</number></property>
+
+          <!--
+            productThumbnailLabel: set a QPixmap from the variant preview_url.
+            pixmap.scaled(56, 56, KeepAspectRatio, SmoothTransformation)
+          -->
+          <item>
+           <widget class="QLabel" name="productThumbnailLabel">
+            <property name="minimumSize"><size><width>56</width><height>56</height></size></property>
+            <property name="maximumSize"><size><width>56</width><height>56</height></size></property>
+            <property name="alignment"><set>Qt::AlignmentFlag::AlignCenter</set></property>
+            <property name="styleSheet">
+             <string>background: #f0f0f0; border: 1px solid #e0e0e0; border-radius: 4px;</string>
+            </property>
+            <property name="text"><string/></property>
+           </widget>
+          </item>
+
+          <item>
+           <layout class="QVBoxLayout" name="productSummaryTextLayout">
+            <property name="spacing"><number>3</number></property>
+            <!--
+              productNameLabel: set in Python e.g. "Canvas Print"
+              productVariantLabel: set in Python e.g. '16" x 20"'
+            -->
+            <item>
+             <widget class="QLabel" name="productNameLabel">
+              <property name="text"><string>Canvas Print</string></property>
+              <property name="styleSheet"><string>font-weight: bold; font-size: 12px;</string></property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QLabel" name="productVariantLabel">
+              <property name="text"><string>—</string></property>
+              <property name="styleSheet"><string>color: palette(text); font-size: 11px;</string></property>
+              <property name="wordWrap"><bool>true</bool></property>
+             </widget>
+            </item>
+           </layout>
+          </item>
+
+          <item>
+           <spacer name="productSummarySpacer">
+            <property name="orientation"><enum>Qt::Orientation::Horizontal</enum></property>
+            <property name="sizeHint" stdset="0"><size><width>40</width><height>20</height></size></property>
+           </spacer>
+          </item>
+
+         </layout>
+        </widget>
+       </item>
+
+       <!-- ── Shipping address summary ── -->
+       <!--
+         All labels populated in Python from shipping_info dict:
+           self.shipNameLabel.setText(shipping["name"])
+           self.shipEmailLabel.setText(shipping["email"])
+           addr2 = shipping.get("address2") or ""
+           self.shipAddressLabel.setText(
+               f"{shipping['address1']}{', ' + addr2 if addr2 else ''}"
+           )
+           state = shipping.get("state_code") or ""
+           self.shipCityLabel.setText(
+               f"{shipping['city']}{', ' + state if state else ''}"
+           )
+           self.shipCountryPostalLabel.setText(
+               f"{shipping['country_code']}  ·  {shipping['zip']}"
+           )
+       -->
+       <item>
+        <widget class="QGroupBox" name="shippingAddressGroupBox">
+         <property name="title"><string>Shipping To</string></property>
+         <property name="styleSheet"><string>QGroupBox { color: palette(text); font-weight: bold; }</string></property>
+         <layout class="QVBoxLayout" name="shippingAddressLayout">
+          <property name="spacing"><number>3</number></property>
+
+          <!-- Name -->
+          <item>
+           <widget class="QLabel" name="shipNameLabel">
+            <property name="text"><string>—</string></property>
+            <property name="styleSheet"><string>font-size: 12px; font-weight: bold; color: palette(text);</string></property>
+            <property name="wordWrap"><bool>true</bool></property>
+           </widget>
+          </item>
+
+          <!-- Email -->
+          <item>
+           <widget class="QLabel" name="shipEmailLabel">
+            <property name="text"><string>—</string></property>
+            <property name="styleSheet"><string>font-size: 11px; color: palette(text);</string></property>
+            <property name="wordWrap"><bool>true</bool></property>
+           </widget>
+          </item>
+
+          <!-- Address line 1 + optional line 2 -->
+          <item>
+           <widget class="QLabel" name="shipAddressLabel">
+            <property name="text"><string>—</string></property>
+            <property name="styleSheet"><string>font-size: 11px; color: palette(text);</string></property>
+            <property name="wordWrap"><bool>true</bool></property>
+           </widget>
+          </item>
+
+          <!-- City + state -->
+          <item>
+           <widget class="QLabel" name="shipCityLabel">
+            <property name="text"><string>—</string></property>
+            <property name="styleSheet"><string>font-size: 11px; color: palette(text);</string></property>
+            <property name="wordWrap"><bool>true</bool></property>
+           </widget>
+          </item>
+
+          <!-- Country + postal -->
+          <item>
+           <widget class="QLabel" name="shipCountryPostalLabel">
+            <property name="text"><string>—</string></property>
+            <property name="styleSheet"><string>font-size: 11px; color: palette(text);</string></property>
+            <property name="wordWrap"><bool>true</bool></property>
+           </widget>
+          </item>
+
+         </layout>
+        </widget>
+       </item>
+
+       <!-- ── Shipping options (always visible) ── -->
+       <!--
+         shippingOptionsGroupBox: always shown.
+         Populate QRadioButtons dynamically in Python via shippingOptionsLayout:
+
+         Single option → add one QRadioButton, setChecked(True)
+         Multiple options → add one QRadioButton per option, first checked by default.
+
+         For each option:
+           rb = QRadioButton(f"{option['name']}  —  {currency} {option['rate']:.2f}")
+           rb.setChecked(i == 0)
+           self.shippingOptionsLayout.addWidget(rb)
+       -->
+       <item>
+        <widget class="QGroupBox" name="shippingOptionsGroupBox">
+         <property name="title"><string>Shipping Method</string></property>
+         <property name="styleSheet"><string>QGroupBox { color: palette(text); font-weight: bold; }</string></property>
+         <layout class="QVBoxLayout" name="shippingOptionsLayout">
+          <property name="spacing"><number>6</number></property>
+          <!-- QRadioButtons added dynamically in Python -->
+         </layout>
+        </widget>
+       </item>
+
+       <!-- ── Price breakdown ── -->
+       <item>
+        <widget class="QGroupBox" name="priceSummaryGroupBox">
+         <property name="title"><string>Price Summary</string></property>
+         <property name="styleSheet"><string>QGroupBox { color: palette(text); font-weight: bold; }</string></property>
+         <layout class="QVBoxLayout" name="priceSummaryLayout">
+          <property name="spacing"><number>6</number></property>
+
+          <!-- Product price row -->
+          <item>
+           <layout class="QHBoxLayout" name="productPriceRow">
+            <item>
+             <widget class="QLabel" name="productPriceHeadLabel">
+              <property name="text"><string>Product</string></property>
+              <property name="styleSheet"><string>font-size: 12px; color: palette(text);</string></property>
+              <property name="wordWrap"><bool>true</bool></property>
+             </widget>
+            </item>
+            <item>
+             <spacer name="productPriceSpacer">
+              <property name="orientation"><enum>Qt::Orientation::Horizontal</enum></property>
+              <property name="sizeHint" stdset="0"><size><width>40</width><height>20</height></size></property>
+             </spacer>
+            </item>
+            <item>
+             <!--
+               productPriceLabel: set in Python e.g. "USD 59.99"
+               self.productPriceLabel.setText(f"{currency} {product_price:.2f}")
+             -->
+             <widget class="QLabel" name="productPriceLabel">
+              <property name="text"><string>—</string></property>
+              <property name="alignment"><set>Qt::AlignmentFlag::AlignRight|Qt::AlignmentFlag::AlignVCenter</set></property>
+              <property name="styleSheet"><string>font-size: 12px; color: palette(text);</string></property>
+              <property name="wordWrap"><bool>true</bool></property>
+             </widget>
+            </item>
+           </layout>
+          </item>
+
+          <!-- Shipping price row -->
+          <item>
+           <layout class="QHBoxLayout" name="shippingPriceRow">
+            <item>
+             <!--
+               shippingPriceHeadLabel: update text in Python if needed
+               e.g. self.shippingPriceHeadLabel.setText(f"Shipping ({option_name})")
+             -->
+             <widget class="QLabel" name="shippingPriceHeadLabel">
+              <property name="text"><string>Shipping</string></property>
+              <property name="styleSheet"><string>font-size: 12px; color: palette(text);</string></property>
+              <property name="wordWrap"><bool>true</bool></property>
+             </widget>
+            </item>
+            <item>
+             <spacer name="shippingPriceSpacer">
+              <property name="orientation"><enum>Qt::Orientation::Horizontal</enum></property>
+              <property name="sizeHint" stdset="0"><size><width>40</width><height>20</height></size></property>
+             </spacer>
+            </item>
+            <item>
+             <!--
+               shippingPriceLabel: set in Python e.g. "USD 8.50"
+               self.shippingPriceLabel.setText(f"{currency} {shipping_price:.2f}")
+             -->
+             <widget class="QLabel" name="shippingPriceLabel">
+              <property name="text"><string>—</string></property>
+              <property name="alignment"><set>Qt::AlignmentFlag::AlignRight|Qt::AlignmentFlag::AlignVCenter</set></property>
+              <property name="styleSheet"><string>font-size: 12px; color: palette(text);</string></property>
+              <property name="wordWrap"><bool>true</bool></property>
+             </widget>
+            </item>
+           </layout>
+          </item>
+
+          <!-- Divider -->
+          <item>
+           <widget class="QFrame" name="priceDivider">
+            <property name="frameShape"><enum>QFrame::Shape::HLine</enum></property>
+            <property name="frameShadow"><enum>QFrame::Shadow::Sunken</enum></property>
+            <property name="styleSheet"><string>color: #dddddd;</string></property>
+           </widget>
+          </item>
+
+          <!-- Total row -->
+          <item>
+           <layout class="QHBoxLayout" name="totalPriceRow">
+            <item>
+             <widget class="QLabel" name="totalPriceHeadLabel">
+              <property name="text"><string>Total</string></property>
+              <property name="styleSheet">
+               <string>font-size: 13px; font-weight: bold; color: palette(text);</string>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <spacer name="totalPriceSpacer">
+              <property name="orientation"><enum>Qt::Orientation::Horizontal</enum></property>
+              <property name="sizeHint" stdset="0"><size><width>40</width><height>20</height></size></property>
+             </spacer>
+            </item>
+            <item>
+             <!--
+               totalPriceLabel: set in Python e.g. "USD 68.49"
+               self.totalPriceLabel.setText(f"{currency} {total:.2f}")
+             -->
+             <widget class="QLabel" name="totalPriceLabel">
+              <property name="text"><string>—</string></property>
+              <property name="alignment"><set>Qt::AlignmentFlag::AlignRight|Qt::AlignmentFlag::AlignVCenter</set></property>
+              <property name="styleSheet">
+               <string>font-size: 14px; font-weight: bold; color: #3a7ebf;</string>
+              </property>
+             </widget>
+            </item>
+           </layout>
+          </item>
+
+          <!-- Currency note -->
+          <item>
+           <widget class="QLabel" name="currencyNoteLabel">
+            <property name="text"><string>All prices in USD. Taxes may apply at checkout.</string></property>
+            <property name="styleSheet"><string>color: palette(text); font-size: 10px;</string></property>
+            <property name="wordWrap"><bool>true</bool></property>
+            <property name="alignment"><set>Qt::AlignmentFlag::AlignRight|Qt::AlignmentFlag::AlignVCenter</set></property>
+           </widget>
+          </item>
+
+         </layout>
+        </widget>
+       </item>
+
+       <item>
+        <spacer name="contentBottomSpacer">
+         <property name="orientation"><enum>Qt::Orientation::Vertical</enum></property>
+         <property name="sizeHint" stdset="0"><size><width>20</width><height>8</height></size></property>
+        </spacer>
+       </item>
+
+      </layout>
+     </widget>
+
+     <!-- ── Page 2 : Error ── -->
+     <widget class="QWidget" name="quoteErrorPage">
+      <layout class="QVBoxLayout" name="quoteErrorLayout">
+       <property name="spacing"><number>10</number></property>
+       <item>
+        <spacer name="errorTopSpacer">
+         <property name="orientation"><enum>Qt::Orientation::Vertical</enum></property>
+         <property name="sizeHint" stdset="0"><size><width>20</width><height>40</height></size></property>
+        </spacer>
+       </item>
+       <item>
+        <widget class="QLabel" name="quoteErrorIconLabel">
+         <property name="text"><string>⚠️</string></property>
+         <property name="alignment"><set>Qt::AlignmentFlag::AlignCenter</set></property>
+         <property name="styleSheet"><string>font-size: 28px;</string></property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QLabel" name="quoteErrorTitleLabel">
+         <property name="text"><string>Could not calculate quote</string></property>
+         <property name="alignment"><set>Qt::AlignmentFlag::AlignCenter</set></property>
+         <property name="styleSheet"><string>font-size: 13px; font-weight: bold; color: palette(text);</string></property>
+        </widget>
+       </item>
+       <item>
+        <!--
+          quoteErrorMessageLabel: set in Python with the actual error string.
+          self.quoteErrorMessageLabel.setText(str(error))
+        -->
+        <widget class="QLabel" name="quoteErrorMessageLabel">
+         <property name="text"><string>Please check your shipping address and try again.</string></property>
+         <property name="alignment"><set>Qt::AlignmentFlag::AlignCenter</set></property>
+         <property name="styleSheet"><string>color: palette(text); font-size: 11px;</string></property>
+         <property name="wordWrap"><bool>true</bool></property>
+        </widget>
+       </item>
+       <item>
+        <layout class="QHBoxLayout" name="quoteRetryLayout">
+         <item>
+          <spacer name="retryLeftSpacer">
+           <property name="orientation"><enum>Qt::Orientation::Horizontal</enum></property>
+           <property name="sizeHint" stdset="0"><size><width>40</width><height>20</height></size></property>
+          </spacer>
+         </item>
+         <item>
+          <!--
+            quoteRetryButton: connect to self._request_quote() in Python.
+            Retries the POST /quotes with the same product + shipping info.
+          -->
+          <widget class="QPushButton" name="quoteRetryButton">
+           <property name="text"><string>Retry</string></property>
+           <property name="styleSheet">
+            <string>QPushButton { background: #3a7ebf; color: white; border: none;
+              border-radius: 4px; padding: 6px 24px; font-size: 12px; }
+            QPushButton:hover { background: #2e6aaa; }</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <spacer name="retryRightSpacer">
+           <property name="orientation"><enum>Qt::Orientation::Horizontal</enum></property>
+           <property name="sizeHint" stdset="0"><size><width>40</width><height>20</height></size></property>
+          </spacer>
+         </item>
+        </layout>
+       </item>
+       <item>
+        <spacer name="errorBottomSpacer">
+         <property name="orientation"><enum>Qt::Orientation::Vertical</enum></property>
+         <property name="sizeHint" stdset="0"><size><width>20</width><height>40</height></size></property>
+        </spacer>
+       </item>
+      </layout>
+     </widget>
+
+    </widget> <!-- /dialogStackedWidget -->
+   </item>
+
+   <!-- ── Button box (always visible) ── -->
+   <item>
+    <widget class="QDialogButtonBox" name="buttonsActions">
+     <property name="orientation"><enum>Qt::Orientation::Horizontal</enum></property>
+     <property name="standardButtons">
+      <set>QDialogButtonBox::StandardButton::Cancel|QDialogButtonBox::StandardButton::Ok</set>
+     </property>
+    </widget>
+   </item>
+
+  </layout>
+ </widget>
+
+ <resources/>
+ <connections>
+  <connection>
+   <sender>buttonsActions</sender><signal>accepted()</signal>
+   <receiver>AtlasPressQuoteDialog</receiver><slot>accept()</slot>
+   <hints>
+    <hint type="sourcelabel"><x>248</x><y>550</y></hint>
+    <hint type="destinationlabel"><x>157</x><y>550</y></hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>buttonsActions</sender><signal>rejected()</signal>
+   <receiver>AtlasPressQuoteDialog</receiver><slot>reject()</slot>
+   <hints>
+    <hint type="sourcelabel"><x>316</x><y>550</y></hint>
+    <hint type="destinationlabel"><x>286</x><y>550</y></hint>
+   </hints>
+  </connection>
+ </connections>
+</ui>
