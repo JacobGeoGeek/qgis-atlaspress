@@ -5,10 +5,19 @@ from qgis.gui import QgsLayoutDesignerInterface
 from qgis.PyQt.QtGui import QAction, QIcon
 from qgis.PyQt.QtWidgets import QMenu, QToolBar
 
-from ..core import AssetService, CoreServices, OrderState, ProductService, ShippingService
+from ..core import (
+    AssetService,
+    CoreServices,
+    OrderState,
+    ProductService,
+    QuoteResponse,
+    QuoteService,
+    ShippingService,
+)
 from ..core.product.models.product import Product
 from ..core.shipping.models import ShippingAddress
 from ..ui.product import ProductDialog
+from ..ui.quote import QuoteDialog
 from ..ui.shipping import ShippingAddressDialog
 
 
@@ -24,8 +33,10 @@ class LayoutDesignerController:
         self._asset_service: AssetService = core_services.asset_service
         self._product_service: ProductService = core_services.product_service
         self._shipping_service: ShippingService = core_services.shipping_service
+        self._quote_service: QuoteService = core_services.quote_service
         self._order_state: Final[OrderState] = OrderState()
         self._shipping_dialog: ShippingAddressDialog | None = None
+        self._quote_dialog: QuoteDialog | None = None
 
         self._product_dialog: ProductDialog | None = None
 
@@ -188,10 +199,29 @@ class LayoutDesignerController:
             "AtlasPress",
             level=Qgis.Info,
         )
+        self._quote_dialog = QuoteDialog(
+            self._quote_service,
+            self._order_state,
+            self._on_quote_updated,
+            self._on_quote_back_requested,
+        )
+        self._quote_dialog.show()
+
+    def _on_quote_updated(self, quote: QuoteResponse) -> None:
+        self._order_state.set_quote(quote)
+        QgsMessageLog.logMessage(
+            f"Quote captured with ID: {quote.quote_id}",
+            "AtlasPress",
+            level=Qgis.Info,
+        )
 
     def _on_shipping_back_requested(self) -> None:
         if self._product_dialog is not None:
             self._product_dialog.show()
+
+    def _on_quote_back_requested(self) -> None:
+        if self._shipping_dialog is not None:
+            self._shipping_dialog.show()
 
     def _validate_designer_layout(self, designer: QgsLayoutDesignerInterface) -> bool:
         layout: Final[QgsLayout] = designer.layout()
