@@ -1,9 +1,9 @@
 import json
 from typing import Final
 
-from qgis.core import QgsBlockingNetworkRequest
-from qgis.PyQt.QtCore import QByteArray, QUrl
-from qgis.PyQt.QtNetwork import QNetworkRequest
+from qgis.core import QgsBlockingNetworkRequest, QgsNetworkAccessManager, QgsNetworkReplyContent
+from qgis.PyQt.QtCore import QByteArray, QEventLoop, QUrl
+from qgis.PyQt.QtNetwork import QNetworkReply, QNetworkRequest
 
 from .model.http_response import HttpResponse
 
@@ -72,6 +72,48 @@ class HttpClient:
         error_code: Final[QgsBlockingNetworkRequest.ErrorCode] = reply.post(request, body)
 
         return self._build_response(reply, error_code)
+
+    def patch(self, endpoint: str, payload: dict = None) -> HttpResponse:
+        url: Final[QUrl] = self._build_url(endpoint)
+
+        request: Final[QNetworkRequest] = QNetworkRequest(url)
+
+        request.setHeader(
+            QNetworkRequest.KnownHeaders.ContentTypeHeader,
+            "application/json",
+        )
+
+        self._apply_auth(request)
+
+        body: Final[QByteArray] = (
+            QByteArray(json.dumps(payload).encode("utf-8")) if payload else QByteArray()
+        )
+
+        manager: Final[QgsNetworkAccessManager] = QgsNetworkAccessManager.instance()
+        reply: Final[QNetworkReply] = manager.sendCustomRequest(request, b"PATCH", body)
+        event_loop: Final[QEventLoop] = QEventLoop()
+        reply.finished.connect(event_loop.quit)
+        event_loop.exec()
+
+        http_status_code = reply.attribute(QNetworkRequest.Attribute.HttpStatusCodeAttribute)
+        error_code = (
+            QgsBlockingNetworkRequest.NoError
+            if reply.error() == QNetworkReply.NetworkError.NoError
+            and (http_status_code is None or int(http_status_code) < 400)
+            else QgsBlockingNetworkRequest.NetworkError
+        )
+        response = HttpResponse(
+            error_code=error_code,
+            error_message=reply.errorString(),
+            reply=self._build_reply_content(reply),
+        )
+        reply.deleteLater()
+        return response
+
+    def _build_reply_content(self, reply: QNetworkReply) -> QgsNetworkReplyContent:
+        reply_content = QgsNetworkReplyContent(reply)
+        reply_content.setContent(reply.readAll())
+        return reply_content
 
     def put(
         self,
