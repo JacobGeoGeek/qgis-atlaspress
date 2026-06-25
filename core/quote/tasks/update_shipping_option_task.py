@@ -1,7 +1,8 @@
 from qgis.core import Qgis, QgsMessageLog, QgsTask
 
+from ...config.model.http_response import HttpResponseError
 from ..models import QuoteResponse
-from ..quote_service import QuoteService
+from ..quote_service import QuoteRequestError, QuoteService
 
 MESSAGE_CATEGORY = "UpdateShippingOptionTask"
 
@@ -23,7 +24,7 @@ class UpdateShippingOptionTask(QgsTask):
         self._selected_shipping_option_id = selected_shipping_option_id
         self._on_finished_callback = on_finished_callback
         self._quote: QuoteResponse | None = None
-        self._error_message = ""
+        self._error: HttpResponseError | None = None
 
     def run(self):
         try:
@@ -32,16 +33,28 @@ class UpdateShippingOptionTask(QgsTask):
                 self._selected_shipping_option_id,
             )
             return True
-        except Exception as e:
+        except QuoteRequestError as error:
+            self._error = error.error
+            QgsMessageLog.logMessage(
+                f"Error updating quote shipping option: {error}",
+                MESSAGE_CATEGORY,
+                level=Qgis.Warning,
+            )
+            return False
+        except Exception as error:
             import traceback
 
-            self._error_message = str(e)
+            self._error = HttpResponseError(
+                status_code=0,
+                message=str(error) or "Could not update shipping method.",
+                details=[],
+            )
             QgsMessageLog.logMessage(
-                f"Error updating quote shipping option: {e}\n{traceback.format_exc()}",
+                f"Error updating quote shipping option: {error}\n{traceback.format_exc()}",
                 MESSAGE_CATEGORY,
                 level=Qgis.Critical,
             )
             return False
 
     def finished(self, result):
-        self._on_finished_callback(result, self._quote, self._error_message)
+        self._on_finished_callback(result, self._quote, self._error)
