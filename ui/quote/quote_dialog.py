@@ -13,6 +13,7 @@ from qgis.PyQt.QtWidgets import (
     QWidget,
 )
 
+from ...core.config.model.http_response import HttpResponseError
 from ...core.order import OrderState
 from ...core.product.models.product import Product
 from ...core.quote.models import QuoteResponse, ShippingOption
@@ -73,7 +74,7 @@ class QuoteDialog(QDialog, Ui_AtlasPressQuoteDialog):
         try:
             quote_payload = self._order_state.to_quote_payload()
         except ValueError as error:
-            self._show_error(str(error))
+            self._show_error(None, str(error))
             return
 
         self._last_failed_operation = "create"
@@ -106,10 +107,10 @@ class QuoteDialog(QDialog, Ui_AtlasPressQuoteDialog):
         self,
         result: bool,
         quote: QuoteResponse | None,
-        error_message: str,
+        error: HttpResponseError | None,
     ) -> None:
         if not result or quote is None:
-            self._show_error(error_message or "Could not calculate quote.")
+            self._show_error(error, "Could not calculate quote.")
             return
 
         self._current_quote = quote
@@ -119,10 +120,10 @@ class QuoteDialog(QDialog, Ui_AtlasPressQuoteDialog):
         self,
         result: bool,
         quote: QuoteResponse | None,
-        error_message: str,
+        error: HttpResponseError | None,
     ) -> None:
         if not result or quote is None:
-            self._show_error(error_message or "Could not update shipping method.")
+            self._show_error(error, "Could not update shipping method.")
             return
 
         self._pending_shipping_option_id = None
@@ -241,9 +242,24 @@ class QuoteDialog(QDialog, Ui_AtlasPressQuoteDialog):
         self.dialogStackedWidget.setCurrentWidget(self.quoteLoadingPage)
         self._set_continue_enabled(False)
 
-    def _show_error(self, message: str) -> None:
+    def _show_error(
+        self,
+        error: HttpResponseError | None,
+        fallback_message: str,
+    ) -> None:
         self._spinner.stop()
-        self.quoteErrorMessageLabel.setText(message)
+        self.quoteErrorTitleLabel.setText(error.message if error else fallback_message)
+
+        detail_messages = [detail.message for detail in error.details] if error else []
+        self.quoteErrorDetailsLabel.setText(
+            "\n".join(f"• {message}" for message in detail_messages)
+        )
+        self.quoteErrorDetailsLabel.setVisible(bool(detail_messages))
+        self.quoteErrorMessageLabel.setText(
+            "Review the details below, then go back and try again."
+            if detail_messages
+            else "Go back and review your information, then try again."
+        )
         self.dialogStackedWidget.setCurrentWidget(self.quoteErrorPage)
         self._set_continue_enabled(False)
 
