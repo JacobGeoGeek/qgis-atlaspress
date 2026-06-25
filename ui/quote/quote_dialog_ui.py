@@ -224,6 +224,12 @@ class Ui_AtlasPressQuoteDialog(object):
         self.quoteErrorMessageLabel.setWordWrap(True)
         self.quoteErrorMessageLabel.setObjectName("quoteErrorMessageLabel")
         self.quoteErrorLayout.addWidget(self.quoteErrorMessageLabel)
+        self.quoteErrorDetailsLabel = QtWidgets.QLabel(parent=self.quoteErrorPage)
+        self.quoteErrorDetailsLabel.setText("")
+        self.quoteErrorDetailsLabel.setWordWrap(True)
+        self.quoteErrorDetailsLabel.setVisible(False)
+        self.quoteErrorDetailsLabel.setObjectName("quoteErrorDetailsLabel")
+        self.quoteErrorLayout.addWidget(self.quoteErrorDetailsLabel)
         self.quoteRetryLayout = QtWidgets.QHBoxLayout()
         self.quoteRetryLayout.setObjectName("quoteRetryLayout")
         spacerItem8 = QtWidgets.QSpacerItem(
@@ -390,9 +396,14 @@ class Ui_AtlasPressQuoteDialog(object):
             )
         )
         self.quoteErrorMessageLabel.setText(
-            _translate("AtlasPressQuoteDialog", "Please check your shipping address and try again.")
+            _translate(
+                "AtlasPressQuoteDialog", "Go back and review your information, then try again."
+            )
         )
         self.quoteErrorMessageLabel.setStyleSheet(
+            _translate("AtlasPressQuoteDialog", "color: palette(text); font-size: 11px;")
+        )
+        self.quoteErrorDetailsLabel.setStyleSheet(
             _translate("AtlasPressQuoteDialog", "color: palette(text); font-size: 11px;")
         )
         self.quoteRetryButton.setText(_translate("AtlasPressQuoteDialog", "Retry"))

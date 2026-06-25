@@ -429,10 +429,18 @@
           self.quoteErrorMessageLabel.setText(str(error))
         -->
         <widget class="QLabel" name="quoteErrorMessageLabel">
-         <property name="text"><string>Please check your shipping address and try again.</string></property>
+         <property name="text"><string>Go back and review your information, then try again.</string></property>
          <property name="alignment"><set>Qt::AlignmentFlag::AlignCenter</set></property>
          <property name="styleSheet"><string>color: palette(text); font-size: 11px;</string></property>
          <property name="wordWrap"><bool>true</bool></property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QLabel" name="quoteErrorDetailsLabel">
+         <property name="text"><string/></property>
+         <property name="styleSheet"><string>color: palette(text); font-size: 11px;</string></property>
+         <property name="wordWrap"><bool>true</bool></property>
+         <property name="visible"><bool>false</bool></property>
         </widget>
        </item>
        <item>
