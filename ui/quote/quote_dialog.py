@@ -1,6 +1,6 @@
-from qgis.core import Qgis, QgsApplication, QgsMessageLog
+from qgis.core import QgsApplication
 from qgis.PyQt.QtCore import Qt, QUrl
-from qgis.PyQt.QtGui import QPixmap
+from qgis.PyQt.QtGui import QDesktopServices, QPixmap
 from qgis.PyQt.QtNetwork import QNetworkAccessManager, QNetworkReply, QNetworkRequest
 from qgis.PyQt.QtWidgets import (
     QButtonGroup,
@@ -13,6 +13,9 @@ from qgis.PyQt.QtWidgets import (
     QWidget,
 )
 
+from ...core.checkout.checkout_service import CheckoutService
+from ...core.checkout.models import CheckoutResponse
+from ...core.checkout.tasks import CreateCheckoutTask
 from ...core.config.model.http_response import HttpResponseError
 from ...core.order import OrderState
 from ...core.product.models.product import Product
@@ -28,6 +31,7 @@ class QuoteDialog(QDialog, Ui_AtlasPressQuoteDialog):
     def __init__(
         self,
         quote_service: QuoteService,
+        checkout_service: CheckoutService,
         order_state: OrderState,
         on_quote_updated: callable,
         on_back_requested: callable,
@@ -37,6 +41,7 @@ class QuoteDialog(QDialog, Ui_AtlasPressQuoteDialog):
         self.setupUi(self)
 
         self._quote_service = quote_service
+        self._checkout_service = checkout_service
         self._order_state = order_state
         self._on_quote_updated = on_quote_updated
         self._on_back_requested = on_back_requested
@@ -44,6 +49,8 @@ class QuoteDialog(QDialog, Ui_AtlasPressQuoteDialog):
         self._current_quote: QuoteResponse | None = None
         self._pending_shipping_option_id: str | None = None
         self._last_failed_operation = "create"
+        self._checkout_in_progress = False
+        self._pending_checkout_url: str | None = None
         self._rendering_shipping_options = False
         self._shipping_option_button_group = QButtonGroup(self)
         self._shipping_option_button_group.setExclusive(True)
@@ -216,6 +223,14 @@ class QuoteDialog(QDialog, Ui_AtlasPressQuoteDialog):
         self._request_shipping_option_update(shipping_option_id)
 
     def _retry_last_request(self) -> None:
+        if self._last_failed_operation == "open_browser" and self._pending_checkout_url:
+            self._open_checkout_url(self._pending_checkout_url)
+            return
+
+        if self._last_failed_operation == "checkout":
+            self._request_checkout()
+            return
+
         if self._last_failed_operation == "update" and self._pending_shipping_option_id:
             self._request_shipping_option_update(self._pending_shipping_option_id)
             return
@@ -223,14 +238,61 @@ class QuoteDialog(QDialog, Ui_AtlasPressQuoteDialog):
         self._request_quote()
 
     def _continue_to_payment(self) -> None:
-        if self._current_quote is None:
+        self._request_checkout()
+
+    def _request_checkout(self) -> None:
+        if self._current_quote is None or self._checkout_in_progress:
             return
 
-        QgsMessageLog.logMessage(
-            f"Payment flow requested for quote ID: {self._current_quote.quote_id}",
-            "AtlasPress",
-            level=Qgis.Info,
+        self._checkout_in_progress = True
+        self._pending_checkout_url = None
+        self._last_failed_operation = "checkout"
+        self._show_loading("Preparing secure checkout...")
+        self._set_navigation_enabled(False)
+        QgsApplication.taskManager().addTask(
+            CreateCheckoutTask(
+                self._checkout_service,
+                self._current_quote.quote_id,
+                self._on_checkout_created,
+            )
         )
+
+    def _on_checkout_created(
+        self,
+        result: bool,
+        checkout: CheckoutResponse | None,
+        error: HttpResponseError | None,
+    ) -> None:
+        self._checkout_in_progress = False
+        self._set_navigation_enabled(True)
+
+        if not result or checkout is None:
+            self._show_error(error, "Could not prepare checkout.")
+            return
+
+        self._open_checkout_url(checkout.checkout_url)
+
+    def _open_checkout_url(self, checkout_url: str) -> None:
+        url = QUrl(checkout_url)
+        if not url.isValid() or url.scheme().lower() != "https" or not url.host():
+            self._last_failed_operation = "checkout"
+            self._show_error(None, "Checkout returned an invalid secure URL.")
+            return
+
+        self._pending_checkout_url = checkout_url
+        if not QDesktopServices.openUrl(url):
+            self._last_failed_operation = "open_browser"
+            self._show_error(None, "Could not open checkout in your default browser.")
+            return
+
+        self._pending_checkout_url = None
+        self._show_quote_content()
+
+    def _show_quote_content(self) -> None:
+        self._spinner.stop()
+        self.dialogStackedWidget.setCurrentWidget(self.quoteContentPage)
+        self._set_navigation_enabled(True)
+        self._set_continue_enabled(self._current_quote is not None)
 
     def _go_back(self) -> None:
         self.reject()
@@ -261,7 +323,14 @@ class QuoteDialog(QDialog, Ui_AtlasPressQuoteDialog):
             else "Go back and review your information, then try again."
         )
         self.dialogStackedWidget.setCurrentWidget(self.quoteErrorPage)
+        self._set_navigation_enabled(True)
         self._set_continue_enabled(False)
+
+    def _set_navigation_enabled(self, enabled: bool) -> None:
+        self._back_button.setEnabled(enabled)
+        cancel_button = self.buttonsActions.button(QDialogButtonBox.StandardButton.Cancel)
+        if cancel_button is not None:
+            cancel_button.setEnabled(enabled)
 
     def _build_shipping_option_row(self, radio_button: QRadioButton, text: str) -> QWidget:
         row = QWidget(self.shippingOptionsGroupBox)
