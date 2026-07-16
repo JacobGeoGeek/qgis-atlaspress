@@ -7,6 +7,7 @@ from qgis.PyQt.QtWidgets import QMenu, QToolBar
 
 from ..core import (
     AssetService,
+    CheckoutService,
     CoreServices,
     OrderState,
     ProductService,
@@ -31,6 +32,7 @@ class LayoutDesignerController:
         self._designer_id: Final[int] = id(self._designer)
 
         self._asset_service: AssetService = core_services.asset_service
+        self._checkout_service: CheckoutService = core_services.checkout_service
         self._product_service: ProductService = core_services.product_service
         self._shipping_service: ShippingService = core_services.shipping_service
         self._quote_service: QuoteService = core_services.quote_service
@@ -201,6 +203,7 @@ class LayoutDesignerController:
         )
         self._quote_dialog = QuoteDialog(
             self._quote_service,
+            self._checkout_service,
             self._order_state,
             self._on_quote_updated,
             self._on_quote_back_requested,
