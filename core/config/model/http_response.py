@@ -14,7 +14,11 @@ class HttpResponse:
     reply: QgsNetworkReplyContent | None
 
     def is_success(self) -> bool:
-        return self.error_code == QgsBlockingNetworkRequest.NoError
+        if self.error_code != QgsBlockingNetworkRequest.NoError:
+            return False
+
+        status_code = self.status_code()
+        return status_code is None or 200 <= status_code < 300
 
     def content_json(self) -> dict | list | None:
         if self.reply is None:
