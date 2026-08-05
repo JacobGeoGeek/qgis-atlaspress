@@ -272,7 +272,7 @@ class Ui_AtlasPressQuoteDialog(object):
         )
         self.headerLabel.setText(_translate("AtlasPressQuoteDialog", "🗺️  Print & Order Your Map"))
         self.stepIndicatorLabel.setText(
-            _translate("AtlasPressQuoteDialog", "Step 3 of 3 — Review Your Quote")
+            _translate("AtlasPressQuoteDialog", "Step 3 of 4 — Review Your Quote")
         )
         self.stepIndicatorLabel.setStyleSheet(
             _translate("AtlasPressQuoteDialog", "color: palette(text); font-size: 11px;")

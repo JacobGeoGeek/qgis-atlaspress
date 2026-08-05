@@ -362,7 +362,7 @@ class Ui_AtlasPressShippingDialog(object):
             _translate("AtlasPressShippingDialog", "color: #666666; font-size: 11px;")
         )
         self.stepIndicatorLabel.setText(
-            _translate("AtlasPressShippingDialog", "Step 2 of 3 — Shipping Information")
+            _translate("AtlasPressShippingDialog", "Step 2 of 4 — Shipping Information")
         )
         self.dividerLine.setStyleSheet(_translate("AtlasPressShippingDialog", "color: #dddddd;"))
         self.dialogLoadingTextLabel.setStyleSheet(

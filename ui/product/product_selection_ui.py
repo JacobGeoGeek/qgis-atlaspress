@@ -169,7 +169,7 @@ class Ui_AtlasPressProductDialog(object):
             _translate("AtlasPressProductDialog", "color: #666666; font-size: 11px;")
         )
         self.subtitleLabel.setText(
-            _translate("AtlasPressProductDialog", "Step 1 of 3 — Choose Product")
+            _translate("AtlasPressProductDialog", "Step 1 of 4 — Choose Product")
         )
         self.instructionLabel.setStyleSheet(
             _translate("AtlasPressProductDialog", "color: #666666; font-size: 11px;")
