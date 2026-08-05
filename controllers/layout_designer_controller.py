@@ -17,6 +17,7 @@ from ..core import (
 )
 from ..core.product.models.product import Product
 from ..core.shipping.models import ShippingAddress
+from ..ui.checkout import CheckoutDialog
 from ..ui.product import ProductDialog
 from ..ui.quote import QuoteDialog
 from ..ui.shipping import ShippingAddressDialog
@@ -39,6 +40,7 @@ class LayoutDesignerController:
         self._order_state: Final[OrderState] = OrderState()
         self._shipping_dialog: ShippingAddressDialog | None = None
         self._quote_dialog: QuoteDialog | None = None
+        self._checkout_dialog: CheckoutDialog | None = None
 
         self._product_dialog: ProductDialog | None = None
 
@@ -203,9 +205,9 @@ class LayoutDesignerController:
         )
         self._quote_dialog = QuoteDialog(
             self._quote_service,
-            self._checkout_service,
             self._order_state,
             self._on_quote_updated,
+            self._on_checkout_requested,
             self._on_quote_back_requested,
         )
         self._quote_dialog.show()
@@ -217,6 +219,13 @@ class LayoutDesignerController:
             "AtlasPress",
             level=Qgis.Info,
         )
+
+    def _on_checkout_requested(self) -> None:
+        self._checkout_dialog = CheckoutDialog(
+            self._checkout_service,
+            self._order_state,
+        )
+        self._checkout_dialog.show()
 
     def _on_shipping_back_requested(self) -> None:
         if self._product_dialog is not None:
