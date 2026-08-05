@@ -26,9 +26,18 @@ class CoreServices:
 
 def create_core_services() -> CoreServices:
     config = load_config_file()
+    supabase_config = config["supabase"]
+    base_url = str(supabase_config.get("baseUrl", "")).strip()
+    access_token = str(supabase_config.get("accessToken", "")).strip()
+
+    if not base_url or not access_token:
+        raise ValueError(
+            "Supabase configuration requires baseUrl and a development accessToken."
+        )
+
     http_client = HttpClient(
-        config["supabase"]["baseUrl"],
-        config["supabase"]["anonKey"],
+        base_url,
+        access_token,
     )
 
     return CoreServices(
