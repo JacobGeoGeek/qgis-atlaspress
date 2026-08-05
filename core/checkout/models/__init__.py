@@ -1,3 +1,17 @@
-from .checkout import CheckoutResponse, CheckoutResponseResult, CheckoutTotals
+from .checkout import (
+    CheckoutResponse,
+    CheckoutResponseResult,
+    CheckoutStatus,
+    CheckoutStatusResponse,
+    CheckoutStatusResponseResult,
+    CheckoutTotals,
+)
 
-__all__ = ["CheckoutResponse", "CheckoutResponseResult", "CheckoutTotals"]
+__all__ = [
+    "CheckoutResponse",
+    "CheckoutResponseResult",
+    "CheckoutStatus",
+    "CheckoutStatusResponse",
+    "CheckoutStatusResponseResult",
+    "CheckoutTotals",
+]
