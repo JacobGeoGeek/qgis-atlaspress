@@ -1,6 +1,6 @@
 from ..config.model.http_response import HttpResponseError
 from .checkout_repository import CheckoutRepository
-from .models import CheckoutResponse
+from .models import CheckoutResponse, CheckoutStatusResponse
 
 
 class CheckoutRequestError(Exception):
@@ -23,3 +23,14 @@ class CheckoutService:
             raise Exception("Checkout response is empty.")
 
         return result.checkout
+
+    def get_checkout_status(self, quote_id: str) -> CheckoutStatusResponse:
+        result = self._checkout_repository.get_checkout_status(quote_id)
+
+        if result.error:
+            raise CheckoutRequestError(result.error)
+
+        if result.checkout_status is None:
+            raise Exception("Checkout status response is empty.")
+
+        return result.checkout_status
