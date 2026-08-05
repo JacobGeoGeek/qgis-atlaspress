@@ -46,7 +46,7 @@ PACKAGE_EXCLUDES := \
 	--exclude ".python-version" \
 	--exclude "config.example.json" \
 
-.PHONY: help install-dev format lint scan check designer resources ui clean-dist package
+.PHONY: help install-dev format lint scan check designer resources ui clean-dist package package-config-check
 
 help:
 	@echo "Available targets:"
@@ -58,6 +58,7 @@ help:
 	@echo "  make designer     Open Qt Designer"
 	@echo "  make resources    Compile Qt resources into resources.py"
 	@echo "  make ui           Compile Qt Designer .ui files into Python"
+	@echo "  make package-config-check  Validate packaged plugin configuration"
 	@echo "  make package      Build a QGIS plugin zip in dist/"
 	@echo "  make clean-dist   Remove built package artifacts"
 
@@ -89,11 +90,22 @@ ui: $(UI_PY_FILES)
 
 %_ui.py: %.ui
 	$(PYUIC) $< -o $@
+	sed 's/^from PyQt6 import/from qgis.PyQt import/' $@ > $@.tmp
+	mv $@.tmp $@
 
 clean-dist:
 	rm -rf $(DIST_DIR)
 
-package: clean-dist resources ui
+package-config-check:
+	@test -f config.json || (echo "config.json is required for packaging" && exit 1)
+	@grep -Eq '"baseUrl"' config.json && grep -Eq '"accessToken"' config.json || \
+		(echo "config.json requires baseUrl and accessToken" && exit 1)
+	@if grep -Eq '"(serviceRoleKey|secretKey)"' config.json; then \
+		echo "config.json must not contain server-side secrets"; \
+		exit 1; \
+	fi
+
+package: package-config-check clean-dist resources ui
 	mkdir -p $(PACKAGE_DIR)
 	$(RSYNC) -a ./ $(PACKAGE_DIR)/ $(PACKAGE_EXCLUDES)
 	cd $(DIST_DIR) && zip -r $(PLUGIN_NAME).zip $(PLUGIN_NAME) \
