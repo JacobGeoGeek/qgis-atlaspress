@@ -9,9 +9,17 @@ from .model.http_response import HttpResponse
 
 
 class HttpClient:
-    def __init__(self, base_url: str, publishable_key: str):
+    def __init__(self, base_url: str, access_token: str):
         self._base_url: QUrl = QUrl(base_url)
-        self._publishable_key: Final[str] = publishable_key
+        self._access_token: Final[str] = access_token
+
+    @property
+    def base_url(self) -> str:
+        return self._base_url.toString()
+
+    @property
+    def access_token(self) -> str:
+        return self._access_token
 
     def _build_url(self, endpoint: str) -> QUrl:
         return self._base_url.resolved(QUrl(endpoint))
@@ -19,7 +27,7 @@ class HttpClient:
     def _apply_auth(self, request: QNetworkRequest) -> None:
         request.setRawHeader(
             b"Authorization",
-            f"Bearer {self._publishable_key}".encode("utf-8"),
+            f"Bearer {self._access_token}".encode("utf-8"),
         )
 
     def _build_response(

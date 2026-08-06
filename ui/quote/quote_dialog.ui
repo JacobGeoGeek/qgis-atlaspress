@@ -31,7 +31,7 @@
    <!-- Step indicator label only — no progress bar -->
    <item>
     <widget class="QLabel" name="stepIndicatorLabel">
-     <property name="text"><string>Step 3 of 3 — Review Your Quote</string></property>
+     <property name="text"><string>Step 3 of 4 — Review Your Quote</string></property>
      <property name="alignment"><set>Qt::AlignmentFlag::AlignCenter</set></property>
      <property name="styleSheet"><string>color: palette(text); font-size: 11px;</string></property>
     </widget>
@@ -479,7 +479,7 @@
          <property name="sizeHint" stdset="0"><size><width>20</width><height>40</height></size></property>
         </spacer>
        </item>
-      </layout>
+     </layout>
      </widget>
 
     </widget> <!-- /dialogStackedWidget -->

@@ -1,6 +1,12 @@
 from .assets.asset_service import AssetService
 from .assets.tasks.upload_file_task import UploadFileTask
-from .checkout import CheckoutService, CreateCheckoutTask
+from .checkout import (
+    CheckoutService,
+    CheckoutStatus,
+    CheckoutStatusMonitor,
+    CreateCheckoutTask,
+    GetCheckoutStatusTask,
+)
 from .order import OrderState
 from .product.models.product import ProductType
 from .product.product_service import ProductService
@@ -12,6 +18,8 @@ from .shipping import FetchCountriesTask, ShippingAddress, ShippingService
 __all__ = [
     "ProductService",
     "CheckoutService",
+    "CheckoutStatus",
+    "CheckoutStatusMonitor",
     "AssetService",
     "ShippingService",
     "QuoteService",
@@ -21,6 +29,7 @@ __all__ = [
     "FetchCountriesTask",
     "CreateQuoteTask",
     "CreateCheckoutTask",
+    "GetCheckoutStatusTask",
     "UpdateShippingOptionTask",
     "UploadFileTask",
     "ProductType",

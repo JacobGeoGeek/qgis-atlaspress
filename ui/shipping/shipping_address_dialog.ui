@@ -57,7 +57,7 @@
       <string>color: #666666; font-size: 11px;</string>
      </property>
      <property name="text">
-      <string>Step 2 of 3 — Shipping Information</string>
+      <string>Step 2 of 4 — Shipping Information</string>
      </property>
      <property name="alignment">
       <set>Qt::AlignmentFlag::AlignCenter</set>
