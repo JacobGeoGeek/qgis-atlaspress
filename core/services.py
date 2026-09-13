@@ -6,6 +6,8 @@ from .checkout.checkout_repository import CheckoutRepository
 from .checkout.checkout_service import CheckoutService
 from .config.config import load_config_file
 from .config.http_client import HttpClient
+from .mockup.mockup_repository import MockupRepository
+from .mockup.mockup_service import MockupService
 from .product.product_repository import ProductRepository
 from .product.product_service import ProductService
 from .quote.quote_repository import QuoteRepository
@@ -22,6 +24,7 @@ class CoreServices:
     asset_service: AssetService
     shipping_service: ShippingService
     quote_service: QuoteService
+    mockup_service: MockupService
 
 
 def create_core_services() -> CoreServices:
@@ -31,9 +34,7 @@ def create_core_services() -> CoreServices:
     access_token = str(supabase_config.get("accessToken", "")).strip()
 
     if not base_url or not access_token:
-        raise ValueError(
-            "Supabase configuration requires baseUrl and a development accessToken."
-        )
+        raise ValueError("Supabase configuration requires baseUrl and a development accessToken.")
 
     http_client = HttpClient(
         base_url,
@@ -47,4 +48,5 @@ def create_core_services() -> CoreServices:
         asset_service=AssetService(AssetRepository(http_client)),
         shipping_service=ShippingService(ShippingRepository(http_client)),
         quote_service=QuoteService(QuoteRepository(http_client)),
+        mockup_service=MockupService(MockupRepository(http_client)),
     )
