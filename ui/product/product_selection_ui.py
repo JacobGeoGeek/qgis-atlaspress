@@ -9,16 +9,23 @@
 from qgis.PyQt import QtCore, QtGui, QtWidgets
 
 
-class Ui_AtlasPressProductDialog(object):
-    def setupUi(self, AtlasPressProductDialog):
-        AtlasPressProductDialog.setObjectName("AtlasPressProductDialog")
-        AtlasPressProductDialog.resize(712, 580)
-        AtlasPressProductDialog.setMinimumSize(QtCore.QSize(680, 580))
-        self.rootLayout = QtWidgets.QVBoxLayout(AtlasPressProductDialog)
+class Ui_AtlasPressProductSelectionDialog(object):
+    def setupUi(self, AtlasPressProductSelectionDialog):
+        AtlasPressProductSelectionDialog.setObjectName("AtlasPressProductSelectionDialog")
+        AtlasPressProductSelectionDialog.resize(760, 580)
+        AtlasPressProductSelectionDialog.setMinimumSize(QtCore.QSize(700, 540))
+        self.rootLayout = QtWidgets.QVBoxLayout(AtlasPressProductSelectionDialog)
         self.rootLayout.setContentsMargins(20, 18, 20, 16)
         self.rootLayout.setSpacing(14)
         self.rootLayout.setObjectName("rootLayout")
-        self.headerLabel = QtWidgets.QLabel(parent=AtlasPressProductDialog)
+        self.headerLabel = QtWidgets.QLabel(parent=AtlasPressProductSelectionDialog)
+        sizePolicy = QtWidgets.QSizePolicy(
+            QtWidgets.QSizePolicy.Policy.Preferred, QtWidgets.QSizePolicy.Policy.Fixed
+        )
+        sizePolicy.setHorizontalStretch(0)
+        sizePolicy.setVerticalStretch(0)
+        sizePolicy.setHeightForWidth(self.headerLabel.sizePolicy().hasHeightForWidth())
+        self.headerLabel.setSizePolicy(sizePolicy)
         font = QtGui.QFont()
         font.setPointSize(13)
         font.setBold(True)
@@ -26,218 +33,401 @@ class Ui_AtlasPressProductDialog(object):
         self.headerLabel.setAlignment(QtCore.Qt.AlignmentFlag.AlignCenter)
         self.headerLabel.setObjectName("headerLabel")
         self.rootLayout.addWidget(self.headerLabel)
-        self.subtitleLabel = QtWidgets.QLabel(parent=AtlasPressProductDialog)
-        self.subtitleLabel.setAlignment(QtCore.Qt.AlignmentFlag.AlignCenter)
-        self.subtitleLabel.setObjectName("subtitleLabel")
-        self.rootLayout.addWidget(self.subtitleLabel)
-        self.instructionLabel = QtWidgets.QLabel(parent=AtlasPressProductDialog)
-        self.instructionLabel.setAlignment(QtCore.Qt.AlignmentFlag.AlignCenter)
-        self.instructionLabel.setObjectName("instructionLabel")
-        self.rootLayout.addWidget(self.instructionLabel)
-        self.dividerLine = QtWidgets.QFrame(parent=AtlasPressProductDialog)
+        self.stepIndicatorLabel = QtWidgets.QLabel(parent=AtlasPressProductSelectionDialog)
+        sizePolicy = QtWidgets.QSizePolicy(
+            QtWidgets.QSizePolicy.Policy.Preferred, QtWidgets.QSizePolicy.Policy.Fixed
+        )
+        sizePolicy.setHorizontalStretch(0)
+        sizePolicy.setVerticalStretch(0)
+        sizePolicy.setHeightForWidth(self.stepIndicatorLabel.sizePolicy().hasHeightForWidth())
+        self.stepIndicatorLabel.setSizePolicy(sizePolicy)
+        self.stepIndicatorLabel.setAlignment(QtCore.Qt.AlignmentFlag.AlignCenter)
+        self.stepIndicatorLabel.setObjectName("stepIndicatorLabel")
+        self.rootLayout.addWidget(self.stepIndicatorLabel)
+        self.dividerLine = QtWidgets.QFrame(parent=AtlasPressProductSelectionDialog)
         self.dividerLine.setFrameShape(QtWidgets.QFrame.Shape.HLine)
         self.dividerLine.setFrameShadow(QtWidgets.QFrame.Shadow.Sunken)
         self.dividerLine.setObjectName("dividerLine")
         self.rootLayout.addWidget(self.dividerLine)
-        self.productTypeGroupBox = QtWidgets.QGroupBox(parent=AtlasPressProductDialog)
-        self.productTypeGroupBox.setObjectName("productTypeGroupBox")
-        self.productGroupLayout = QtWidgets.QVBoxLayout(self.productTypeGroupBox)
-        self.productGroupLayout.setSpacing(6)
-        self.productGroupLayout.setObjectName("productGroupLayout")
-        self.radioLayout = QtWidgets.QHBoxLayout()
-        self.radioLayout.setSpacing(20)
-        self.radioLayout.setObjectName("radioLayout")
-        self.radioCanvas = QtWidgets.QRadioButton(parent=self.productTypeGroupBox)
-        self.radioCanvas.setChecked(True)
-        self.radioCanvas.setObjectName("radioCanvas")
-        self.radioLayout.addWidget(self.radioCanvas)
-        self.radioPoster = QtWidgets.QRadioButton(parent=self.productTypeGroupBox)
-        self.radioPoster.setObjectName("radioPoster")
-        self.radioLayout.addWidget(self.radioPoster)
+        self.startupLoadingPage = QtWidgets.QWidget(parent=AtlasPressProductSelectionDialog)
+        sizePolicy = QtWidgets.QSizePolicy(
+            QtWidgets.QSizePolicy.Policy.Expanding, QtWidgets.QSizePolicy.Policy.Expanding
+        )
+        sizePolicy.setHorizontalStretch(1)
+        sizePolicy.setVerticalStretch(1)
+        sizePolicy.setHeightForWidth(self.startupLoadingPage.sizePolicy().hasHeightForWidth())
+        self.startupLoadingPage.setSizePolicy(sizePolicy)
+        self.startupLoadingPage.setObjectName("startupLoadingPage")
+        self.startupLoadingLayout = QtWidgets.QVBoxLayout(self.startupLoadingPage)
+        self.startupLoadingLayout.setObjectName("startupLoadingLayout")
         spacerItem = QtWidgets.QSpacerItem(
-            40, 20, QtWidgets.QSizePolicy.Policy.Expanding, QtWidgets.QSizePolicy.Policy.Minimum
+            20, 40, QtWidgets.QSizePolicy.Policy.Minimum, QtWidgets.QSizePolicy.Policy.Expanding
         )
-        self.radioLayout.addItem(spacerItem)
-        self.productGroupLayout.addLayout(self.radioLayout)
-        self.descriptionLabel = QtWidgets.QLabel(parent=self.productTypeGroupBox)
-        self.descriptionLabel.setWordWrap(True)
-        self.descriptionLabel.setObjectName("descriptionLabel")
-        self.productGroupLayout.addWidget(self.descriptionLabel)
-        self.rootLayout.addWidget(self.productTypeGroupBox)
-        self.sizeGroupBox = QtWidgets.QGroupBox(parent=AtlasPressProductDialog)
-        self.sizeGroupBox.setObjectName("sizeGroupBox")
-        self.sizeGroupLayout = QtWidgets.QVBoxLayout(self.sizeGroupBox)
-        self.sizeGroupLayout.setSpacing(10)
-        self.sizeGroupLayout.setObjectName("sizeGroupLayout")
-        self.sizeStackedWidget = QtWidgets.QStackedWidget(parent=self.sizeGroupBox)
-        self.sizeStackedWidget.setObjectName("sizeStackedWidget")
-        self.sizeLoadingPage = QtWidgets.QWidget()
-        self.sizeLoadingPage.setObjectName("sizeLoadingPage")
-        self.loadingPageLayout = QtWidgets.QVBoxLayout(self.sizeLoadingPage)
-        self.loadingPageLayout.setContentsMargins(-1, 12, -1, 12)
-        self.loadingPageLayout.setSpacing(8)
-        self.loadingPageLayout.setObjectName("loadingPageLayout")
-        self.loadingTextLabel = QtWidgets.QLabel(parent=self.sizeLoadingPage)
-        self.loadingTextLabel.setAlignment(QtCore.Qt.AlignmentFlag.AlignCenter)
-        self.loadingTextLabel.setObjectName("loadingTextLabel")
-        self.loadingPageLayout.addWidget(self.loadingTextLabel)
-        self.sizeStackedWidget.addWidget(self.sizeLoadingPage)
-        self.sizeCardsPage = QtWidgets.QWidget()
-        self.sizeCardsPage.setObjectName("sizeCardsPage")
-        self.cardsPageLayout = QtWidgets.QVBoxLayout(self.sizeCardsPage)
-        self.cardsPageLayout.setContentsMargins(0, 4, 0, 4)
-        self.cardsPageLayout.setSpacing(8)
-        self.cardsPageLayout.setObjectName("cardsPageLayout")
-        self.sizeCardsLayout = QtWidgets.QHBoxLayout()
-        self.sizeCardsLayout.setSpacing(10)
-        self.sizeCardsLayout.setObjectName("sizeCardsLayout")
-        self.cardsPageLayout.addLayout(self.sizeCardsLayout)
+        self.startupLoadingLayout.addItem(spacerItem)
+        self.startupSpinnerLabel = QtWidgets.QLabel(parent=self.startupLoadingPage)
+        self.startupSpinnerLabel.setMinimumSize(QtCore.QSize(0, 40))
+        self.startupSpinnerLabel.setText("")
+        self.startupSpinnerLabel.setAlignment(QtCore.Qt.AlignmentFlag.AlignCenter)
+        self.startupSpinnerLabel.setObjectName("startupSpinnerLabel")
+        self.startupLoadingLayout.addWidget(self.startupSpinnerLabel)
+        self.startupLoadingTextLabel = QtWidgets.QLabel(parent=self.startupLoadingPage)
+        self.startupLoadingTextLabel.setAlignment(QtCore.Qt.AlignmentFlag.AlignCenter)
+        self.startupLoadingTextLabel.setWordWrap(True)
+        self.startupLoadingTextLabel.setObjectName("startupLoadingTextLabel")
+        self.startupLoadingLayout.addWidget(self.startupLoadingTextLabel)
         spacerItem1 = QtWidgets.QSpacerItem(
-            20,
-            40,
-            QtWidgets.QSizePolicy.Policy.Minimum,
-            QtWidgets.QSizePolicy.Policy.MinimumExpanding,
+            20, 40, QtWidgets.QSizePolicy.Policy.Minimum, QtWidgets.QSizePolicy.Policy.Expanding
         )
-        self.cardsPageLayout.addItem(spacerItem1)
-        self.selectionSizeLabel = QtWidgets.QLabel(parent=self.sizeCardsPage)
-        self.selectionSizeLabel.setAlignment(QtCore.Qt.AlignmentFlag.AlignCenter)
-        self.selectionSizeLabel.setObjectName("selectionSizeLabel")
-        self.cardsPageLayout.addWidget(self.selectionSizeLabel)
-        self.sizeStackedWidget.addWidget(self.sizeCardsPage)
-        self.sizeErrorPage = QtWidgets.QWidget()
-        self.sizeErrorPage.setObjectName("sizeErrorPage")
-        self.errorPageLayout = QtWidgets.QVBoxLayout(self.sizeErrorPage)
-        self.errorPageLayout.setContentsMargins(-1, 10, -1, 10)
-        self.errorPageLayout.setSpacing(6)
-        self.errorPageLayout.setObjectName("errorPageLayout")
-        self.errorIconLabel = QtWidgets.QLabel(parent=self.sizeErrorPage)
-        self.errorIconLabel.setAlignment(QtCore.Qt.AlignmentFlag.AlignCenter)
-        self.errorIconLabel.setObjectName("errorIconLabel")
-        self.errorPageLayout.addWidget(self.errorIconLabel)
-        self.errorMessageLabel = QtWidgets.QLabel(parent=self.sizeErrorPage)
-        self.errorMessageLabel.setAlignment(QtCore.Qt.AlignmentFlag.AlignCenter)
-        self.errorMessageLabel.setWordWrap(True)
-        self.errorMessageLabel.setObjectName("errorMessageLabel")
-        self.errorPageLayout.addWidget(self.errorMessageLabel)
-        self.retryButtonLayout = QtWidgets.QHBoxLayout()
-        self.retryButtonLayout.setObjectName("retryButtonLayout")
+        self.startupLoadingLayout.addItem(spacerItem1)
+        self.rootLayout.addWidget(self.startupLoadingPage)
+        self.mainSplitter = QtWidgets.QSplitter(parent=AtlasPressProductSelectionDialog)
+        sizePolicy = QtWidgets.QSizePolicy(
+            QtWidgets.QSizePolicy.Policy.Expanding, QtWidgets.QSizePolicy.Policy.Expanding
+        )
+        sizePolicy.setHorizontalStretch(0)
+        sizePolicy.setVerticalStretch(1)
+        sizePolicy.setHeightForWidth(self.mainSplitter.sizePolicy().hasHeightForWidth())
+        self.mainSplitter.setSizePolicy(sizePolicy)
+        self.mainSplitter.setOrientation(QtCore.Qt.Orientation.Horizontal)
+        self.mainSplitter.setChildrenCollapsible(False)
+        self.mainSplitter.setObjectName("mainSplitter")
+        self.previewGroupBox = QtWidgets.QGroupBox(parent=self.mainSplitter)
+        self.previewGroupBox.setMinimumSize(QtCore.QSize(360, 0))
+        self.previewGroupBox.setObjectName("previewGroupBox")
+        self.previewPaneLayout = QtWidgets.QVBoxLayout(self.previewGroupBox)
+        self.previewPaneLayout.setObjectName("previewPaneLayout")
+        self.previewStackedWidget = QtWidgets.QStackedWidget(parent=self.previewGroupBox)
+        self.previewStackedWidget.setObjectName("previewStackedWidget")
+        self.previewEmptyPage = QtWidgets.QWidget()
+        self.previewEmptyPage.setObjectName("previewEmptyPage")
+        self.previewEmptyLayout = QtWidgets.QVBoxLayout(self.previewEmptyPage)
+        self.previewEmptyLayout.setObjectName("previewEmptyLayout")
         spacerItem2 = QtWidgets.QSpacerItem(
-            40, 20, QtWidgets.QSizePolicy.Policy.Expanding, QtWidgets.QSizePolicy.Policy.Minimum
+            20, 40, QtWidgets.QSizePolicy.Policy.Minimum, QtWidgets.QSizePolicy.Policy.Expanding
         )
-        self.retryButtonLayout.addItem(spacerItem2)
-        self.retryButton = QtWidgets.QPushButton(parent=self.sizeErrorPage)
-        self.retryButton.setObjectName("retryButton")
-        self.retryButtonLayout.addWidget(self.retryButton)
+        self.previewEmptyLayout.addItem(spacerItem2)
+        self.previewEmptyTextLabel = QtWidgets.QLabel(parent=self.previewEmptyPage)
+        self.previewEmptyTextLabel.setAlignment(QtCore.Qt.AlignmentFlag.AlignCenter)
+        self.previewEmptyTextLabel.setWordWrap(True)
+        self.previewEmptyTextLabel.setObjectName("previewEmptyTextLabel")
+        self.previewEmptyLayout.addWidget(self.previewEmptyTextLabel)
         spacerItem3 = QtWidgets.QSpacerItem(
+            20, 40, QtWidgets.QSizePolicy.Policy.Minimum, QtWidgets.QSizePolicy.Policy.Expanding
+        )
+        self.previewEmptyLayout.addItem(spacerItem3)
+        self.previewStackedWidget.addWidget(self.previewEmptyPage)
+        self.previewLoadingPage = QtWidgets.QWidget()
+        self.previewLoadingPage.setObjectName("previewLoadingPage")
+        self.previewLoadingLayout = QtWidgets.QVBoxLayout(self.previewLoadingPage)
+        self.previewLoadingLayout.setObjectName("previewLoadingLayout")
+        spacerItem4 = QtWidgets.QSpacerItem(
+            20, 40, QtWidgets.QSizePolicy.Policy.Minimum, QtWidgets.QSizePolicy.Policy.Expanding
+        )
+        self.previewLoadingLayout.addItem(spacerItem4)
+        self.previewLoadingSpinnerLabel = QtWidgets.QLabel(parent=self.previewLoadingPage)
+        self.previewLoadingSpinnerLabel.setMinimumSize(QtCore.QSize(0, 40))
+        self.previewLoadingSpinnerLabel.setText("")
+        self.previewLoadingSpinnerLabel.setAlignment(QtCore.Qt.AlignmentFlag.AlignCenter)
+        self.previewLoadingSpinnerLabel.setObjectName("previewLoadingSpinnerLabel")
+        self.previewLoadingLayout.addWidget(self.previewLoadingSpinnerLabel)
+        self.previewLoadingTextLabel = QtWidgets.QLabel(parent=self.previewLoadingPage)
+        self.previewLoadingTextLabel.setAlignment(QtCore.Qt.AlignmentFlag.AlignCenter)
+        self.previewLoadingTextLabel.setWordWrap(True)
+        self.previewLoadingTextLabel.setObjectName("previewLoadingTextLabel")
+        self.previewLoadingLayout.addWidget(self.previewLoadingTextLabel)
+        spacerItem5 = QtWidgets.QSpacerItem(
+            20, 40, QtWidgets.QSizePolicy.Policy.Minimum, QtWidgets.QSizePolicy.Policy.Expanding
+        )
+        self.previewLoadingLayout.addItem(spacerItem5)
+        self.previewStackedWidget.addWidget(self.previewLoadingPage)
+        self.previewContentPage = QtWidgets.QWidget()
+        self.previewContentPage.setObjectName("previewContentPage")
+        self.previewContentLayout = QtWidgets.QVBoxLayout(self.previewContentPage)
+        self.previewContentLayout.setContentsMargins(0, 0, 0, 0)
+        self.previewContentLayout.setSpacing(6)
+        self.previewContentLayout.setObjectName("previewContentLayout")
+        self.previewGraphicsView = QtWidgets.QGraphicsView(parent=self.previewContentPage)
+        sizePolicy = QtWidgets.QSizePolicy(
+            QtWidgets.QSizePolicy.Policy.Expanding, QtWidgets.QSizePolicy.Policy.Expanding
+        )
+        sizePolicy.setHorizontalStretch(1)
+        sizePolicy.setVerticalStretch(1)
+        sizePolicy.setHeightForWidth(self.previewGraphicsView.sizePolicy().hasHeightForWidth())
+        self.previewGraphicsView.setSizePolicy(sizePolicy)
+        self.previewGraphicsView.setFrameShape(QtWidgets.QFrame.Shape.NoFrame)
+        self.previewGraphicsView.setObjectName("previewGraphicsView")
+        self.previewContentLayout.addWidget(self.previewGraphicsView)
+        self.previewZoomLayout = QtWidgets.QHBoxLayout()
+        self.previewZoomLayout.setObjectName("previewZoomLayout")
+        spacerItem6 = QtWidgets.QSpacerItem(
             40, 20, QtWidgets.QSizePolicy.Policy.Expanding, QtWidgets.QSizePolicy.Policy.Minimum
         )
-        self.retryButtonLayout.addItem(spacerItem3)
-        self.errorPageLayout.addLayout(self.retryButtonLayout)
-        self.sizeStackedWidget.addWidget(self.sizeErrorPage)
-        self.sizeGroupLayout.addWidget(self.sizeStackedWidget)
-        self.rootLayout.addWidget(self.sizeGroupBox)
-        self.priceNoteLabel = QtWidgets.QLabel(parent=AtlasPressProductDialog)
-        self.priceNoteLabel.setWordWrap(True)
-        self.priceNoteLabel.setObjectName("priceNoteLabel")
-        self.rootLayout.addWidget(self.priceNoteLabel)
-        spacerItem4 = QtWidgets.QSpacerItem(
-            20, 8, QtWidgets.QSizePolicy.Policy.Minimum, QtWidgets.QSizePolicy.Policy.Expanding
+        self.previewZoomLayout.addItem(spacerItem6)
+        self.zoomOutButton = QtWidgets.QToolButton(parent=self.previewContentPage)
+        self.zoomOutButton.setAutoRaise(True)
+        self.zoomOutButton.setObjectName("zoomOutButton")
+        self.previewZoomLayout.addWidget(self.zoomOutButton)
+        self.zoomFitButton = QtWidgets.QToolButton(parent=self.previewContentPage)
+        self.zoomFitButton.setAutoRaise(True)
+        self.zoomFitButton.setObjectName("zoomFitButton")
+        self.previewZoomLayout.addWidget(self.zoomFitButton)
+        self.zoomInButton = QtWidgets.QToolButton(parent=self.previewContentPage)
+        self.zoomInButton.setAutoRaise(True)
+        self.zoomInButton.setObjectName("zoomInButton")
+        self.previewZoomLayout.addWidget(self.zoomInButton)
+        spacerItem7 = QtWidgets.QSpacerItem(
+            40, 20, QtWidgets.QSizePolicy.Policy.Expanding, QtWidgets.QSizePolicy.Policy.Minimum
         )
-        self.rootLayout.addItem(spacerItem4)
-        self.buttonsActions = QtWidgets.QDialogButtonBox(parent=AtlasPressProductDialog)
-        self.buttonsActions.setOrientation(QtCore.Qt.Orientation.Horizontal)
-        self.buttonsActions.setStandardButtons(
+        self.previewZoomLayout.addItem(spacerItem7)
+        self.previewContentLayout.addLayout(self.previewZoomLayout)
+        self.previewInteractionLabel = QtWidgets.QLabel(parent=self.previewContentPage)
+        self.previewInteractionLabel.setAlignment(QtCore.Qt.AlignmentFlag.AlignCenter)
+        self.previewInteractionLabel.setWordWrap(True)
+        self.previewInteractionLabel.setObjectName("previewInteractionLabel")
+        self.previewContentLayout.addWidget(self.previewInteractionLabel)
+        self.previewStackedWidget.addWidget(self.previewContentPage)
+        self.previewErrorPage = QtWidgets.QWidget()
+        self.previewErrorPage.setObjectName("previewErrorPage")
+        self.previewErrorLayout = QtWidgets.QVBoxLayout(self.previewErrorPage)
+        self.previewErrorLayout.setObjectName("previewErrorLayout")
+        spacerItem8 = QtWidgets.QSpacerItem(
+            20, 40, QtWidgets.QSizePolicy.Policy.Minimum, QtWidgets.QSizePolicy.Policy.Expanding
+        )
+        self.previewErrorLayout.addItem(spacerItem8)
+        self.previewErrorTitleLabel = QtWidgets.QLabel(parent=self.previewErrorPage)
+        font = QtGui.QFont()
+        font.setBold(True)
+        self.previewErrorTitleLabel.setFont(font)
+        self.previewErrorTitleLabel.setAlignment(QtCore.Qt.AlignmentFlag.AlignCenter)
+        self.previewErrorTitleLabel.setObjectName("previewErrorTitleLabel")
+        self.previewErrorLayout.addWidget(self.previewErrorTitleLabel)
+        self.previewErrorTextLabel = QtWidgets.QLabel(parent=self.previewErrorPage)
+        self.previewErrorTextLabel.setAlignment(QtCore.Qt.AlignmentFlag.AlignCenter)
+        self.previewErrorTextLabel.setWordWrap(True)
+        self.previewErrorTextLabel.setObjectName("previewErrorTextLabel")
+        self.previewErrorLayout.addWidget(self.previewErrorTextLabel)
+        self.previewRetryLayout = QtWidgets.QHBoxLayout()
+        self.previewRetryLayout.setObjectName("previewRetryLayout")
+        spacerItem9 = QtWidgets.QSpacerItem(
+            40, 20, QtWidgets.QSizePolicy.Policy.Expanding, QtWidgets.QSizePolicy.Policy.Minimum
+        )
+        self.previewRetryLayout.addItem(spacerItem9)
+        self.previewRetryButton = QtWidgets.QPushButton(parent=self.previewErrorPage)
+        self.previewRetryButton.setObjectName("previewRetryButton")
+        self.previewRetryLayout.addWidget(self.previewRetryButton)
+        spacerItem10 = QtWidgets.QSpacerItem(
+            40, 20, QtWidgets.QSizePolicy.Policy.Expanding, QtWidgets.QSizePolicy.Policy.Minimum
+        )
+        self.previewRetryLayout.addItem(spacerItem10)
+        self.previewErrorLayout.addLayout(self.previewRetryLayout)
+        spacerItem11 = QtWidgets.QSpacerItem(
+            20, 40, QtWidgets.QSizePolicy.Policy.Minimum, QtWidgets.QSizePolicy.Policy.Expanding
+        )
+        self.previewErrorLayout.addItem(spacerItem11)
+        self.previewStackedWidget.addWidget(self.previewErrorPage)
+        self.previewPaneLayout.addWidget(self.previewStackedWidget)
+        self.previewNoteLabel = QtWidgets.QLabel(parent=self.previewGroupBox)
+        self.previewNoteLabel.setAlignment(QtCore.Qt.AlignmentFlag.AlignCenter)
+        self.previewNoteLabel.setWordWrap(True)
+        self.previewNoteLabel.setObjectName("previewNoteLabel")
+        self.previewPaneLayout.addWidget(self.previewNoteLabel)
+        self.productConfigurationScrollArea = QtWidgets.QScrollArea(parent=self.mainSplitter)
+        self.productConfigurationScrollArea.setMinimumSize(QtCore.QSize(270, 0))
+        self.productConfigurationScrollArea.setFrameShape(QtWidgets.QFrame.Shape.NoFrame)
+        self.productConfigurationScrollArea.setWidgetResizable(True)
+        self.productConfigurationScrollArea.setObjectName("productConfigurationScrollArea")
+        self.productConfigurationPane = QtWidgets.QWidget()
+        self.productConfigurationPane.setGeometry(QtCore.QRect(0, 0, 310, 430))
+        self.productConfigurationPane.setObjectName("productConfigurationPane")
+        self.productConfigurationPaneLayout = QtWidgets.QVBoxLayout(self.productConfigurationPane)
+        self.productConfigurationPaneLayout.setContentsMargins(4, 0, 4, 4)
+        self.productConfigurationPaneLayout.setSpacing(12)
+        self.productConfigurationPaneLayout.setObjectName("productConfigurationPaneLayout")
+        self.productSection = QtWidgets.QWidget(parent=self.productConfigurationPane)
+        self.productSection.setObjectName("productSection")
+        self.productFieldLayout = QtWidgets.QVBoxLayout(self.productSection)
+        self.productFieldLayout.setContentsMargins(0, 0, 0, 0)
+        self.productFieldLayout.setObjectName("productFieldLayout")
+        self.productLabel = QtWidgets.QLabel(parent=self.productSection)
+        font = QtGui.QFont()
+        font.setBold(True)
+        self.productLabel.setFont(font)
+        self.productLabel.setObjectName("productLabel")
+        self.productFieldLayout.addWidget(self.productLabel)
+        self.productComboBox = QtWidgets.QComboBox(parent=self.productSection)
+        self.productComboBox.setObjectName("productComboBox")
+        self.productComboBox.addItem("")
+        self.productComboBox.addItem("")
+        self.productFieldLayout.addWidget(self.productComboBox)
+        self.productLoadingStatusLabel = QtWidgets.QLabel(parent=self.productSection)
+        self.productLoadingStatusLabel.setWordWrap(True)
+        self.productLoadingStatusLabel.setObjectName("productLoadingStatusLabel")
+        self.productFieldLayout.addWidget(self.productLoadingStatusLabel)
+        self.productLoadingRetryButton = QtWidgets.QPushButton(parent=self.productSection)
+        self.productLoadingRetryButton.setObjectName("productLoadingRetryButton")
+        self.productFieldLayout.addWidget(self.productLoadingRetryButton)
+        self.productConfigurationPaneLayout.addWidget(self.productSection)
+        self.sizeSection = QtWidgets.QWidget(parent=self.productConfigurationPane)
+        self.sizeSection.setObjectName("sizeSection")
+        self.sizeFieldLayout = QtWidgets.QVBoxLayout(self.sizeSection)
+        self.sizeFieldLayout.setContentsMargins(0, 0, 0, 0)
+        self.sizeFieldLayout.setObjectName("sizeFieldLayout")
+        self.sizeLabel = QtWidgets.QLabel(parent=self.sizeSection)
+        font = QtGui.QFont()
+        font.setBold(True)
+        self.sizeLabel.setFont(font)
+        self.sizeLabel.setObjectName("sizeLabel")
+        self.sizeFieldLayout.addWidget(self.sizeLabel)
+        self.sizeComboBox = QtWidgets.QComboBox(parent=self.sizeSection)
+        self.sizeComboBox.setObjectName("sizeComboBox")
+        self.sizeComboBox.addItem("")
+        self.sizeFieldLayout.addWidget(self.sizeComboBox)
+        self.productConfigurationPaneLayout.addWidget(self.sizeSection)
+        self.mapUploadGroupBox = QtWidgets.QGroupBox(parent=self.productConfigurationPane)
+        self.mapUploadGroupBox.setObjectName("mapUploadGroupBox")
+        self.mapUploadStatusLayout = QtWidgets.QVBoxLayout(self.mapUploadGroupBox)
+        self.mapUploadStatusLayout.setObjectName("mapUploadStatusLayout")
+        self.mapUploadStatusLabel = QtWidgets.QLabel(parent=self.mapUploadGroupBox)
+        self.mapUploadStatusLabel.setWordWrap(True)
+        self.mapUploadStatusLabel.setObjectName("mapUploadStatusLabel")
+        self.mapUploadStatusLayout.addWidget(self.mapUploadStatusLabel)
+        self.mapUploadRetryButton = QtWidgets.QPushButton(parent=self.mapUploadGroupBox)
+        self.mapUploadRetryButton.setObjectName("mapUploadRetryButton")
+        self.mapUploadStatusLayout.addWidget(self.mapUploadRetryButton)
+        self.productConfigurationPaneLayout.addWidget(self.mapUploadGroupBox)
+        spacerItem12 = QtWidgets.QSpacerItem(
+            20, 40, QtWidgets.QSizePolicy.Policy.Minimum, QtWidgets.QSizePolicy.Policy.Expanding
+        )
+        self.productConfigurationPaneLayout.addItem(spacerItem12)
+        self.productPriceLayout = QtWidgets.QHBoxLayout()
+        self.productPriceLayout.setObjectName("productPriceLayout")
+        self.productPriceTitleLabel = QtWidgets.QLabel(parent=self.productConfigurationPane)
+        self.productPriceTitleLabel.setObjectName("productPriceTitleLabel")
+        self.productPriceLayout.addWidget(self.productPriceTitleLabel)
+        spacerItem13 = QtWidgets.QSpacerItem(
+            40, 20, QtWidgets.QSizePolicy.Policy.Expanding, QtWidgets.QSizePolicy.Policy.Minimum
+        )
+        self.productPriceLayout.addItem(spacerItem13)
+        self.productPriceValueLabel = QtWidgets.QLabel(parent=self.productConfigurationPane)
+        font = QtGui.QFont()
+        font.setBold(True)
+        self.productPriceValueLabel.setFont(font)
+        self.productPriceValueLabel.setObjectName("productPriceValueLabel")
+        self.productPriceLayout.addWidget(self.productPriceValueLabel)
+        self.productConfigurationPaneLayout.addLayout(self.productPriceLayout)
+        self.basePriceNoteLabel = QtWidgets.QLabel(parent=self.productConfigurationPane)
+        self.basePriceNoteLabel.setWordWrap(True)
+        self.basePriceNoteLabel.setObjectName("basePriceNoteLabel")
+        self.productConfigurationPaneLayout.addWidget(self.basePriceNoteLabel)
+        self.productConfigurationScrollArea.setWidget(self.productConfigurationPane)
+        self.rootLayout.addWidget(self.mainSplitter)
+        self.actionButtonBox = QtWidgets.QDialogButtonBox(parent=AtlasPressProductSelectionDialog)
+        self.actionButtonBox.setOrientation(QtCore.Qt.Orientation.Horizontal)
+        self.actionButtonBox.setStandardButtons(
             QtWidgets.QDialogButtonBox.StandardButton.Cancel
             | QtWidgets.QDialogButtonBox.StandardButton.Ok
         )
-        self.buttonsActions.setObjectName("buttonsActions")
-        self.rootLayout.addWidget(self.buttonsActions)
+        self.actionButtonBox.setObjectName("actionButtonBox")
+        self.rootLayout.addWidget(self.actionButtonBox)
 
-        self.retranslateUi(AtlasPressProductDialog)
-        self.sizeStackedWidget.setCurrentIndex(1)
-        self.buttonsActions.accepted.connect(AtlasPressProductDialog.accept)  # type: ignore
-        self.buttonsActions.rejected.connect(AtlasPressProductDialog.reject)  # type: ignore
-        QtCore.QMetaObject.connectSlotsByName(AtlasPressProductDialog)
+        self.retranslateUi(AtlasPressProductSelectionDialog)
+        self.previewStackedWidget.setCurrentIndex(0)
+        self.actionButtonBox.accepted.connect(AtlasPressProductSelectionDialog.accept)  # type: ignore
+        self.actionButtonBox.rejected.connect(AtlasPressProductSelectionDialog.reject)  # type: ignore
+        QtCore.QMetaObject.connectSlotsByName(AtlasPressProductSelectionDialog)
 
-    def retranslateUi(self, AtlasPressProductDialog):
+    def retranslateUi(self, AtlasPressProductSelectionDialog):
         _translate = QtCore.QCoreApplication.translate
-        AtlasPressProductDialog.setWindowTitle(
-            _translate("AtlasPressProductDialog", "Atlas Press — Choose Product")
+        AtlasPressProductSelectionDialog.setWindowTitle(
+            _translate("AtlasPressProductSelectionDialog", "Atlas Press — Choose Product")
         )
-        self.headerLabel.setText(_translate("AtlasPressProductDialog", "🗺️ Print & Order Your Map"))
-        self.subtitleLabel.setStyleSheet(
-            _translate("AtlasPressProductDialog", "color: #666666; font-size: 11px;")
+        self.headerLabel.setText(
+            _translate("AtlasPressProductSelectionDialog", "🗺️  Print & Order Your Map")
         )
-        self.subtitleLabel.setText(
-            _translate("AtlasPressProductDialog", "Step 1 of 4 — Choose Product")
+        self.stepIndicatorLabel.setText(
+            _translate("AtlasPressProductSelectionDialog", "Step 1 of 4 — Choose Product")
         )
-        self.instructionLabel.setStyleSheet(
-            _translate("AtlasPressProductDialog", "color: #666666; font-size: 11px;")
+        self.stepIndicatorLabel.setStyleSheet(
+            _translate("AtlasPressProductSelectionDialog", "color: palette(text); font-size: 11px;")
         )
-        self.instructionLabel.setText(
-            _translate("AtlasPressProductDialog", "Select a product type, then pick a size.")
+        self.startupLoadingTextLabel.setText(
+            _translate("AtlasPressProductSelectionDialog", "Preparing your order…")
         )
-        self.dividerLine.setStyleSheet(_translate("AtlasPressProductDialog", "color: #dddddd;"))
-        self.productTypeGroupBox.setStyleSheet(
-            _translate("AtlasPressProductDialog", "QGroupBox { font-weight: bold; }")
-        )
-        self.productTypeGroupBox.setTitle(_translate("AtlasPressProductDialog", "Product Type"))
-        self.radioCanvas.setText(_translate("AtlasPressProductDialog", "Canvas Print"))
-        self.radioPoster.setText(_translate("AtlasPressProductDialog", "Poster Print"))
-        self.descriptionLabel.setStyleSheet(
-            _translate("AtlasPressProductDialog", "color: #555555; font-size: 11px;")
-        )
-        self.descriptionLabel.setText(
-            _translate("AtlasPressProductDialog", "Premium gallery-wrapped canvas, ready to hang.")
-        )
-        self.sizeGroupBox.setStyleSheet(
-            _translate("AtlasPressProductDialog", "QGroupBox { font-weight: bold; }")
-        )
-        self.sizeGroupBox.setTitle(_translate("AtlasPressProductDialog", "Size"))
-        self.loadingTextLabel.setStyleSheet(
-            _translate("AtlasPressProductDialog", "color: #888888; font-size: 11px;")
-        )
-        self.loadingTextLabel.setText(_translate("AtlasPressProductDialog", "Fetching products…"))
-        self.selectionSizeLabel.setStyleSheet(
+        self.previewGroupBox.setTitle(_translate("AtlasPressProductSelectionDialog", "Preview"))
+        self.previewEmptyTextLabel.setText(
             _translate(
-                "AtlasPressProductDialog",
-                "color: #3a7ebf; font-weight: bold; font-size: 12px; margin-top:\n"
-                "                            2px;",
+                "AtlasPressProductSelectionDialog",
+                "Select a product and size to generate a preview.",
             )
         )
-        self.selectionSizeLabel.setText(_translate("AtlasPressProductDialog", "No size selected"))
-        self.errorIconLabel.setStyleSheet(_translate("AtlasPressProductDialog", "font-size: 22px;"))
-        self.errorIconLabel.setText(_translate("AtlasPressProductDialog", "⚠️"))
-        self.errorMessageLabel.setStyleSheet(
-            _translate("AtlasPressProductDialog", "color: #cc4444; font-size: 11px;")
+        self.previewLoadingTextLabel.setText(
+            _translate("AtlasPressProductSelectionDialog", "Generating your preview…")
         )
-        self.errorMessageLabel.setText(
+        self.previewGraphicsView.setToolTip(
             _translate(
-                "AtlasPressProductDialog", "Could not load products. Please check your connection."
+                "AtlasPressProductSelectionDialog", "Use the mouse wheel to zoom and drag to pan."
             )
         )
-        self.retryButton.setStyleSheet(
+        self.zoomOutButton.setText(_translate("AtlasPressProductSelectionDialog", "−"))
+        self.zoomOutButton.setToolTip(_translate("AtlasPressProductSelectionDialog", "Zoom out"))
+        self.zoomFitButton.setText(_translate("AtlasPressProductSelectionDialog", "Fit"))
+        self.zoomFitButton.setToolTip(
+            _translate("AtlasPressProductSelectionDialog", "Fit preview to window")
+        )
+        self.zoomInButton.setText(_translate("AtlasPressProductSelectionDialog", "+"))
+        self.zoomInButton.setToolTip(_translate("AtlasPressProductSelectionDialog", "Zoom in"))
+        self.previewInteractionLabel.setText(
             _translate(
-                "AtlasPressProductDialog",
-                "\n"
-                "                                QPushButton {\n"
-                "                                background: #3a7ebf;\n"
-                "                                color: white;\n"
-                "                                border: none;\n"
-                "                                border-radius: 4px;\n"
-                "                                padding: 4px 16px;\n"
-                "                                font-size: 11px;\n"
-                "                                }\n"
-                "                                QPushButton:hover { background: #2e6aaa; }\n"
-                "                              ",
+                "AtlasPressProductSelectionDialog",
+                "Use the mouse wheel or double-click to zoom. Drag to pan.",
             )
         )
-        self.retryButton.setText(_translate("AtlasPressProductDialog", "Retry"))
-        self.priceNoteLabel.setStyleSheet(
-            _translate("AtlasPressProductDialog", "color: #999999; font-size: 10px;")
+        self.previewErrorTitleLabel.setText(
+            _translate("AtlasPressProductSelectionDialog", "Preview unavailable")
         )
-        self.priceNoteLabel.setText(
+        self.previewErrorTextLabel.setText(
+            _translate("AtlasPressProductSelectionDialog", "Could not generate a preview.")
+        )
+        self.previewRetryButton.setText(
+            _translate("AtlasPressProductSelectionDialog", "Retry Preview")
+        )
+        self.previewNoteLabel.setText(
             _translate(
-                "AtlasPressProductDialog", "ℹ️ Prices are base prices and exclude shipping & tax."
+                "AtlasPressProductSelectionDialog",
+                "Product preview only. The final printed product may vary slightly.",
+            )
+        )
+        self.productLabel.setText(_translate("AtlasPressProductSelectionDialog", "Product"))
+        self.productComboBox.setItemText(
+            0, _translate("AtlasPressProductSelectionDialog", "Canvas Print")
+        )
+        self.productComboBox.setItemText(
+            1, _translate("AtlasPressProductSelectionDialog", "Poster Print")
+        )
+        self.productLoadingStatusLabel.setText(
+            _translate("AtlasPressProductSelectionDialog", "Loading available sizes…")
+        )
+        self.productLoadingRetryButton.setText(
+            _translate("AtlasPressProductSelectionDialog", "Retry Loading Products")
+        )
+        self.sizeLabel.setText(_translate("AtlasPressProductSelectionDialog", "Size"))
+        self.sizeComboBox.setItemText(
+            0, _translate("AtlasPressProductSelectionDialog", "Select a size")
+        )
+        self.mapUploadGroupBox.setTitle(_translate("AtlasPressProductSelectionDialog", "Map"))
+        self.mapUploadStatusLabel.setText(
+            _translate("AtlasPressProductSelectionDialog", "Preparing map…")
+        )
+        self.mapUploadRetryButton.setText(
+            _translate("AtlasPressProductSelectionDialog", "Retry Map Upload")
+        )
+        self.productPriceTitleLabel.setText(
+            _translate("AtlasPressProductSelectionDialog", "Product price")
+        )
+        self.productPriceValueLabel.setText(_translate("AtlasPressProductSelectionDialog", "—"))
+        self.basePriceNoteLabel.setText(
+            _translate(
+                "AtlasPressProductSelectionDialog",
+                "ℹ️  Prices are base prices and exclude shipping & tax.",
             )
         )
