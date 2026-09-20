@@ -39,3 +39,18 @@ make package
 ```
 
 This target regenerates `resources.py` before creating the plugin archive in `dist/`.
+
+## Product Previews
+
+Opening product selection exports a snapshot of the layout and uploads it once.
+Choose a product and size to generate its preview. Changing sizes reuses that
+upload; restart the order flow to include subsequent map edits.
+
+Preview generation is optional: once the map is uploaded and a size is selected,
+Continue to Shipping works even if the preview is still generating or failed.
+Retry is available for recoverable preview failures. Back from shipping preserves
+the uploaded asset and selection.
+
+The backend must support create, status, and retry under
+`/functions/v1/mockups`. Local Printful testing requires a publicly accessible
+source-image URL, such as your ngrok-backed storage URL.

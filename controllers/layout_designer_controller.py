@@ -37,6 +37,7 @@ class LayoutDesignerController:
         self._product_service: ProductService = core_services.product_service
         self._shipping_service: ShippingService = core_services.shipping_service
         self._quote_service: QuoteService = core_services.quote_service
+        self._mockup_service = core_services.mockup_service
         self._order_state: Final[OrderState] = OrderState()
         self._shipping_dialog: ShippingAddressDialog | None = None
         self._quote_dialog: QuoteDialog | None = None
@@ -180,10 +181,11 @@ class LayoutDesignerController:
             return
 
         self._product_dialog = ProductDialog(
-            self._product_service,
-            self._asset_service,
-            self._designer,
-            self._on_product_uploaded,
+            product_service=self._product_service,
+            asset_service=self._asset_service,
+            mockup_service=self._mockup_service,
+            designer=self._designer,
+            on_product_uploaded=self._on_product_uploaded,
         )
         self._product_dialog.show()
 
