@@ -106,7 +106,7 @@ class ProductDialog(QDialog, Ui_AtlasPressProductSelectionDialog):
         self.rootLayout.setStretch(4, 1)
 
         self.continueButton = self.actionButtonBox.button(QDialogButtonBox.StandardButton.Ok)
-        self.continueButton.setText("Next")
+        self.continueButton.setText("Continue to Shipping")
         self.continueButton.setEnabled(False)
 
         self.actionButtonBox.accepted.disconnect(self.accept)
@@ -405,7 +405,9 @@ class ProductDialog(QDialog, Ui_AtlasPressProductSelectionDialog):
             return
 
         if self._pixmap is None:
-            self._loading("Generating your preview... You can continue to shipping.")
+            self._loading(
+                "Generating your preview... You can select Continue to Shipping now."
+            )
 
         self._monitor.start(self._asset_id, self._selected_product.id)
 
@@ -416,7 +418,9 @@ class ProductDialog(QDialog, Ui_AtlasPressProductSelectionDialog):
 
     def _on_preview(self, response):
         if response.status == MockupStatus.PENDING:
-            self._loading("Generating your preview... You can continue to shipping.")
+            self._loading(
+                "Generating your preview... You can select Continue to Shipping now."
+            )
         elif response.status == MockupStatus.FAILED:
             self._preview_error(
                 response.error_message or "Could not generate a preview.", response.retryable
