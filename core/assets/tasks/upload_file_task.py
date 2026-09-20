@@ -1,7 +1,7 @@
 from qgis.core import Qgis, QgsMessageLog, QgsTask
-from qgis.gui import QgsLayoutDesignerInterface
 
 from ..asset_service import AssetService
+from ..models.exported_layout import ExportedLayout
 
 MESSAGE_CATEGORY = "UploadFileTask"
 
@@ -10,7 +10,7 @@ class UploadFileTask(QgsTask):
     def __init__(
         self,
         asset_service: AssetService,
-        designer: QgsLayoutDesignerInterface,
+        exported: ExportedLayout,
         on_finished_callback: callable,
     ):
         super().__init__(
@@ -18,15 +18,20 @@ class UploadFileTask(QgsTask):
             QgsTask.CanCancel,
         )
         self._asset_service = asset_service
-        self._designer = designer
+        self._exported = exported
         self._on_finished_callback = on_finished_callback
         self._asset_id = None
+        self._error_message = ""
 
     def run(self):
+        if self.isCanceled():
+            return False
+
         try:
-            self._asset_id = self._asset_service.upload_layout_file(self._designer)
+            self._asset_id = self._asset_service.upload_export(self._exported)
             return True
         except Exception as e:
+            self._error_message = "Could not upload the map. Please try again."
             # print stack trace for debugging purposes
             import traceback
 
@@ -38,4 +43,5 @@ class UploadFileTask(QgsTask):
             return False
 
     def finished(self, result):
-        self._on_finished_callback(result, self._asset_id)
+        if not self.isCanceled():
+            self._on_finished_callback(result, self._asset_id, self._error_message)
