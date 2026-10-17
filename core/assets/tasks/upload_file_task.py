@@ -1,6 +1,7 @@
 from qgis.core import Qgis, QgsMessageLog, QgsTask
 
 from ..asset_service import AssetService
+from ..image_normalization import ImageNormalizationError
 from ..models.exported_layout import ExportedLayout
 
 MESSAGE_CATEGORY = "UploadFileTask"
@@ -31,7 +32,11 @@ class UploadFileTask(QgsTask):
             self._asset_id = self._asset_service.upload_export(self._exported)
             return True
         except Exception as e:
-            self._error_message = "Could not upload the map. Please try again."
+            self._error_message = (
+                str(e)
+                if isinstance(e, ImageNormalizationError)
+                else "Could not upload the map. Please try again."
+            )
             # print stack trace for debugging purposes
             import traceback
 

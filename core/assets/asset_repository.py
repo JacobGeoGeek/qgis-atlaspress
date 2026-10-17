@@ -42,7 +42,7 @@ class AssetRepository:
             endpoint=upload_url,
             data=file,
             use_auth=False,
-            content_type="image/png",
+            content_type="image/jpeg",
         )
 
         if not response.is_success():
