@@ -1,0 +1,821 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>AtlasPressOrderHistoryDialog</class>
+ <widget class="QDialog" name="AtlasPressOrderHistoryDialog">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>560</width>
+    <height>640</height>
+   </rect>
+  </property>
+  <property name="minimumSize">
+   <size>
+    <width>480</width>
+    <height>520</height>
+   </size>
+  </property>
+  <property name="windowTitle">
+   <string>Atlas Press - My Orders</string>
+  </property>
+  <property name="styleSheet">
+   <string>QLabel { color: palette(text); } QGroupBox { font-weight: bold; }</string>
+  </property>
+  <layout class="QVBoxLayout" name="rootLayout" stretch="0,0,1,0,0">
+   <property name="leftMargin">
+    <number>20</number>
+   </property>
+   <property name="topMargin">
+    <number>18</number>
+   </property>
+   <property name="rightMargin">
+    <number>20</number>
+   </property>
+   <property name="bottomMargin">
+    <number>16</number>
+   </property>
+   <property name="spacing">
+    <number>14</number>
+   </property>
+   <item>
+    <widget class="QLabel" name="headerLabel">
+     <property name="font">
+      <font>
+       <pointsize>13</pointsize>
+       <bold>true</bold>
+      </font>
+     </property>
+     <property name="text">
+      <string>My Orders</string>
+     </property>
+     <property name="alignment">
+      <set>Qt::AlignmentFlag::AlignCenter</set>
+     </property>
+    </widget>
+   </item>
+   <item>
+    <widget class="QFrame" name="dividerLine">
+     <property name="frameShape">
+      <enum>QFrame::Shape::HLine</enum>
+     </property>
+    </widget>
+   </item>
+   <item>
+    <widget class="QStackedWidget" name="screenStackedWidget">
+     <widget class="QWidget" name="listScreenPage">
+      <layout class="QVBoxLayout" name="listScreenLayout">
+       <item>
+        <widget class="QStackedWidget" name="listStackedWidget">
+         <widget class="QWidget" name="listAuthPage">
+          <layout class="QVBoxLayout" name="listAuthPageLayout">
+           <item>
+            <widget class="QLabel" name="authMessageLabel">
+             <property name="text">
+              <string>A valid development user session is required.</string>
+             </property>
+             <property name="alignment">
+              <set>Qt::AlignmentFlag::AlignCenter</set>
+             </property>
+             <property name="wordWrap">
+              <bool>true</bool>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QLabel" name="authConfigLabel">
+             <property name="text">
+              <string>Update accessToken in the installed plugin's config.json and reload the plugin.</string>
+             </property>
+             <property name="alignment">
+              <set>Qt::AlignmentFlag::AlignCenter</set>
+             </property>
+             <property name="wordWrap">
+              <bool>true</bool>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QLabel" name="authDevelopmentLabel">
+             <property name="text">
+              <string>Login and token refresh are not implemented.</string>
+             </property>
+             <property name="alignment">
+              <set>Qt::AlignmentFlag::AlignCenter</set>
+             </property>
+             <property name="wordWrap">
+              <bool>true</bool>
+             </property>
+            </widget>
+           </item>
+           <property name="alignment">
+            <set>Qt::AlignmentFlag::AlignCenter</set>
+           </property>
+          </layout>
+         </widget>
+         <widget class="QWidget" name="listLoadingPage">
+          <layout class="QVBoxLayout" name="listLoadingPageLayout">
+           <item>
+            <widget class="QLabel" name="listLoadingTextLabel">
+             <property name="text">
+              <string>Loading your orders...</string>
+             </property>
+             <property name="alignment">
+              <set>Qt::AlignmentFlag::AlignCenter</set>
+             </property>
+             <property name="wordWrap">
+              <bool>true</bool>
+             </property>
+            </widget>
+           </item>
+           <property name="alignment">
+            <set>Qt::AlignmentFlag::AlignCenter</set>
+           </property>
+          </layout>
+         </widget>
+         <widget class="QWidget" name="listEmptyPage">
+          <layout class="QVBoxLayout" name="listEmptyPageLayout">
+           <item>
+            <widget class="QLabel" name="emptyTitleLabel">
+             <property name="text">
+              <string>No orders yet.</string>
+             </property>
+             <property name="alignment">
+              <set>Qt::AlignmentFlag::AlignCenter</set>
+             </property>
+             <property name="wordWrap">
+              <bool>true</bool>
+             </property>
+            </widget>
+           </item>
+           <property name="alignment">
+            <set>Qt::AlignmentFlag::AlignCenter</set>
+           </property>
+           <item>
+            <widget class="QLabel" name="emptySubtitleLabel">
+             <property name="text">
+              <string>Maps you print and order will appear here.</string>
+             </property>
+             <property name="alignment">
+              <set>Qt::AlignmentFlag::AlignCenter</set>
+             </property>
+             <property name="wordWrap">
+              <bool>true</bool>
+             </property>
+            </widget>
+           </item>
+          </layout>
+         </widget>
+         <widget class="QWidget" name="listErrorPage">
+          <layout class="QVBoxLayout" name="listErrorPageLayout">
+           <item>
+            <widget class="QLabel" name="listErrorMessageLabel">
+             <property name="text">
+              <string>Could not load orders.</string>
+             </property>
+             <property name="alignment">
+              <set>Qt::AlignmentFlag::AlignCenter</set>
+             </property>
+             <property name="wordWrap">
+              <bool>true</bool>
+             </property>
+            </widget>
+           </item>
+           <item alignment="Qt::AlignmentFlag::AlignHCenter">
+            <widget class="QPushButton" name="listRetryButton">
+             <property name="text">
+              <string>Retry</string>
+             </property>
+            </widget>
+           </item>
+           <property name="alignment">
+            <set>Qt::AlignmentFlag::AlignCenter</set>
+           </property>
+          </layout>
+         </widget>
+         <widget class="QWidget" name="listContentPage">
+          <layout class="QVBoxLayout" name="listContentPageLayout">
+           <item>
+            <widget class="QListView" name="ordersListView">
+             <property name="cursor"><cursorShape>PointingHandCursor</cursorShape></property>
+             <property name="editTriggers">
+              <set>QAbstractItemView::EditTrigger::NoEditTriggers</set>
+             </property>
+             <property name="selectionMode">
+              <enum>QAbstractItemView::SelectionMode::SingleSelection</enum>
+             </property>
+             <property name="wordWrap">
+              <bool>true</bool>
+             </property>
+             <property name="textElideMode">
+              <enum>Qt::TextElideMode::ElideNone</enum>
+             </property>
+             <property name="resizeMode">
+              <enum>QListView::ResizeMode::Adjust</enum>
+             </property>
+             <property name="spacing">
+              <number>0</number>
+             </property>
+             <property name="frameShape">
+              <enum>QFrame::Shape::NoFrame</enum>
+             </property>
+             <property name="styleSheet">
+              <string>QListView { background: transparent; outline: none; }</string>
+             </property>
+             <property name="mouseTracking">
+              <bool>true</bool>
+             </property>
+             <property name="verticalScrollMode">
+              <enum>QAbstractItemView::ScrollMode::ScrollPerPixel</enum>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QLabel" name="loadingMoreLabel">
+             <property name="text">
+              <string>Loading orders...</string>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QLabel" name="loadMoreErrorLabel">
+             <property name="wordWrap">
+              <bool>true</bool>
+             </property>
+             <property name="text">
+              <string />
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QPushButton" name="pageRetryButton">
+             <property name="text">
+              <string>Retry Loading Orders</string>
+             </property>
+            </widget>
+           </item>
+           <property name="leftMargin">
+            <number>0</number>
+           </property>
+           <property name="rightMargin">
+            <number>0</number>
+           </property>
+           <property name="topMargin">
+            <number>0</number>
+           </property>
+           <property name="bottomMargin">
+            <number>0</number>
+           </property>
+          </layout>
+         </widget>
+        </widget>
+       </item>
+       <property name="leftMargin">
+        <number>0</number>
+       </property>
+       <property name="rightMargin">
+        <number>0</number>
+       </property>
+       <property name="topMargin">
+        <number>0</number>
+       </property>
+       <property name="bottomMargin">
+        <number>0</number>
+       </property>
+      </layout>
+     </widget>
+     <widget class="QWidget" name="detailScreenPage">
+      <layout class="QVBoxLayout" name="detailScreenLayout">
+       <item>
+        <layout class="QHBoxLayout" name="backRowLayout">
+         <item>
+          <widget class="QPushButton" name="backButton">
+           <property name="text">
+            <string>Back to Orders</string>
+           </property>
+           <property name="autoDefault"><bool>false</bool></property>
+          </widget>
+         </item>
+         <item>
+          <spacer name="backRowSpacer">
+           <property name="sizeHint" stdset="0">
+            <size>
+             <width>40</width>
+             <height>20</height>
+            </size>
+           </property>
+           <property name="orientation">
+            <enum>Qt::Orientation::Horizontal</enum>
+           </property>
+          </spacer>
+         </item>
+        </layout>
+       </item>
+       <item>
+        <widget class="QStackedWidget" name="detailStackedWidget">
+         <widget class="QWidget" name="detailLoadingPage">
+          <layout class="QVBoxLayout" name="detailLoadingPageLayout">
+           <item>
+            <widget class="QLabel" name="detailLoadingTextLabel">
+             <property name="text">
+              <string>Loading order...</string>
+             </property>
+             <property name="alignment">
+              <set>Qt::AlignmentFlag::AlignCenter</set>
+             </property>
+             <property name="wordWrap">
+              <bool>true</bool>
+             </property>
+            </widget>
+           </item>
+           <property name="alignment">
+            <set>Qt::AlignmentFlag::AlignCenter</set>
+           </property>
+          </layout>
+         </widget>
+         <widget class="QWidget" name="detailErrorPage">
+          <layout class="QVBoxLayout" name="detailErrorPageLayout">
+           <item>
+            <widget class="QLabel" name="detailErrorMessageLabel">
+             <property name="text">
+              <string>This order is unavailable.</string>
+             </property>
+             <property name="alignment">
+              <set>Qt::AlignmentFlag::AlignCenter</set>
+             </property>
+             <property name="wordWrap">
+              <bool>true</bool>
+             </property>
+            </widget>
+           </item>
+           <item alignment="Qt::AlignmentFlag::AlignHCenter">
+            <widget class="QPushButton" name="detailRetryButton">
+             <property name="text">
+              <string>Retry</string>
+             </property>
+            </widget>
+           </item>
+           <property name="alignment">
+            <set>Qt::AlignmentFlag::AlignCenter</set>
+           </property>
+          </layout>
+         </widget>
+         <widget class="QWidget" name="detailContentPage">
+          <layout class="QVBoxLayout" name="detailContentPageLayout">
+           <item>
+            <widget class="QScrollArea" name="detailScrollArea">
+             <property name="widgetResizable">
+              <bool>true</bool>
+             </property>
+             <property name="frameShape">
+              <enum>QFrame::Shape::NoFrame</enum>
+             </property>
+             <widget class="QWidget" name="detailScrollContents">
+              <layout class="QVBoxLayout" name="detailLayout">
+               <item>
+                <layout class="QHBoxLayout" name="orderHeaderLayout">
+                 <item>
+                  <widget class="QLabel" name="orderIdLabel">
+                   <property name="wordWrap">
+                    <bool>true</bool>
+                   </property>
+                   <property name="textInteractionFlags">
+                    <set>Qt::TextInteractionFlag::TextSelectableByMouse</set>
+                   </property>
+                   <property name="text">
+                    <string />
+                   </property>
+                  </widget>
+                 </item>
+                 <item>
+                  <spacer name="orderHeaderSpacer">
+                   <property name="sizeHint" stdset="0">
+                    <size>
+                     <width>40</width>
+                     <height>20</height>
+                    </size>
+                   </property>
+                   <property name="orientation">
+                    <enum>Qt::Orientation::Horizontal</enum>
+                   </property>
+                  </spacer>
+                 </item>
+                 <item>
+                  <widget class="QLabel" name="statusBadgeLabel">
+                   <property name="font">
+                    <font>
+                     <bold>true</bold>
+                    </font>
+                   </property>
+                   <property name="text">
+                    <string />
+                   </property>
+                  </widget>
+                 </item>
+                </layout>
+               </item>
+               <item>
+                <widget class="QLabel" name="placedDateLabel">
+                 <property name="wordWrap">
+                  <bool>true</bool>
+                 </property>
+                 <property name="text">
+                  <string />
+                 </property>
+                </widget>
+               </item>
+               <item>
+                <widget class="QStackedWidget" name="mockupOuterStackedWidget">
+                 <widget class="QWidget" name="mockupAbsentPage">
+                  <layout class="QVBoxLayout" name="mockupAbsentPageLayout">
+                   <item>
+                    <widget class="QLabel" name="mockupAbsentLabel">
+                     <property name="wordWrap">
+                      <bool>true</bool>
+                     </property>
+                     <property name="text">
+                      <string>No preview available for this order.</string>
+                     </property>
+                     <property name="alignment">
+                      <set>Qt::AlignmentFlag::AlignCenter</set>
+                     </property>
+                    </widget>
+                   </item>
+                   <property name="leftMargin">
+                    <number>0</number>
+                   </property>
+                   <property name="rightMargin">
+                    <number>0</number>
+                   </property>
+                   <property name="topMargin">
+                    <number>0</number>
+                   </property>
+                   <property name="bottomMargin">
+                    <number>0</number>
+                   </property>
+                  </layout>
+                 </widget>
+                 <widget class="QWidget" name="mockupPresentPage">
+                  <layout class="QVBoxLayout" name="mockupPresentPageLayout">
+                   <item>
+                    <widget class="QStackedWidget" name="mockupStackedWidget">
+                     <widget class="QWidget" name="mockupLoadingPage">
+                      <layout class="QVBoxLayout" name="mockupLoadingPageLayout">
+                       <item>
+                        <widget class="QLabel" name="mockupLoadingTextLabel">
+                         <property name="text">
+                          <string>Loading preview...</string>
+                         </property>
+                         <property name="alignment">
+                          <set>Qt::AlignmentFlag::AlignCenter</set>
+                         </property>
+                         <property name="wordWrap">
+                          <bool>true</bool>
+                         </property>
+                        </widget>
+                       </item>
+                       <property name="alignment">
+                        <set>Qt::AlignmentFlag::AlignCenter</set>
+                       </property>
+                      </layout>
+                     </widget>
+                     <widget class="QWidget" name="mockupContentPage">
+                      <layout class="QVBoxLayout" name="mockupContentPageLayout">
+                       <item>
+                        <widget class="QLabel" name="previewImageLabel">
+                         <property name="minimumSize">
+                          <size>
+                           <width>1</width>
+                           <height>200</height>
+                          </size>
+                         </property>
+                         <property name="sizePolicy">
+                          <sizepolicy hsizetype="Ignored" vsizetype="Preferred">
+                           <horstretch>0</horstretch>
+                           <verstretch>0</verstretch>
+                          </sizepolicy>
+                         </property>
+                         <property name="alignment">
+                          <set>Qt::AlignmentFlag::AlignCenter</set>
+                         </property>
+                         <property name="text">
+                          <string />
+                         </property>
+                        </widget>
+                       </item>
+                      </layout>
+                     </widget>
+                     <widget class="QWidget" name="mockupErrorPage">
+                      <layout class="QVBoxLayout" name="mockupErrorPageLayout">
+                       <item>
+                        <widget class="QLabel" name="mockupErrorMessageLabel">
+                         <property name="text">
+                          <string>Preview unavailable.</string>
+                         </property>
+                         <property name="alignment">
+                          <set>Qt::AlignmentFlag::AlignCenter</set>
+                         </property>
+                         <property name="wordWrap">
+                          <bool>true</bool>
+                         </property>
+                        </widget>
+                       </item>
+                       <item alignment="Qt::AlignmentFlag::AlignHCenter">
+                        <widget class="QPushButton" name="mockupRefreshButton">
+                         <property name="text">
+                          <string>Refresh Preview</string>
+                         </property>
+                        </widget>
+                       </item>
+                       <item>
+                        <widget class="QLabel" name="mockupRefreshLimitLabel">
+                         <property name="text">
+                          <string>Still unavailable - try again later.</string>
+                         </property>
+                         <property name="alignment">
+                          <set>Qt::AlignmentFlag::AlignCenter</set>
+                         </property>
+                         <property name="wordWrap">
+                          <bool>true</bool>
+                         </property>
+                        </widget>
+                       </item>
+                       <property name="alignment">
+                        <set>Qt::AlignmentFlag::AlignCenter</set>
+                       </property>
+                      </layout>
+                     </widget>
+                    </widget>
+                   </item>
+                   <property name="leftMargin">
+                    <number>0</number>
+                   </property>
+                   <property name="rightMargin">
+                    <number>0</number>
+                   </property>
+                   <property name="topMargin">
+                    <number>0</number>
+                   </property>
+                   <property name="bottomMargin">
+                    <number>0</number>
+                   </property>
+                  </layout>
+                 </widget>
+                </widget>
+               </item>
+               <item>
+                <widget class="QLabel" name="previewDisclaimerLabel">
+                 <property name="wordWrap">
+                  <bool>true</bool>
+                 </property>
+                 <property name="text">
+                  <string>Product preview only. The final printed product may vary slightly.</string>
+                 </property>
+                 <property name="alignment">
+                  <set>Qt::AlignmentFlag::AlignCenter</set>
+                 </property>
+                </widget>
+               </item>
+               <item>
+                <widget class="QGroupBox" name="productGroupBox">
+                 <property name="title">
+                  <string>Product</string>
+                 </property>
+                 <layout class="QVBoxLayout" name="productGroupLayout">
+                  <item>
+                   <widget class="QLabel" name="productDetailLabel">
+                    <property name="wordWrap">
+                     <bool>true</bool>
+                    </property>
+                    <property name="text">
+                     <string />
+                    </property>
+                   </widget>
+                  </item>
+                  <item>
+                   <widget class="QLabel" name="quantityLabel">
+                    <property name="text">
+                     <string />
+                    </property>
+                   </widget>
+                  </item>
+                 </layout>
+                </widget>
+               </item>
+               <item>
+                <widget class="QGroupBox" name="paymentGroupBox">
+                 <layout class="QFormLayout" name="paymentGroupLayout">
+                  <item row="0" column="0">
+                   <widget class="QLabel" name="itemSubtotalCaption">
+                    <property name="text">
+                     <string>Item subtotal</string>
+                    </property>
+                   </widget>
+                  </item>
+                  <item row="0" column="1">
+                   <widget class="QLabel" name="itemSubtotalValueLabel">
+                    <property name="text">
+                     <string />
+                    </property>
+                    <property name="alignment">
+                     <set>Qt::AlignmentFlag::AlignRight|Qt::AlignmentFlag::AlignVCenter</set>
+                    </property>
+                   </widget>
+                  </item>
+                  <item row="1" column="0">
+                   <widget class="QLabel" name="shippingTotalCaption">
+                    <property name="text">
+                     <string>Shipping</string>
+                    </property>
+                   </widget>
+                  </item>
+                  <item row="1" column="1">
+                   <widget class="QLabel" name="shippingTotalValueLabel">
+                    <property name="text">
+                     <string />
+                    </property>
+                    <property name="alignment">
+                     <set>Qt::AlignmentFlag::AlignRight|Qt::AlignmentFlag::AlignVCenter</set>
+                    </property>
+                   </widget>
+                  </item>
+                  <item row="2" column="0">
+                   <widget class="QLabel" name="taxTotalCaption">
+                    <property name="text">
+                     <string>Tax</string>
+                    </property>
+                   </widget>
+                  </item>
+                  <item row="2" column="1">
+                   <widget class="QLabel" name="taxTotalValueLabel">
+                    <property name="text">
+                     <string />
+                    </property>
+                    <property name="alignment">
+                     <set>Qt::AlignmentFlag::AlignRight|Qt::AlignmentFlag::AlignVCenter</set>
+                    </property>
+                   </widget>
+                  </item>
+                  <item row="3" column="0">
+                   <widget class="QLabel" name="totalCaption">
+                    <property name="text">
+                     <string>Total</string>
+                    </property>
+                   </widget>
+                  </item>
+                  <item row="3" column="1">
+                   <widget class="QLabel" name="totalValueLabel">
+                    <property name="font">
+                     <font>
+                      <bold>true</bold>
+                     </font>
+                    </property>
+                    <property name="text">
+                     <string />
+                    </property>
+                    <property name="alignment">
+                     <set>Qt::AlignmentFlag::AlignRight|Qt::AlignmentFlag::AlignVCenter</set>
+                    </property>
+                    <property name="styleSheet">
+                     <string>font-weight: bold; color: palette(highlight);</string>
+                    </property>
+                   </widget>
+                  </item>
+                  <item row="4" column="0">
+                   <widget class="QLabel" name="paidAtCaption">
+                    <property name="text">
+                     <string>Paid</string>
+                    </property>
+                   </widget>
+                  </item>
+                  <item row="4" column="1">
+                   <widget class="QLabel" name="paidAtLabel">
+                    <property name="wordWrap">
+                     <bool>true</bool>
+                    </property>
+                    <property name="text">
+                     <string />
+                    </property>
+                    <property name="alignment">
+                     <set>Qt::AlignmentFlag::AlignRight|Qt::AlignmentFlag::AlignVCenter</set>
+                    </property>
+                   </widget>
+                  </item>
+                 </layout>
+                 <property name="title">
+                  <string>Payment</string>
+                 </property>
+                </widget>
+               </item>
+               <property name="alignment">
+                <set>Qt::AlignmentFlag::AlignTop</set>
+               </property>
+               <item>
+                <spacer name="detailContentBottomSpacer">
+                 <property name="orientation">
+                  <enum>Qt::Orientation::Vertical</enum>
+                 </property>
+                 <property name="sizeHint" stdset="0">
+                  <size>
+                   <width>20</width>
+                   <height>20</height>
+                  </size>
+                 </property>
+                </spacer>
+               </item>
+              </layout>
+             </widget>
+            </widget>
+           </item>
+           <property name="leftMargin">
+            <number>0</number>
+           </property>
+           <property name="rightMargin">
+            <number>0</number>
+           </property>
+           <property name="topMargin">
+            <number>0</number>
+           </property>
+           <property name="bottomMargin">
+            <number>0</number>
+           </property>
+          </layout>
+         </widget>
+        </widget>
+       </item>
+       <property name="leftMargin">
+        <number>0</number>
+       </property>
+       <property name="rightMargin">
+        <number>0</number>
+       </property>
+       <property name="topMargin">
+        <number>0</number>
+       </property>
+       <property name="bottomMargin">
+        <number>0</number>
+       </property>
+      </layout>
+     </widget>
+    </widget>
+   </item>
+   <item>
+    <widget class="QFrame" name="footerDividerLine">
+     <property name="frameShape">
+      <enum>QFrame::Shape::HLine</enum>
+     </property>
+    </widget>
+   </item>
+   <item>
+    <layout class="QHBoxLayout" name="footerActionsLayout">
+     <item>
+      <widget class="QPushButton" name="refreshOrdersButton">
+       <property name="text">
+        <string>Refresh Orders</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <spacer name="footerSpacer">
+       <property name="sizeHint" stdset="0">
+        <size>
+         <width>40</width>
+         <height>20</height>
+        </size>
+       </property>
+       <property name="orientation">
+        <enum>Qt::Orientation::Horizontal</enum>
+       </property>
+      </spacer>
+     </item>
+     <item>
+      <widget class="QDialogButtonBox" name="buttonsActions">
+       <property name="standardButtons">
+        <set>QDialogButtonBox::StandardButton::Close</set>
+       </property>
+      </widget>
+     </item>
+    </layout>
+   </item>
+  </layout>
+ </widget>
+ <resources />
+ <connections>
+  <connection>
+   <sender>buttonsActions</sender>
+   <signal>rejected()</signal>
+   <receiver>AtlasPressOrderHistoryDialog</receiver>
+   <slot>reject()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>0</x>
+     <y>0</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>0</x>
+     <y>0</y>
+    </hint>
+   </hints>
+  </connection>
+ </connections>
+</ui>
