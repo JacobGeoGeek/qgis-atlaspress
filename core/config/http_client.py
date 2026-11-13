@@ -13,22 +13,12 @@ class HttpClient:
         self._base_url: QUrl = QUrl(base_url)
         self._access_token: Final[str] = access_token
 
-    @property
-    def base_url(self) -> str:
-        return self._base_url.toString()
-
-    @property
-    def access_token(self) -> str:
-        return self._access_token
-
     def _build_url(self, endpoint: str) -> QUrl:
         return self._base_url.resolved(QUrl(endpoint))
 
     def _apply_auth(self, request: QNetworkRequest) -> None:
-        request.setRawHeader(
-            b"Authorization",
-            f"Bearer {self._access_token}".encode("utf-8"),
-        )
+        if self._access_token:
+            request.setRawHeader(b"Authorization", f"Bearer {self._access_token}".encode("utf-8"))
 
     def _build_response(
         self,
@@ -43,7 +33,20 @@ class HttpClient:
             reply=reply,
         )
 
-    def get(self, endpoint: str) -> HttpResponse:
+    def _build_reply_content(self, reply: QNetworkReply) -> QgsNetworkReplyContent:
+        reply_content = QgsNetworkReplyContent(reply)
+        reply_content.setContent(reply.readAll())
+        return reply_content
+
+    @property
+    def base_url(self) -> str:
+        return self._base_url.toString()
+
+    @property
+    def access_token(self) -> str:
+        return self._access_token
+
+    def get(self, endpoint: str, feedback=None) -> HttpResponse:
         url = self._build_url(endpoint)
 
         request: Final[QNetworkRequest] = QNetworkRequest(url)
@@ -56,7 +59,9 @@ class HttpClient:
         self._apply_auth(request)
 
         reply: Final[QgsBlockingNetworkRequest] = QgsBlockingNetworkRequest()
-        error_code: Final[QgsBlockingNetworkRequest.ErrorCode] = reply.get(request)
+        error_code: Final[QgsBlockingNetworkRequest.ErrorCode] = (
+            reply.get(request, True, feedback) if feedback is not None else reply.get(request)
+        )
 
         return self._build_response(reply, error_code)
 
@@ -117,11 +122,6 @@ class HttpClient:
         )
         reply.deleteLater()
         return response
-
-    def _build_reply_content(self, reply: QNetworkReply) -> QgsNetworkReplyContent:
-        reply_content = QgsNetworkReplyContent(reply)
-        reply_content.setContent(reply.readAll())
-        return reply_content
 
     def put(
         self,

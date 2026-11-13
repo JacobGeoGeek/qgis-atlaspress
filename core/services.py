@@ -4,7 +4,7 @@ from .assets.asset_repository import AssetRepository
 from .assets.asset_service import AssetService
 from .checkout.checkout_repository import CheckoutRepository
 from .checkout.checkout_service import CheckoutService
-from .config.config import load_config_file
+from .config.config import is_server_key, load_config_file
 from .config.http_client import HttpClient
 from .mockup.mockup_repository import MockupRepository
 from .mockup.mockup_service import MockupService
@@ -33,8 +33,10 @@ def create_core_services() -> CoreServices:
     base_url = str(supabase_config.get("baseUrl", "")).strip()
     access_token = str(supabase_config.get("accessToken", "")).strip()
 
-    if not base_url or not access_token:
-        raise ValueError("Supabase configuration requires baseUrl and a development accessToken.")
+    if not base_url:
+        raise ValueError("Supabase configuration requires baseUrl.")
+    if is_server_key(access_token):
+        raise ValueError("Server keys cannot be used in the plugin. Supply a genuine user session.")
 
     http_client = HttpClient(
         base_url,
