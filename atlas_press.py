@@ -4,6 +4,7 @@ from typing_extensions import Final
 
 from . import resources  # noqa: F401  Needed to register Qt resources
 from .controllers import LayoutDesignerController
+from .controllers.order_history_controller import OrderHistoryController
 from .core.services import CoreServices, create_core_services
 
 
@@ -11,12 +12,14 @@ class AtlasPress:
     def __init__(self, iface: QgisInterface):
         self._iface: Final[QgisInterface] = iface
         self._services: Final[CoreServices] = create_core_services()
+        self._order_history_controller = OrderHistoryController(iface, self._services.http_client)
 
         self._layout_designer_controllers_by_designer: Final[
             dict[QgsLayoutDesignerInterface, LayoutDesignerController]
         ] = {}
 
     def initGui(self):
+        self._order_history_controller.install()
         QgsMessageLog.logMessage(
             "Initializing AtlasPress plugin.",
             "AtlasPress",
@@ -27,6 +30,7 @@ class AtlasPress:
         self._iface.layoutDesignerWillBeClosed.connect(self._on_layout_designer_closed)
 
     def unload(self):
+        self._order_history_controller.unload()
         QgsMessageLog.logMessage(
             "Unloading AtlasPress plugin.",
             "AtlasPress",
