@@ -316,6 +316,15 @@ class Ui_AtlasPressOrderHistoryDialog(object):
         self.quantityLabel.setObjectName("quantityLabel")
         self.productGroupLayout.addWidget(self.quantityLabel)
         self.detailLayout.addWidget(self.productGroupBox)
+        self.trackingGroupBox = QtWidgets.QGroupBox(parent=self.detailScrollContents)
+        self.trackingGroupBox.setObjectName("trackingGroupBox")
+        self.trackingGroupLayout = QtWidgets.QVBoxLayout(self.trackingGroupBox)
+        self.trackingGroupLayout.setObjectName("trackingGroupLayout")
+        self.trackingUnavailableLabel = QtWidgets.QLabel(parent=self.trackingGroupBox)
+        self.trackingUnavailableLabel.setWordWrap(True)
+        self.trackingUnavailableLabel.setObjectName("trackingUnavailableLabel")
+        self.trackingGroupLayout.addWidget(self.trackingUnavailableLabel)
+        self.detailLayout.addWidget(self.trackingGroupBox)
         self.paymentGroupBox = QtWidgets.QGroupBox(parent=self.detailScrollContents)
         self.paymentGroupBox.setObjectName("paymentGroupBox")
         self.paymentGroupLayout = QtWidgets.QFormLayout(self.paymentGroupBox)
@@ -515,6 +524,12 @@ class Ui_AtlasPressOrderHistoryDialog(object):
             )
         )
         self.productGroupBox.setTitle(_translate("AtlasPressOrderHistoryDialog", "Product"))
+        self.trackingGroupBox.setTitle(
+            _translate("AtlasPressOrderHistoryDialog", "Shipping & Tracking")
+        )
+        self.trackingUnavailableLabel.setText(
+            _translate("AtlasPressOrderHistoryDialog", "Tracking information is not available yet.")
+        )
         self.paymentGroupBox.setTitle(_translate("AtlasPressOrderHistoryDialog", "Payment"))
         self.itemSubtotalCaption.setText(
             _translate("AtlasPressOrderHistoryDialog", "Item subtotal")

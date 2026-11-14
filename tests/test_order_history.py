@@ -686,6 +686,16 @@ class DialogTests(unittest.TestCase):
         self.manager.finish(failure=error(404))
         self.assertEqual(self.dialog.detailErrorMessageLabel.text(), "This order is unavailable.")
 
+    def test_tracking_unavailable_message_is_shown_in_order_details(self):
+        self.open_detail()
+        self.assertEqual(self.dialog.trackingGroupBox.title(), "Shipping & Tracking")
+        self.assertEqual(
+            self.dialog.trackingUnavailableLabel.text(),
+            "Tracking information is not available yet.",
+        )
+        self.assertTrue(self.dialog.trackingGroupBox.isVisible())
+        self.assertTrue(self.dialog.trackingUnavailableLabel.wordWrap())
+
     def test_absent_preview_leaves_order_visible(self):
         self.open_detail()
         self.assertIs(

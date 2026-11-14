@@ -603,6 +603,25 @@
                 </widget>
                </item>
                <item>
+                <widget class="QGroupBox" name="trackingGroupBox">
+                 <property name="title">
+                  <string>Shipping &amp; Tracking</string>
+                 </property>
+                 <layout class="QVBoxLayout" name="trackingGroupLayout">
+                  <item>
+                   <widget class="QLabel" name="trackingUnavailableLabel">
+                    <property name="text">
+                     <string>Tracking information is not available yet.</string>
+                    </property>
+                    <property name="wordWrap">
+                     <bool>true</bool>
+                    </property>
+                   </widget>
+                  </item>
+                 </layout>
+                </widget>
+               </item>
+               <item>
                 <widget class="QGroupBox" name="paymentGroupBox">
                  <layout class="QFormLayout" name="paymentGroupLayout">
                   <item row="0" column="0">
