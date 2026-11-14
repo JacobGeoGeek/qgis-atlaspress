@@ -51,6 +51,17 @@ Continue to Shipping works even if the preview is still generating or failed.
 Retry is available for recoverable preview failures. Back from shipping preserves
 the uploaded asset and selection.
 
-The backend must support create, status, and retry under
-`/functions/v1/mockups`. Local Printful testing requires a publicly accessible
-source-image URL, such as your ngrok-backed storage URL.
+## My Orders
+
+Open **Web > Atlas Press > My Orders** to browse saved orders and their details.
+More orders load automatically as you scroll; Refresh Orders starts a new list.
+The visible list or order details refresh automatically every 30 seconds while
+the dialog is open.
+Previews are optional and do not change or confirm orders.
+
+Closing My Orders clears its displayed data and cancels requests. Product
+previews are temporary and are not stored as a persistent local cache.
+
+## Development
+
+See the [development guide](docs/development.md) for local setup and verification.
