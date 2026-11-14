@@ -5,6 +5,7 @@ from .order_page import OrderPage
 from .order_page_result import OrderPageResult
 from .order_preview import OrderPreview
 from .order_product import OrderProduct
+from .order_sort import OrderSort
 from .order_status import OrderStatus
 from .order_summary import OrderSummary
 
@@ -14,6 +15,7 @@ __all__ = [
     "OrderPage",
     "OrderPageResult",
     "OrderPreview",
+    "OrderSort",
     "OrderProduct",
     "OrderStatus",
     "OrderSummary",

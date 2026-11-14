@@ -1,4 +1,4 @@
-from .models import OrderDetail, OrderPage
+from .models import OrderDetail, OrderPage, OrderSort, OrderStatus
 from .order_repository import OrderRepository
 
 
@@ -19,8 +19,17 @@ class OrderService:
             raise ValueError("Empty order response.")
         return result.data
 
-    def list_orders(self, cursor=None, feedback=None) -> OrderPage:
-        return self._require_data(self._repository.list_orders(cursor, feedback=feedback))
+    def list_orders(
+        self,
+        cursor=None,
+        feedback=None,
+        *,
+        status: OrderStatus | None = None,
+        sort: OrderSort = OrderSort.NEWEST,
+    ) -> OrderPage:
+        return self._require_data(
+            self._repository.list_orders(cursor, feedback=feedback, status=status, sort=sort)
+        )
 
     def get_order(self, public_order_id, feedback=None) -> OrderDetail:
         return self._require_data(
