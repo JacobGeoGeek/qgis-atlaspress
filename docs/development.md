@@ -44,3 +44,10 @@ rows, details, and images are cleared and that delayed callbacks cannot restore
 them. Changes to configuration are not watched while the plugin is running.
 
 Reading existing history requires no Stripe payment or Printful confirmation.
+
+While My Orders is open, the visible list or detail view refreshes every 30
+seconds. List refreshes re-read enough cursor pages to cover the loaded rows;
+updates preserve selection and scroll position. Temporary refresh failures keep
+existing information visible and retry on the next interval. Polling stops on
+close, plugin unload, or HTTP 401. Status refreshes do not repeatedly download
+previews or bypass their bounded retry action.

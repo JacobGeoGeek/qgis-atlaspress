@@ -75,6 +75,8 @@ class OrderHistoryDialog(QDialog, Ui_AtlasPressOrderHistoryDialog):
         return super().eventFilter(watched, event)
 
     def clear_user_data(self):
+        self.refreshStatusLabel.clear()
+        self.refreshStatusLabel.hide()
         self.orders_model.clear()
         self.orderIdLabel.setToolTip("")
 

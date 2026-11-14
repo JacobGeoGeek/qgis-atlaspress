@@ -99,7 +99,9 @@ class Ui_AtlasPressOrderHistoryDialog(object):
         self.listErrorPageLayout.addWidget(self.listErrorMessageLabel)
         self.listRetryButton = QtWidgets.QPushButton(parent=self.listErrorPage)
         self.listRetryButton.setObjectName("listRetryButton")
-        self.listErrorPageLayout.addWidget(self.listRetryButton, 0, QtCore.Qt.AlignmentFlag.AlignHCenter)
+        self.listErrorPageLayout.addWidget(
+            self.listRetryButton, 0, QtCore.Qt.AlignmentFlag.AlignHCenter
+        )
         self.listStackedWidget.addWidget(self.listErrorPage)
         self.listContentPage = QtWidgets.QWidget()
         self.listContentPage.setObjectName("listContentPage")
@@ -109,13 +111,17 @@ class Ui_AtlasPressOrderHistoryDialog(object):
         self.ordersListView = QtWidgets.QListView(parent=self.listContentPage)
         self.ordersListView.setCursor(QtGui.QCursor(QtCore.Qt.CursorShape.PointingHandCursor))
         self.ordersListView.setEditTriggers(QtWidgets.QAbstractItemView.EditTrigger.NoEditTriggers)
-        self.ordersListView.setSelectionMode(QtWidgets.QAbstractItemView.SelectionMode.SingleSelection)
+        self.ordersListView.setSelectionMode(
+            QtWidgets.QAbstractItemView.SelectionMode.SingleSelection
+        )
         self.ordersListView.setWordWrap(True)
         self.ordersListView.setTextElideMode(QtCore.Qt.TextElideMode.ElideNone)
         self.ordersListView.setResizeMode(QtWidgets.QListView.ResizeMode.Adjust)
         self.ordersListView.setFrameShape(QtWidgets.QFrame.Shape.NoFrame)
         self.ordersListView.setMouseTracking(True)
-        self.ordersListView.setVerticalScrollMode(QtWidgets.QAbstractItemView.ScrollMode.ScrollPerPixel)
+        self.ordersListView.setVerticalScrollMode(
+            QtWidgets.QAbstractItemView.ScrollMode.ScrollPerPixel
+        )
         self.ordersListView.setObjectName("ordersListView")
         self.listContentPageLayout.addWidget(self.ordersListView)
         self.loadingMoreLabel = QtWidgets.QLabel(parent=self.listContentPage)
@@ -143,7 +149,9 @@ class Ui_AtlasPressOrderHistoryDialog(object):
         self.backButton.setAutoDefault(False)
         self.backButton.setObjectName("backButton")
         self.backRowLayout.addWidget(self.backButton)
-        spacerItem = QtWidgets.QSpacerItem(40, 20, QtWidgets.QSizePolicy.Policy.Expanding, QtWidgets.QSizePolicy.Policy.Minimum)
+        spacerItem = QtWidgets.QSpacerItem(
+            40, 20, QtWidgets.QSizePolicy.Policy.Expanding, QtWidgets.QSizePolicy.Policy.Minimum
+        )
         self.backRowLayout.addItem(spacerItem)
         self.detailScreenLayout.addLayout(self.backRowLayout)
         self.detailStackedWidget = QtWidgets.QStackedWidget(parent=self.detailScreenPage)
@@ -171,7 +179,9 @@ class Ui_AtlasPressOrderHistoryDialog(object):
         self.detailErrorPageLayout.addWidget(self.detailErrorMessageLabel)
         self.detailRetryButton = QtWidgets.QPushButton(parent=self.detailErrorPage)
         self.detailRetryButton.setObjectName("detailRetryButton")
-        self.detailErrorPageLayout.addWidget(self.detailRetryButton, 0, QtCore.Qt.AlignmentFlag.AlignHCenter)
+        self.detailErrorPageLayout.addWidget(
+            self.detailRetryButton, 0, QtCore.Qt.AlignmentFlag.AlignHCenter
+        )
         self.detailStackedWidget.addWidget(self.detailErrorPage)
         self.detailContentPage = QtWidgets.QWidget()
         self.detailContentPage.setObjectName("detailContentPage")
@@ -191,11 +201,15 @@ class Ui_AtlasPressOrderHistoryDialog(object):
         self.orderHeaderLayout.setObjectName("orderHeaderLayout")
         self.orderIdLabel = QtWidgets.QLabel(parent=self.detailScrollContents)
         self.orderIdLabel.setWordWrap(True)
-        self.orderIdLabel.setTextInteractionFlags(QtCore.Qt.TextInteractionFlag.TextSelectableByMouse)
+        self.orderIdLabel.setTextInteractionFlags(
+            QtCore.Qt.TextInteractionFlag.TextSelectableByMouse
+        )
         self.orderIdLabel.setText("")
         self.orderIdLabel.setObjectName("orderIdLabel")
         self.orderHeaderLayout.addWidget(self.orderIdLabel)
-        spacerItem1 = QtWidgets.QSpacerItem(40, 20, QtWidgets.QSizePolicy.Policy.Expanding, QtWidgets.QSizePolicy.Policy.Minimum)
+        spacerItem1 = QtWidgets.QSpacerItem(
+            40, 20, QtWidgets.QSizePolicy.Policy.Expanding, QtWidgets.QSizePolicy.Policy.Minimum
+        )
         self.orderHeaderLayout.addItem(spacerItem1)
         self.statusBadgeLabel = QtWidgets.QLabel(parent=self.detailScrollContents)
         font = QtGui.QFont()
@@ -247,7 +261,9 @@ class Ui_AtlasPressOrderHistoryDialog(object):
         self.mockupContentPageLayout.setObjectName("mockupContentPageLayout")
         self.previewImageLabel = QtWidgets.QLabel(parent=self.mockupContentPage)
         self.previewImageLabel.setMinimumSize(QtCore.QSize(1, 200))
-        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Policy.Ignored, QtWidgets.QSizePolicy.Policy.Preferred)
+        sizePolicy = QtWidgets.QSizePolicy(
+            QtWidgets.QSizePolicy.Policy.Ignored, QtWidgets.QSizePolicy.Policy.Preferred
+        )
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
         sizePolicy.setHeightForWidth(self.previewImageLabel.sizePolicy().hasHeightForWidth())
@@ -269,7 +285,9 @@ class Ui_AtlasPressOrderHistoryDialog(object):
         self.mockupErrorPageLayout.addWidget(self.mockupErrorMessageLabel)
         self.mockupRefreshButton = QtWidgets.QPushButton(parent=self.mockupErrorPage)
         self.mockupRefreshButton.setObjectName("mockupRefreshButton")
-        self.mockupErrorPageLayout.addWidget(self.mockupRefreshButton, 0, QtCore.Qt.AlignmentFlag.AlignHCenter)
+        self.mockupErrorPageLayout.addWidget(
+            self.mockupRefreshButton, 0, QtCore.Qt.AlignmentFlag.AlignHCenter
+        )
         self.mockupRefreshLimitLabel = QtWidgets.QLabel(parent=self.mockupErrorPage)
         self.mockupRefreshLimitLabel.setAlignment(QtCore.Qt.AlignmentFlag.AlignCenter)
         self.mockupRefreshLimitLabel.setWordWrap(True)
@@ -304,50 +322,82 @@ class Ui_AtlasPressOrderHistoryDialog(object):
         self.paymentGroupLayout.setObjectName("paymentGroupLayout")
         self.itemSubtotalCaption = QtWidgets.QLabel(parent=self.paymentGroupBox)
         self.itemSubtotalCaption.setObjectName("itemSubtotalCaption")
-        self.paymentGroupLayout.setWidget(0, QtWidgets.QFormLayout.ItemRole.LabelRole, self.itemSubtotalCaption)
+        self.paymentGroupLayout.setWidget(
+            0, QtWidgets.QFormLayout.ItemRole.LabelRole, self.itemSubtotalCaption
+        )
         self.itemSubtotalValueLabel = QtWidgets.QLabel(parent=self.paymentGroupBox)
         self.itemSubtotalValueLabel.setText("")
-        self.itemSubtotalValueLabel.setAlignment(QtCore.Qt.AlignmentFlag.AlignRight|QtCore.Qt.AlignmentFlag.AlignVCenter)
+        self.itemSubtotalValueLabel.setAlignment(
+            QtCore.Qt.AlignmentFlag.AlignRight | QtCore.Qt.AlignmentFlag.AlignVCenter
+        )
         self.itemSubtotalValueLabel.setObjectName("itemSubtotalValueLabel")
-        self.paymentGroupLayout.setWidget(0, QtWidgets.QFormLayout.ItemRole.FieldRole, self.itemSubtotalValueLabel)
+        self.paymentGroupLayout.setWidget(
+            0, QtWidgets.QFormLayout.ItemRole.FieldRole, self.itemSubtotalValueLabel
+        )
         self.shippingTotalCaption = QtWidgets.QLabel(parent=self.paymentGroupBox)
         self.shippingTotalCaption.setObjectName("shippingTotalCaption")
-        self.paymentGroupLayout.setWidget(1, QtWidgets.QFormLayout.ItemRole.LabelRole, self.shippingTotalCaption)
+        self.paymentGroupLayout.setWidget(
+            1, QtWidgets.QFormLayout.ItemRole.LabelRole, self.shippingTotalCaption
+        )
         self.shippingTotalValueLabel = QtWidgets.QLabel(parent=self.paymentGroupBox)
         self.shippingTotalValueLabel.setText("")
-        self.shippingTotalValueLabel.setAlignment(QtCore.Qt.AlignmentFlag.AlignRight|QtCore.Qt.AlignmentFlag.AlignVCenter)
+        self.shippingTotalValueLabel.setAlignment(
+            QtCore.Qt.AlignmentFlag.AlignRight | QtCore.Qt.AlignmentFlag.AlignVCenter
+        )
         self.shippingTotalValueLabel.setObjectName("shippingTotalValueLabel")
-        self.paymentGroupLayout.setWidget(1, QtWidgets.QFormLayout.ItemRole.FieldRole, self.shippingTotalValueLabel)
+        self.paymentGroupLayout.setWidget(
+            1, QtWidgets.QFormLayout.ItemRole.FieldRole, self.shippingTotalValueLabel
+        )
         self.taxTotalCaption = QtWidgets.QLabel(parent=self.paymentGroupBox)
         self.taxTotalCaption.setObjectName("taxTotalCaption")
-        self.paymentGroupLayout.setWidget(2, QtWidgets.QFormLayout.ItemRole.LabelRole, self.taxTotalCaption)
+        self.paymentGroupLayout.setWidget(
+            2, QtWidgets.QFormLayout.ItemRole.LabelRole, self.taxTotalCaption
+        )
         self.taxTotalValueLabel = QtWidgets.QLabel(parent=self.paymentGroupBox)
         self.taxTotalValueLabel.setText("")
-        self.taxTotalValueLabel.setAlignment(QtCore.Qt.AlignmentFlag.AlignRight|QtCore.Qt.AlignmentFlag.AlignVCenter)
+        self.taxTotalValueLabel.setAlignment(
+            QtCore.Qt.AlignmentFlag.AlignRight | QtCore.Qt.AlignmentFlag.AlignVCenter
+        )
         self.taxTotalValueLabel.setObjectName("taxTotalValueLabel")
-        self.paymentGroupLayout.setWidget(2, QtWidgets.QFormLayout.ItemRole.FieldRole, self.taxTotalValueLabel)
+        self.paymentGroupLayout.setWidget(
+            2, QtWidgets.QFormLayout.ItemRole.FieldRole, self.taxTotalValueLabel
+        )
         self.totalCaption = QtWidgets.QLabel(parent=self.paymentGroupBox)
         self.totalCaption.setObjectName("totalCaption")
-        self.paymentGroupLayout.setWidget(3, QtWidgets.QFormLayout.ItemRole.LabelRole, self.totalCaption)
+        self.paymentGroupLayout.setWidget(
+            3, QtWidgets.QFormLayout.ItemRole.LabelRole, self.totalCaption
+        )
         self.totalValueLabel = QtWidgets.QLabel(parent=self.paymentGroupBox)
         font = QtGui.QFont()
         font.setBold(True)
         self.totalValueLabel.setFont(font)
         self.totalValueLabel.setText("")
-        self.totalValueLabel.setAlignment(QtCore.Qt.AlignmentFlag.AlignRight|QtCore.Qt.AlignmentFlag.AlignVCenter)
+        self.totalValueLabel.setAlignment(
+            QtCore.Qt.AlignmentFlag.AlignRight | QtCore.Qt.AlignmentFlag.AlignVCenter
+        )
         self.totalValueLabel.setObjectName("totalValueLabel")
-        self.paymentGroupLayout.setWidget(3, QtWidgets.QFormLayout.ItemRole.FieldRole, self.totalValueLabel)
+        self.paymentGroupLayout.setWidget(
+            3, QtWidgets.QFormLayout.ItemRole.FieldRole, self.totalValueLabel
+        )
         self.paidAtCaption = QtWidgets.QLabel(parent=self.paymentGroupBox)
         self.paidAtCaption.setObjectName("paidAtCaption")
-        self.paymentGroupLayout.setWidget(4, QtWidgets.QFormLayout.ItemRole.LabelRole, self.paidAtCaption)
+        self.paymentGroupLayout.setWidget(
+            4, QtWidgets.QFormLayout.ItemRole.LabelRole, self.paidAtCaption
+        )
         self.paidAtLabel = QtWidgets.QLabel(parent=self.paymentGroupBox)
         self.paidAtLabel.setWordWrap(True)
         self.paidAtLabel.setText("")
-        self.paidAtLabel.setAlignment(QtCore.Qt.AlignmentFlag.AlignRight|QtCore.Qt.AlignmentFlag.AlignVCenter)
+        self.paidAtLabel.setAlignment(
+            QtCore.Qt.AlignmentFlag.AlignRight | QtCore.Qt.AlignmentFlag.AlignVCenter
+        )
         self.paidAtLabel.setObjectName("paidAtLabel")
-        self.paymentGroupLayout.setWidget(4, QtWidgets.QFormLayout.ItemRole.FieldRole, self.paidAtLabel)
+        self.paymentGroupLayout.setWidget(
+            4, QtWidgets.QFormLayout.ItemRole.FieldRole, self.paidAtLabel
+        )
         self.detailLayout.addWidget(self.paymentGroupBox)
-        spacerItem2 = QtWidgets.QSpacerItem(20, 20, QtWidgets.QSizePolicy.Policy.Minimum, QtWidgets.QSizePolicy.Policy.Expanding)
+        spacerItem2 = QtWidgets.QSpacerItem(
+            20, 20, QtWidgets.QSizePolicy.Policy.Minimum, QtWidgets.QSizePolicy.Policy.Expanding
+        )
         self.detailLayout.addItem(spacerItem2)
         self.detailScrollArea.setWidget(self.detailScrollContents)
         self.detailContentPageLayout.addWidget(self.detailScrollArea)
@@ -355,6 +405,11 @@ class Ui_AtlasPressOrderHistoryDialog(object):
         self.detailScreenLayout.addWidget(self.detailStackedWidget)
         self.screenStackedWidget.addWidget(self.detailScreenPage)
         self.rootLayout.addWidget(self.screenStackedWidget)
+        self.refreshStatusLabel = QtWidgets.QLabel(parent=AtlasPressOrderHistoryDialog)
+        self.refreshStatusLabel.setText("")
+        self.refreshStatusLabel.setWordWrap(True)
+        self.refreshStatusLabel.setObjectName("refreshStatusLabel")
+        self.rootLayout.addWidget(self.refreshStatusLabel)
         self.footerDividerLine = QtWidgets.QFrame(parent=AtlasPressOrderHistoryDialog)
         self.footerDividerLine.setFrameShape(QtWidgets.QFrame.Shape.HLine)
         self.footerDividerLine.setObjectName("footerDividerLine")
@@ -364,7 +419,9 @@ class Ui_AtlasPressOrderHistoryDialog(object):
         self.refreshOrdersButton = QtWidgets.QPushButton(parent=AtlasPressOrderHistoryDialog)
         self.refreshOrdersButton.setObjectName("refreshOrdersButton")
         self.footerActionsLayout.addWidget(self.refreshOrdersButton)
-        spacerItem3 = QtWidgets.QSpacerItem(40, 20, QtWidgets.QSizePolicy.Policy.Expanding, QtWidgets.QSizePolicy.Policy.Minimum)
+        spacerItem3 = QtWidgets.QSpacerItem(
+            40, 20, QtWidgets.QSizePolicy.Policy.Expanding, QtWidgets.QSizePolicy.Policy.Minimum
+        )
         self.footerActionsLayout.addItem(spacerItem3)
         self.buttonsActions = QtWidgets.QDialogButtonBox(parent=AtlasPressOrderHistoryDialog)
         self.buttonsActions.setStandardButtons(QtWidgets.QDialogButtonBox.StandardButton.Close)
@@ -374,41 +431,103 @@ class Ui_AtlasPressOrderHistoryDialog(object):
         self.rootLayout.setStretch(2, 1)
 
         self.retranslateUi(AtlasPressOrderHistoryDialog)
-        self.buttonsActions.rejected.connect(AtlasPressOrderHistoryDialog.reject) # type: ignore
+        self.buttonsActions.rejected.connect(AtlasPressOrderHistoryDialog.reject)  # type: ignore
         QtCore.QMetaObject.connectSlotsByName(AtlasPressOrderHistoryDialog)
 
     def retranslateUi(self, AtlasPressOrderHistoryDialog):
         _translate = QtCore.QCoreApplication.translate
-        AtlasPressOrderHistoryDialog.setWindowTitle(_translate("AtlasPressOrderHistoryDialog", "Atlas Press - My Orders"))
-        AtlasPressOrderHistoryDialog.setStyleSheet(_translate("AtlasPressOrderHistoryDialog", "QLabel { color: palette(text); } QGroupBox { font-weight: bold; }"))
+        AtlasPressOrderHistoryDialog.setWindowTitle(
+            _translate("AtlasPressOrderHistoryDialog", "Atlas Press - My Orders")
+        )
+        AtlasPressOrderHistoryDialog.setStyleSheet(
+            _translate(
+                "AtlasPressOrderHistoryDialog",
+                "QLabel { color: palette(text); } QGroupBox { font-weight: bold; }",
+            )
+        )
         self.headerLabel.setText(_translate("AtlasPressOrderHistoryDialog", "My Orders"))
-        self.authMessageLabel.setText(_translate("AtlasPressOrderHistoryDialog", "A valid development user session is required."))
-        self.authConfigLabel.setText(_translate("AtlasPressOrderHistoryDialog", "Update accessToken in the installed plugin\'s config.json and reload the plugin."))
-        self.authDevelopmentLabel.setText(_translate("AtlasPressOrderHistoryDialog", "Login and token refresh are not implemented."))
-        self.listLoadingTextLabel.setText(_translate("AtlasPressOrderHistoryDialog", "Loading your orders..."))
+        self.authMessageLabel.setText(
+            _translate(
+                "AtlasPressOrderHistoryDialog", "A valid development user session is required."
+            )
+        )
+        self.authConfigLabel.setText(
+            _translate(
+                "AtlasPressOrderHistoryDialog",
+                "Update accessToken in the installed plugin's config.json and reload the plugin.",
+            )
+        )
+        self.authDevelopmentLabel.setText(
+            _translate(
+                "AtlasPressOrderHistoryDialog", "Login and token refresh are not implemented."
+            )
+        )
+        self.listLoadingTextLabel.setText(
+            _translate("AtlasPressOrderHistoryDialog", "Loading your orders...")
+        )
         self.emptyTitleLabel.setText(_translate("AtlasPressOrderHistoryDialog", "No orders yet."))
-        self.emptySubtitleLabel.setText(_translate("AtlasPressOrderHistoryDialog", "Maps you print and order will appear here."))
-        self.listErrorMessageLabel.setText(_translate("AtlasPressOrderHistoryDialog", "Could not load orders."))
+        self.emptySubtitleLabel.setText(
+            _translate("AtlasPressOrderHistoryDialog", "Maps you print and order will appear here.")
+        )
+        self.listErrorMessageLabel.setText(
+            _translate("AtlasPressOrderHistoryDialog", "Could not load orders.")
+        )
         self.listRetryButton.setText(_translate("AtlasPressOrderHistoryDialog", "Retry"))
-        self.ordersListView.setStyleSheet(_translate("AtlasPressOrderHistoryDialog", "QListView { background: transparent; outline: none; }"))
-        self.loadingMoreLabel.setText(_translate("AtlasPressOrderHistoryDialog", "Loading orders..."))
-        self.pageRetryButton.setText(_translate("AtlasPressOrderHistoryDialog", "Retry Loading Orders"))
+        self.ordersListView.setStyleSheet(
+            _translate(
+                "AtlasPressOrderHistoryDialog",
+                "QListView { background: transparent; outline: none; }",
+            )
+        )
+        self.loadingMoreLabel.setText(
+            _translate("AtlasPressOrderHistoryDialog", "Loading orders...")
+        )
+        self.pageRetryButton.setText(
+            _translate("AtlasPressOrderHistoryDialog", "Retry Loading Orders")
+        )
         self.backButton.setText(_translate("AtlasPressOrderHistoryDialog", "Back to Orders"))
-        self.detailLoadingTextLabel.setText(_translate("AtlasPressOrderHistoryDialog", "Loading order..."))
-        self.detailErrorMessageLabel.setText(_translate("AtlasPressOrderHistoryDialog", "This order is unavailable."))
+        self.detailLoadingTextLabel.setText(
+            _translate("AtlasPressOrderHistoryDialog", "Loading order...")
+        )
+        self.detailErrorMessageLabel.setText(
+            _translate("AtlasPressOrderHistoryDialog", "This order is unavailable.")
+        )
         self.detailRetryButton.setText(_translate("AtlasPressOrderHistoryDialog", "Retry"))
-        self.mockupAbsentLabel.setText(_translate("AtlasPressOrderHistoryDialog", "No preview available for this order."))
-        self.mockupLoadingTextLabel.setText(_translate("AtlasPressOrderHistoryDialog", "Loading preview..."))
-        self.mockupErrorMessageLabel.setText(_translate("AtlasPressOrderHistoryDialog", "Preview unavailable."))
-        self.mockupRefreshButton.setText(_translate("AtlasPressOrderHistoryDialog", "Refresh Preview"))
-        self.mockupRefreshLimitLabel.setText(_translate("AtlasPressOrderHistoryDialog", "Still unavailable - try again later."))
-        self.previewDisclaimerLabel.setText(_translate("AtlasPressOrderHistoryDialog", "Product preview only. The final printed product may vary slightly."))
+        self.mockupAbsentLabel.setText(
+            _translate("AtlasPressOrderHistoryDialog", "No preview available for this order.")
+        )
+        self.mockupLoadingTextLabel.setText(
+            _translate("AtlasPressOrderHistoryDialog", "Loading preview...")
+        )
+        self.mockupErrorMessageLabel.setText(
+            _translate("AtlasPressOrderHistoryDialog", "Preview unavailable.")
+        )
+        self.mockupRefreshButton.setText(
+            _translate("AtlasPressOrderHistoryDialog", "Refresh Preview")
+        )
+        self.mockupRefreshLimitLabel.setText(
+            _translate("AtlasPressOrderHistoryDialog", "Still unavailable - try again later.")
+        )
+        self.previewDisclaimerLabel.setText(
+            _translate(
+                "AtlasPressOrderHistoryDialog",
+                "Product preview only. The final printed product may vary slightly.",
+            )
+        )
         self.productGroupBox.setTitle(_translate("AtlasPressOrderHistoryDialog", "Product"))
         self.paymentGroupBox.setTitle(_translate("AtlasPressOrderHistoryDialog", "Payment"))
-        self.itemSubtotalCaption.setText(_translate("AtlasPressOrderHistoryDialog", "Item subtotal"))
+        self.itemSubtotalCaption.setText(
+            _translate("AtlasPressOrderHistoryDialog", "Item subtotal")
+        )
         self.shippingTotalCaption.setText(_translate("AtlasPressOrderHistoryDialog", "Shipping"))
         self.taxTotalCaption.setText(_translate("AtlasPressOrderHistoryDialog", "Tax"))
         self.totalCaption.setText(_translate("AtlasPressOrderHistoryDialog", "Total"))
-        self.totalValueLabel.setStyleSheet(_translate("AtlasPressOrderHistoryDialog", "font-weight: bold; color: palette(highlight);"))
+        self.totalValueLabel.setStyleSheet(
+            _translate(
+                "AtlasPressOrderHistoryDialog", "font-weight: bold; color: palette(highlight);"
+            )
+        )
         self.paidAtCaption.setText(_translate("AtlasPressOrderHistoryDialog", "Paid"))
-        self.refreshOrdersButton.setText(_translate("AtlasPressOrderHistoryDialog", "Refresh Orders"))
+        self.refreshOrdersButton.setText(
+            _translate("AtlasPressOrderHistoryDialog", "Refresh Orders")
+        )

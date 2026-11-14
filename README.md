@@ -55,6 +55,8 @@ the uploaded asset and selection.
 
 Open **Web > Atlas Press > My Orders** to browse saved orders and their details.
 More orders load automatically as you scroll; Refresh Orders starts a new list.
+The visible list or order details refresh automatically every 30 seconds while
+the dialog is open.
 Previews are optional and do not change or confirm orders.
 
 Closing My Orders clears its displayed data and cancels requests. Product

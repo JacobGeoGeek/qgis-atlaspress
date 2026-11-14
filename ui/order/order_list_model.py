@@ -76,6 +76,40 @@ class OrderListModel(QAbstractListModel):
         self._loading = True
         self._failed = False
 
+    def update_orders(self, orders, replace=False):
+        """Update by public ID without resetting selection or pagination state."""
+        if replace:
+            wanted = {order.public_order_id for order in orders}
+            for row in range(len(self._orders) - 1, -1, -1):
+                if self._orders[row].public_order_id not in wanted:
+                    self.beginRemoveRows(QModelIndex(), row, row)
+                    self._orders.pop(row)
+                    self.endRemoveRows()
+            for row, order in enumerate(orders):
+                source = next(
+                    (
+                        i
+                        for i, item in enumerate(self._orders)
+                        if item.public_order_id == order.public_order_id
+                    ),
+                    None,
+                )
+                if source is None:
+                    self.beginInsertRows(QModelIndex(), row, row)
+                    self._orders.insert(row, order)
+                    self.endInsertRows()
+                elif source != row:
+                    self.beginMoveRows(QModelIndex(), source, source, QModelIndex(), row)
+                    self._orders.insert(row, self._orders.pop(source))
+                    self.endMoveRows()
+        updates = {order.public_order_id: order for order in orders}
+        for row, previous in enumerate(self._orders):
+            updated = updates.get(previous.public_order_id, previous)
+            if updated != previous:
+                self._orders[row] = updated
+                index = self.index(row, 0)
+                self.dataChanged.emit(index, index)
+
     def finish_fetch(self, has_more, failed=False):
         self._has_more = has_more
         self._loading = False
