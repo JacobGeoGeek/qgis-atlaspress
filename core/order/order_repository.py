@@ -1,8 +1,15 @@
-from urllib.parse import quote
+from urllib.parse import quote, urlencode
 
 from ..config.http_client import HttpClient
 from ..config.model.http_response import HttpResponse, HttpResponseError
-from .models import OrderDetail, OrderDetailResult, OrderPage, OrderPageResult
+from .models import (
+    OrderDetail,
+    OrderDetailResult,
+    OrderPage,
+    OrderPageResult,
+    OrderSort,
+    OrderStatus,
+)
 
 
 class OrderRepository:
@@ -23,10 +30,20 @@ class OrderRepository:
             details=[],
         )
 
-    def list_orders(self, cursor: str | None = None, feedback=None) -> OrderPageResult:
-        endpoint = "/functions/v1/orders?limit=20"
+    def list_orders(
+        self,
+        cursor: str | None = None,
+        feedback=None,
+        *,
+        status: OrderStatus | None = None,
+        sort: OrderSort = OrderSort.NEWEST,
+    ) -> OrderPageResult:
+        parameters = {"limit": "20", "sort": sort.value}
+        if status is not None:
+            parameters["status"] = status.name
         if cursor is not None:
-            endpoint += f"&cursor={quote(cursor, safe='')}"
+            parameters["cursor"] = cursor
+        endpoint = f"/functions/v1/orders?{urlencode(parameters)}"
         response = self._get(endpoint, feedback)
 
         if not response.is_success():

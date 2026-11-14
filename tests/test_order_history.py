@@ -132,13 +132,61 @@ class ApiTests(unittest.TestCase):
         result = repo.list_orders(cursor)
         self.assertIsNone(result.error)
         endpoint = client.get.call_args.kwargs["endpoint"]
-        self.assertEqual(parse_qs(urlsplit(endpoint).query), {"limit": ["20"], "cursor": [cursor]})
+        self.assertEqual(
+            parse_qs(urlsplit(endpoint).query),
+            {
+                "limit": ["20"],
+                "sort": ["newest"],
+                "cursor": [cursor],
+            },
+        )
         encoded_url = bytes(
             http_module.HttpClient("http://localhost", "user")._build_url(endpoint).toEncoded()
         ).decode()
         self.assertEqual(parse_qs(urlsplit(encoded_url).query)["cursor"], [cursor])
         repo.list_orders()
-        client.get.assert_called_with(endpoint="/functions/v1/orders?limit=20")
+        client.get.assert_called_with(endpoint="/functions/v1/orders?limit=20&sort=newest")
+
+    def test_filter_sort_and_cursor_are_encoded_for_every_combination(self):
+        client = Mock()
+        client.get.return_value.content_json.return_value = {"orders": [], "nextCursor": None}
+        repo = repository_module.OrderRepository(client)
+        cursor = "opaque:/+? &%="
+        for status in (None, *models.OrderStatus):
+            for sort in models.OrderSort:
+                with self.subTest(status=status, sort=sort):
+                    for next_cursor in (None, cursor):
+                        self.assertIsNone(
+                            repo.list_orders(next_cursor, status=status, sort=sort).error
+                        )
+                        query = parse_qs(urlsplit(client.get.call_args.kwargs["endpoint"]).query)
+                        self.assertEqual(query["sort"], [sort.value])
+                        self.assertEqual(query.get("status"), [status.name] if status else None)
+                        self.assertEqual(query.get("cursor"), [cursor] if next_cursor else None)
+
+    def test_list_task_captures_filter_sort_and_forwards_them_through_service(self):
+        service_module = importlib.import_module("atlaspress_test.core.order.order_service")
+        tasks = importlib.import_module("atlaspress_test.core.order.tasks")
+        repo = Mock(spec=repository_module.OrderRepository)
+        page = models.OrderPage([], None)
+        repo.list_orders.return_value = models.OrderPageResult(page, None)
+        service = service_module.OrderService(repo)
+        callback = Mock()
+        task = tasks.ListOrdersTask(
+            service,
+            "cursor",
+            callback,
+            status=models.OrderStatus.SHIPPED,
+            sort=models.OrderSort.OLDEST,
+        )
+        task.finished(task.run())
+        repo.list_orders.assert_called_once_with(
+            "cursor",
+            feedback=task._feedback,
+            status=models.OrderStatus.SHIPPED,
+            sort=models.OrderSort.OLDEST,
+        )
+        callback.assert_called_once_with(page, None)
 
     def test_detail_route_and_structured_errors(self):
         client = Mock()
@@ -311,6 +359,145 @@ class DialogTests(unittest.TestCase):
         self.load_page()
         self.controller.open_order(order_json()["publicOrderId"])
         self.manager.finish(models.OrderDetail.from_json(order_json(**changes)))
+
+    def select_status(self, status):
+        self.dialog.statusFilterComboBox.setCurrentIndex(
+            self.dialog.statusFilterComboBox.findData(status)
+        )
+
+    def test_query_controls_use_existing_labels_and_backend_values(self):
+        combo = self.dialog.statusFilterComboBox
+        self.assertEqual(combo.count(), len(models.OrderStatus) + 1)
+        self.assertEqual(combo.itemText(0), "All orders")
+        self.assertIsNone(combo.itemData(0))
+        for i, status in enumerate(models.OrderStatus, 1):
+            self.assertEqual(combo.itemText(i), status.value)
+            self.assertIs(combo.itemData(i), status)
+        self.assertEqual(self.dialog.sortOrderComboBox.currentText(), "Newest first")
+        self.assertFalse(self.dialog.queryControlsWidget.isHidden())
+
+    def test_filter_sort_and_reset_are_keyboard_usable(self):
+        APP.setActiveWindow(self.dialog)
+        APP.processEvents()
+        self.dialog.statusFilterComboBox.setFocus()
+        QTest.keyClick(self.dialog.statusFilterComboBox, Qt.Key.Key_End)
+        self.assertIs(self.manager.tasks[-1]._status, models.OrderStatus.FAILED)
+        QTest.keyClick(self.dialog.statusFilterComboBox, Qt.Key.Key_Tab)
+        self.assertTrue(self.dialog.sortOrderComboBox.hasFocus())
+        QTest.keyClick(self.dialog.sortOrderComboBox, Qt.Key.Key_End)
+        self.assertIs(self.manager.tasks[-1]._sort, models.OrderSort.OLDEST)
+        QTest.keyClick(self.dialog.sortOrderComboBox, Qt.Key.Key_Tab)
+        self.assertTrue(self.dialog.resetFiltersButton.hasFocus())
+        QTest.keyClick(self.dialog.resetFiltersButton, Qt.Key.Key_Space)
+        self.assertIsNone(self.manager.tasks[-1]._status)
+        self.assertIs(self.manager.tasks[-1]._sort, models.OrderSort.NEWEST)
+
+    def test_changing_status_cancels_request_clears_cursor_and_ignores_old_results(self):
+        self.load_page(tuple(range(1, 21)), "old-cursor")
+        self.controller.load_more()
+        old_task = self.manager.tasks[-1]
+        self.select_status(models.OrderStatus.SHIPPED)
+        task = self.manager.tasks[-1]
+        self.assertTrue(old_task.isCanceled())
+        self.assertIsNone(task._cursor)
+        self.assertIs(task._status, models.OrderStatus.SHIPPED)
+        self.assertEqual(self.dialog.orders_model.rowCount(), 0)
+        self.assertIsNone(self.controller._cursor)
+        old_task._callback(
+            models.OrderPage([models.OrderSummary.from_json(order_json())], "stale-cursor"), None
+        )
+        self.assertEqual(self.dialog.orders_model.rowCount(), 0)
+        self.assertIs(self.controller._list_task, task)
+        self.assertIsNone(self.controller._cursor)
+        self.load_page(())
+        self.assertEqual(self.dialog.emptyTitleLabel.text(), "No orders match the selected status.")
+        self.assertFalse(self.dialog.queryControlsWidget.isHidden())
+
+    def test_sort_changes_immediately_and_reset_issues_only_one_default_request(self):
+        self.select_status(models.OrderStatus.PAID)
+        self.dialog.sortOrderComboBox.setCurrentIndex(1)
+        self.assertIs(self.manager.tasks[-1]._sort, models.OrderSort.OLDEST)
+        count = len(self.manager.tasks)
+        self.dialog.resetFiltersButton.click()
+        self.assertEqual(len(self.manager.tasks), count + 1)
+        self.assertIsNone(self.manager.tasks[-1]._status)
+        self.assertIs(self.manager.tasks[-1]._sort, models.OrderSort.NEWEST)
+        self.assertEqual(self.dialog.statusFilterComboBox.currentIndex(), 0)
+        self.assertEqual(self.dialog.sortOrderComboBox.currentIndex(), 0)
+        self.dialog.resetFiltersButton.click()
+        self.assertEqual(len(self.manager.tasks), count + 1)
+
+    def test_filtered_pagination_retry_manual_and_automatic_refresh_keep_query(self):
+        self.select_status(models.OrderStatus.PAID)
+        self.dialog.sortOrderComboBox.setCurrentIndex(1)
+        self.load_page(tuple(range(1, 21)), "filtered-cursor")
+        self.controller.load_more()
+        self.assertEqual(self.manager.tasks[-1]._cursor, "filtered-cursor")
+        self.manager.finish(failure=error(500))
+        self.dialog.pageRetryButton.click()
+        self.assertEqual(self.manager.tasks[-1]._cursor, "filtered-cursor")
+        self.load_page((21,))
+        self.controller._refresh_timer.timeout.emit()
+        self.load_page(tuple(range(1, 21)), "poll-page-2")
+        self.assertEqual(self.manager.tasks[-1]._cursor, "poll-page-2")
+        self.load_page((21,))
+        self.controller.refresh_orders()
+        self.assertIsNone(self.manager.tasks[-1]._cursor)
+        for task in self.manager.tasks[3:]:
+            self.assertIs(task._status, models.OrderStatus.PAID)
+            self.assertIs(task._sort, models.OrderSort.OLDEST)
+        self.assertIs(self.dialog.statusFilterComboBox.currentData(), models.OrderStatus.PAID)
+        self.assertIs(self.dialog.sortOrderComboBox.currentData(), models.OrderSort.OLDEST)
+
+    def test_filter_change_during_multi_page_poll_discards_partial_results(self):
+        self.load_page(tuple(range(1, 41)), "next")
+        self.controller._refresh_timer.timeout.emit()
+        self.load_page(tuple(range(1, 21)), "next-poll")
+        old_task = self.manager.tasks[-1]
+        self.select_status(models.OrderStatus.FAILED)
+        old_task._callback(
+            models.OrderPage([models.OrderSummary.from_json(order_json(22))], None), None
+        )
+        self.assertEqual(self.dialog.orders_model.rowCount(), 0)
+        self.assertIs(self.manager.tasks[-1]._status, models.OrderStatus.FAILED)
+
+    def test_query_errors_preserve_controls_and_401_hides_them(self):
+        self.select_status(models.OrderStatus.SHIPPED)
+        for status_code in (400, 500):
+            self.manager.finish(failure=error(status_code))
+            self.assertFalse(self.dialog.queryControlsWidget.isHidden())
+            self.assertIs(
+                self.dialog.statusFilterComboBox.currentData(), models.OrderStatus.SHIPPED
+            )
+            self.dialog.listRetryButton.click()
+            self.assertIs(self.manager.tasks[-1]._status, models.OrderStatus.SHIPPED)
+        self.manager.finish(failure=error(401))
+        self.assertTrue(self.dialog.queryControlsWidget.isHidden())
+        self.assertFalse(self.controller._refresh_timer.isActive())
+
+    def test_detail_outside_filter_stays_open_but_leaves_cached_list(self):
+        self.select_status(models.OrderStatus.PAID)
+        self.load_page()
+        self.controller.open_order(order_json()["publicOrderId"])
+        self.manager.finish(models.OrderDetail.from_json(order_json()))
+        self.controller._refresh_timer.timeout.emit()
+        self.manager.finish(models.OrderDetail.from_json(order_json(status="SHIPPED")))
+        self.assertEqual(self.dialog.statusBadgeLabel.text(), "Shipped")
+        self.assertIs(self.dialog.screenStackedWidget.currentWidget(), self.dialog.detailScreenPage)
+        self.assertEqual(self.dialog.orders_model.rowCount(), 0)
+        self.controller.back_to_orders()
+        self.assertIs(self.manager.tasks[-1]._status, models.OrderStatus.PAID)
+        self.assertIsNone(self.manager.tasks[-1]._cursor)
+
+    def test_close_reopen_resets_query_without_duplicate_requests(self):
+        self.select_status(models.OrderStatus.DELIVERED)
+        self.dialog.sortOrderComboBox.setCurrentIndex(1)
+        self.dialog.close()
+        count = len(self.manager.tasks)
+        self.controller.show()
+        self.assertEqual(len(self.manager.tasks), count + 1)
+        self.assertIsNone(self.manager.tasks[-1]._status)
+        self.assertIs(self.manager.tasks[-1]._sort, models.OrderSort.NEWEST)
 
     def test_poll_timer_starts_and_skips_overlapping_requests(self):
         self.assertTrue(self.controller._refresh_timer.isActive())
@@ -505,7 +692,7 @@ class DialogTests(unittest.TestCase):
         self.assertEqual(self.dialog.totalValueLabel.text(), "USD 58.00")
         self.assertEqual(self.dialog.paidAtLabel.text(), "Not available")
         self.controller.back_to_orders()
-        self.assertEqual(len(self.manager.tasks), count + 1)
+        self.assertEqual(len(self.manager.tasks), count + 2)
         self.assertEqual(len(self.dialog.orders_model.orders), 3)
 
     def test_native_list_fetches_next_page_when_scrolled(self):

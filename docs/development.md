@@ -45,6 +45,18 @@ them. Changes to configuration are not watched while the plugin is running.
 
 Reading existing history requires no Stripe payment or Printful confirmation.
 
+Deploy the backend order filtering/sorting enhancement before using the updated
+plugin. List requests send `sort=newest` or `sort=oldest` and optionally a stored
+`status` value. Filtering and ordering apply to all matching orders on the server,
+not only the loaded rows. Existing backend versions reject these new parameters;
+the plugin displays that request failure rather than silently filtering locally.
+
+Verify status/sort combinations across several pages, rapid selection changes,
+Reset, and manual/automatic refresh. Back from details retains the selections;
+closing and reopening My Orders restores the defaults. Check that an order whose
+status leaves the selected filter disappears from the list but its open details
+remain readable.
+
 While My Orders is open, the visible list or detail view refreshes every 30
 seconds. List refreshes re-read enough cursor pages to cover the loaded rows;
 updates preserve selection and scroll position. Temporary refresh failures keep

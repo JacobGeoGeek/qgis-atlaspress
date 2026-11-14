@@ -37,6 +37,33 @@ class Ui_AtlasPressOrderHistoryDialog(object):
         self.listScreenLayout = QtWidgets.QVBoxLayout(self.listScreenPage)
         self.listScreenLayout.setContentsMargins(0, 0, 0, 0)
         self.listScreenLayout.setObjectName("listScreenLayout")
+        self.queryControlsWidget = QtWidgets.QWidget(parent=self.listScreenPage)
+        self.queryControlsWidget.setObjectName("queryControlsWidget")
+        self.queryControlsLayout = QtWidgets.QGridLayout(self.queryControlsWidget)
+        self.queryControlsLayout.setContentsMargins(0, 0, 0, 0)
+        self.queryControlsLayout.setObjectName("queryControlsLayout")
+        self.statusFilterLabel = QtWidgets.QLabel(parent=self.queryControlsWidget)
+        self.statusFilterLabel.setObjectName("statusFilterLabel")
+        self.queryControlsLayout.addWidget(self.statusFilterLabel, 0, 0, 1, 1)
+        self.sortOrderLabel = QtWidgets.QLabel(parent=self.queryControlsWidget)
+        self.sortOrderLabel.setObjectName("sortOrderLabel")
+        self.queryControlsLayout.addWidget(self.sortOrderLabel, 0, 1, 1, 1)
+        self.statusFilterComboBox = QtWidgets.QComboBox(parent=self.queryControlsWidget)
+        self.statusFilterComboBox.setObjectName("statusFilterComboBox")
+        self.queryControlsLayout.addWidget(self.statusFilterComboBox, 1, 0, 1, 1)
+        self.sortOrderComboBox = QtWidgets.QComboBox(parent=self.queryControlsWidget)
+        self.sortOrderComboBox.setObjectName("sortOrderComboBox")
+        self.sortOrderComboBox.addItem("")
+        self.sortOrderComboBox.addItem("")
+        self.queryControlsLayout.addWidget(self.sortOrderComboBox, 1, 1, 1, 1)
+        self.resetFiltersButton = QtWidgets.QPushButton(parent=self.queryControlsWidget)
+        self.resetFiltersButton.setAutoDefault(False)
+        self.resetFiltersButton.setObjectName("resetFiltersButton")
+        self.queryControlsLayout.addWidget(
+            self.resetFiltersButton, 1, 2, 1, 1, QtCore.Qt.AlignmentFlag.AlignRight
+        )
+        self.queryControlsLayout.setColumnStretch(0, 1)
+        self.listScreenLayout.addWidget(self.queryControlsWidget)
         self.listStackedWidget = QtWidgets.QStackedWidget(parent=self.listScreenPage)
         self.listStackedWidget.setObjectName("listStackedWidget")
         self.listAuthPage = QtWidgets.QWidget()
@@ -438,6 +465,8 @@ class Ui_AtlasPressOrderHistoryDialog(object):
         self.footerActionsLayout.addWidget(self.buttonsActions)
         self.rootLayout.addLayout(self.footerActionsLayout)
         self.rootLayout.setStretch(2, 1)
+        self.statusFilterLabel.setBuddy(self.statusFilterComboBox)
+        self.sortOrderLabel.setBuddy(self.sortOrderComboBox)
 
         self.retranslateUi(AtlasPressOrderHistoryDialog)
         self.buttonsActions.rejected.connect(AtlasPressOrderHistoryDialog.reject)  # type: ignore
@@ -455,6 +484,15 @@ class Ui_AtlasPressOrderHistoryDialog(object):
             )
         )
         self.headerLabel.setText(_translate("AtlasPressOrderHistoryDialog", "My Orders"))
+        self.statusFilterLabel.setText(_translate("AtlasPressOrderHistoryDialog", "&Status"))
+        self.sortOrderLabel.setText(_translate("AtlasPressOrderHistoryDialog", "Sort &by"))
+        self.sortOrderComboBox.setItemText(
+            0, _translate("AtlasPressOrderHistoryDialog", "Newest first")
+        )
+        self.sortOrderComboBox.setItemText(
+            1, _translate("AtlasPressOrderHistoryDialog", "Oldest first")
+        )
+        self.resetFiltersButton.setText(_translate("AtlasPressOrderHistoryDialog", "&Reset"))
         self.authMessageLabel.setText(
             _translate(
                 "AtlasPressOrderHistoryDialog", "A valid development user session is required."

@@ -55,6 +55,9 @@ the uploaded asset and selection.
 
 Open **Web > Atlas Press > My Orders** to browse saved orders and their details.
 More orders load automatically as you scroll; Refresh Orders starts a new list.
+Use Status to filter all your orders and Sort by to choose newest or oldest
+first. Changes apply immediately; Reset restores All orders and Newest first.
+Your selections stay active while browsing details or refreshing the list.
 The visible list or order details refresh automatically every 30 seconds while
 the dialog is open.
 Previews are optional and do not change or confirm orders.
