@@ -1,6 +1,7 @@
-from qgis.PyQt.QtCore import QEvent, Qt, pyqtSignal
+from qgis.PyQt.QtCore import QEvent, QSignalBlocker, Qt, pyqtSignal
 from qgis.PyQt.QtWidgets import QDialog
 
+from ...core.order.models import OrderSort, OrderStatus
 from ..common.spinner_widget import SpinnerWidget
 from .order_history_dialog_ui import Ui_AtlasPressOrderHistoryDialog
 from .order_item_delegate import OrderItemDelegate
@@ -23,6 +24,11 @@ class OrderHistoryDialog(QDialog, Ui_AtlasPressOrderHistoryDialog):
     def __init__(self, parent=None):
         super().__init__(parent)
         self.setupUi(self)
+        self.statusFilterComboBox.addItem("All orders", None)
+        for status in OrderStatus:
+            self.statusFilterComboBox.addItem(status.value, status)
+        self.sortOrderComboBox.setItemData(0, OrderSort.NEWEST)
+        self.sortOrderComboBox.setItemData(1, OrderSort.OLDEST)
         self._pixmap = None
         self.previewImageLabel.installEventFilter(self)
         self.orders_model = OrderListModel(self)
@@ -74,7 +80,9 @@ class OrderHistoryDialog(QDialog, Ui_AtlasPressOrderHistoryDialog):
 
         return super().eventFilter(watched, event)
 
-    def clear_user_data(self):
+    def clear_user_data(self, preserve_query_controls=False):
+        if not preserve_query_controls:
+            self.queryControlsWidget.hide()
         self.refreshStatusLabel.clear()
         self.refreshStatusLabel.hide()
         self.orders_model.clear()
@@ -103,6 +111,19 @@ class OrderHistoryDialog(QDialog, Ui_AtlasPressOrderHistoryDialog):
         self.screenStackedWidget.setCurrentWidget(self.listScreenPage)
         self.listStackedWidget.setCurrentWidget(self.listAuthPage)
         self.set_loading()
+
+    def reset_query_controls(self):
+        status_blocker = QSignalBlocker(self.statusFilterComboBox)
+        sort_blocker = QSignalBlocker(self.sortOrderComboBox)
+        self.statusFilterComboBox.setCurrentIndex(0)
+        self.sortOrderComboBox.setCurrentIndex(0)
+        del status_blocker, sort_blocker
+
+    def set_empty_message(self, filtered):
+        self.emptyTitleLabel.setText(
+            "No orders match the selected status." if filtered else "No orders yet."
+        )
+        self.emptySubtitleLabel.setVisible(not filtered)
 
     def clear_preview(self):
         self._pixmap = None
