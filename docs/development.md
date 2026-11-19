@@ -52,19 +52,23 @@ not only the loaded rows. Existing backend versions reject these new parameters;
 the plugin displays that request failure rather than silently filtering locally.
 
 Verify status/sort combinations across several pages, rapid selection changes,
-Reset, and manual/automatic refresh. Back from details retains the selections;
+Reset, and manual refresh. Back from details retains the selections;
 closing and reopening My Orders restores the defaults. Check that an order whose
 status leaves the selected filter disappears from the list but its open details
 remain readable.
 
-While My Orders is open, the visible orders list refreshes every 30 seconds.
-List refreshes re-read enough cursor pages to cover the loaded rows;
-updates preserve selection and scroll position. Temporary refresh failures keep
-existing information visible and retry on the next interval. Polling stops on
-close, plugin unload, or HTTP 401. Order details are fetched on each opening and
-through Refresh Details, not periodically. Manual refresh retains displayed
-information during the request and temporary failures. It does not repeatedly
-download previews or bypass their bounded retry action.
+The orders list loads when My Orders opens. Refresh Orders starts a new request
+from page one, preserving the selected status and sort but clearing the old rows
+and cursor. Pagination loads subsequent pages; it does not refresh existing rows.
+Neither the list nor order details are polled periodically. Returning from details
+preserves the loaded list and scroll position without requesting a refresh.
+
+Order details are fetched on each opening and through Refresh Details. Detail
+refresh retains displayed information during the request and temporary failures.
+It does not repeatedly download previews or bypass their bounded retry action.
+The preview-download timeout and expired-preview URL handling remain in place;
+they are independent of order refresh. Closing, plugin unload, and HTTP 401 still
+cancel requests and prevent stale callbacks from restoring data.
 
 ## Shipping And Tracking Verification
 

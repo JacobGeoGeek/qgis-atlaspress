@@ -58,7 +58,8 @@ More orders load automatically as you scroll; Refresh Orders starts a new list.
 Use Status to filter all your orders and Sort by to choose newest or oldest
 first. Changes apply immediately; Reset restores All orders and Newest first.
 Your selections stay active while browsing details or refreshing the list.
-The orders list refreshes automatically every 30 seconds while it is displayed.
+The latest orders load when My Orders opens. Use Refresh Orders to update the
+list while it stays open; refreshing restarts pagination with your current filters.
 Opening an order fetches its latest saved details; use Refresh Details for further
 updates. Shipping & Tracking lists available packages and lets you open their
 tracking pages in your browser.
