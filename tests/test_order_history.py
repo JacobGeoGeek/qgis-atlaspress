@@ -480,7 +480,7 @@ class DialogTests(unittest.TestCase):
         self.load_page()
         self.controller.open_order(order_json()["publicOrderId"])
         self.manager.finish(models.OrderDetail.from_json(order_json()))
-        self.controller._refresh_timer.timeout.emit()
+        self.dialog.refreshOrdersButton.click()
         self.manager.finish(models.OrderDetail.from_json(order_json(status="SHIPPED")))
         self.assertEqual(self.dialog.statusBadgeLabel.text(), "Shipped")
         self.assertIs(self.dialog.screenStackedWidget.currentWidget(), self.dialog.detailScreenPage)
@@ -605,12 +605,12 @@ class DialogTests(unittest.TestCase):
         self.load_page(tuple(range(1, 21)), "next")
         self.assertTrue(self.dialog.refreshStatusLabel.isHidden())
 
-    def test_detail_poll_updates_status_without_loading_page_or_preview_retry(self):
+    def test_detail_refresh_updates_status_without_loading_page_or_preview_retry(self):
         self.controller._network = Mock()
         self.controller._network.get.return_value = ImageReply(failed=True)
         self.open_detail(mockup=preview())
         self.controller._reply.finished.emit()
-        self.controller._refresh_timer.timeout.emit()
+        self.dialog.refreshOrdersButton.click()
         self.assertIs(
             self.dialog.detailStackedWidget.currentWidget(), self.dialog.detailContentPage
         )
@@ -622,15 +622,15 @@ class DialogTests(unittest.TestCase):
         self.controller._network.get.assert_called_once()
         self.assertIs(self.dialog.mockupStackedWidget.currentWidget(), self.dialog.mockupErrorPage)
 
-    def test_detail_poll_temporary_failure_retains_content_but_404_is_unavailable(self):
+    def test_detail_refresh_temporary_failure_retains_content_but_404_is_unavailable(self):
         self.open_detail()
-        self.controller._refresh_timer.timeout.emit()
+        self.dialog.refreshOrdersButton.click()
         self.manager.finish(failure=error(500))
         self.assertEqual(self.dialog.totalValueLabel.text(), "USD 58.00")
         self.assertIs(
             self.dialog.detailStackedWidget.currentWidget(), self.dialog.detailContentPage
         )
-        self.controller._refresh_timer.timeout.emit()
+        self.dialog.refreshOrdersButton.click()
         self.manager.finish(failure=error(404))
         self.assertIs(self.dialog.detailStackedWidget.currentWidget(), self.dialog.detailErrorPage)
 
@@ -875,7 +875,9 @@ class DialogTests(unittest.TestCase):
 
     def test_tracking_unavailable_message_is_shown_in_order_details(self):
         self.open_detail()
-        self.assertEqual(self.dialog.trackingGroupBox.title(), "Shipping & Tracking")
+        self.assertEqual(
+            self.dialog.trackingGroupBox.title().replace("&&", "&"), "Shipping & Tracking"
+        )
         self.assertEqual(
             self.dialog.trackingUnavailableLabel.text(),
             "Tracking information is not available yet.",
