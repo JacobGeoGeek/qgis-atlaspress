@@ -642,7 +642,7 @@
                <item>
                 <widget class="QGroupBox" name="trackingGroupBox">
                  <property name="title">
-                  <string>Shipping &amp; Tracking</string>
+                  <string>Shipping &amp;&amp; Tracking</string>
                  </property>
                  <layout class="QVBoxLayout" name="trackingGroupLayout">
                   <item>
