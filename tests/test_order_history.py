@@ -18,6 +18,7 @@ from qgis.PyQt.QtCore import (
     QObject,
     QRect,
     Qt,
+    QTimer,
     QUrl,
     pyqtSignal,
 )
@@ -427,7 +428,7 @@ class DialogTests(unittest.TestCase):
         self.dialog.resetFiltersButton.click()
         self.assertEqual(len(self.manager.tasks), count + 1)
 
-    def test_filtered_pagination_retry_manual_and_automatic_refresh_keep_query(self):
+    def test_filtered_pagination_retry_and_manual_refresh_keep_query(self):
         self.select_status(models.OrderStatus.PAID)
         self.dialog.sortOrderComboBox.setCurrentIndex(1)
         self.load_page(tuple(range(1, 21)), "filtered-cursor")
@@ -437,11 +438,7 @@ class DialogTests(unittest.TestCase):
         self.dialog.pageRetryButton.click()
         self.assertEqual(self.manager.tasks[-1]._cursor, "filtered-cursor")
         self.load_page((21,))
-        self.controller._refresh_timer.timeout.emit()
-        self.load_page(tuple(range(1, 21)), "poll-page-2")
-        self.assertEqual(self.manager.tasks[-1]._cursor, "poll-page-2")
-        self.load_page((21,))
-        self.controller.refresh_orders()
+        self.dialog.refreshOrdersButton.click()
         self.assertIsNone(self.manager.tasks[-1]._cursor)
         for task in self.manager.tasks[3:]:
             self.assertIs(task._status, models.OrderStatus.PAID)
@@ -449,17 +446,58 @@ class DialogTests(unittest.TestCase):
         self.assertIs(self.dialog.statusFilterComboBox.currentData(), models.OrderStatus.PAID)
         self.assertIs(self.dialog.sortOrderComboBox.currentData(), models.OrderSort.OLDEST)
 
-    def test_filter_change_during_multi_page_poll_discards_partial_results(self):
-        self.load_page(tuple(range(1, 41)), "next")
-        self.controller._refresh_timer.timeout.emit()
-        self.load_page(tuple(range(1, 21)), "next-poll")
-        old_task = self.manager.tasks[-1]
-        self.select_status(models.OrderStatus.FAILED)
-        old_task._callback(
-            models.OrderPage([models.OrderSummary.from_json(order_json(22))], None), None
-        )
+    def test_list_loads_on_open_without_periodic_or_activation_refresh(self):
+        self.assertEqual(len(self.manager.tasks), 1)
+        self.load_page(tuple(range(1, 21)), "next")
+        count = len(self.manager.tasks)
+        self.dialog.activated.emit()
+        APP.processEvents()
+        QTest.qWait(30)
+        self.assertEqual(len(self.manager.tasks), count)
+        timers = [
+            timer
+            for timer in self.controller.findChildren(QTimer)
+            if timer.parent() is self.controller
+        ]
+        self.assertEqual(timers, [self.controller._preview_timeout])
+        self.assertTrue(timers[0].isSingleShot())
+
+    def test_refresh_button_restarts_pagination_and_discards_previous_results(self):
+        self.load_page(tuple(range(1, 21)), "page-2")
+        self.controller.load_more()
+        previous = self.manager.tasks[-1]
+        count = len(self.manager.tasks)
+        self.dialog.refreshOrdersButton.click()
+        current = self.manager.tasks[-1]
+        self.assertEqual(len(self.manager.tasks), count + 1)
+        self.assertTrue(previous.isCanceled())
+        self.assertIsNone(current._cursor)
+        self.assertIsNone(self.controller._cursor)
         self.assertEqual(self.dialog.orders_model.rowCount(), 0)
-        self.assertIs(self.manager.tasks[-1]._status, models.OrderStatus.FAILED)
+        previous._callback(
+            models.OrderPage([models.OrderSummary.from_json(order_json(21))], "old-next"), None
+        )
+        self.assertIs(self.controller._list_task, current)
+        self.assertEqual(self.dialog.orders_model.rowCount(), 0)
+        self.load_page((22, 1), "new-next")
+        self.assertEqual(
+            [item.public_order_id for item in self.dialog.orders_model.orders],
+            [order_json(22)["publicOrderId"], order_json(1)["publicOrderId"]],
+        )
+        self.assertEqual(self.controller._cursor, "new-next")
+
+    def test_manual_list_refresh_failure_requires_deliberate_retry(self):
+        self.load_page()
+        self.dialog.refreshOrdersButton.click()
+        self.manager.finish(failure=error(500))
+        count = len(self.manager.tasks)
+        APP.processEvents()
+        self.dialog.activated.emit()
+        self.assertEqual(len(self.manager.tasks), count)
+        self.assertIs(self.dialog.listStackedWidget.currentWidget(), self.dialog.listErrorPage)
+        self.dialog.listRetryButton.click()
+        self.assertEqual(len(self.manager.tasks), count + 1)
+        self.assertIsNone(self.manager.tasks[-1]._cursor)
 
     def test_query_errors_preserve_controls_and_401_hides_them(self):
         self.select_status(models.OrderStatus.SHIPPED)
@@ -473,7 +511,7 @@ class DialogTests(unittest.TestCase):
             self.assertIs(self.manager.tasks[-1]._status, models.OrderStatus.SHIPPED)
         self.manager.finish(failure=error(401))
         self.assertTrue(self.dialog.queryControlsWidget.isHidden())
-        self.assertFalse(self.controller._refresh_timer.isActive())
+        self.assertIsNone(self.controller._service)
 
     def test_detail_outside_filter_stays_open_but_leaves_cached_list(self):
         self.select_status(models.OrderStatus.PAID)
@@ -485,9 +523,11 @@ class DialogTests(unittest.TestCase):
         self.assertEqual(self.dialog.statusBadgeLabel.text(), "Shipped")
         self.assertIs(self.dialog.screenStackedWidget.currentWidget(), self.dialog.detailScreenPage)
         self.assertEqual(self.dialog.orders_model.rowCount(), 0)
+        count = len(self.manager.tasks)
         self.controller.back_to_orders()
-        self.assertIs(self.manager.tasks[-1]._status, models.OrderStatus.PAID)
-        self.assertIsNone(self.manager.tasks[-1]._cursor)
+        self.assertEqual(len(self.manager.tasks), count)
+        self.assertIs(self.dialog.listStackedWidget.currentWidget(), self.dialog.listEmptyPage)
+        self.assertIs(self.dialog.statusFilterComboBox.currentData(), models.OrderStatus.PAID)
 
     def test_close_reopen_resets_query_without_duplicate_requests(self):
         self.select_status(models.OrderStatus.DELIVERED)
@@ -498,112 +538,6 @@ class DialogTests(unittest.TestCase):
         self.assertEqual(len(self.manager.tasks), count + 1)
         self.assertIsNone(self.manager.tasks[-1]._status)
         self.assertIs(self.manager.tasks[-1]._sort, models.OrderSort.NEWEST)
-
-    def test_poll_timer_starts_and_skips_overlapping_requests(self):
-        self.assertTrue(self.controller._refresh_timer.isActive())
-        self.assertEqual(self.controller._refresh_timer.interval(), 30000)
-        count = len(self.manager.tasks)
-        self.controller._refresh_timer.timeout.emit()
-        self.assertEqual(len(self.manager.tasks), count)
-        self.load_page()
-        self.controller._refresh_timer.timeout.emit()
-        self.assertEqual(len(self.manager.tasks), count + 1)
-        self.controller._refresh_timer.timeout.emit()
-        self.assertEqual(len(self.manager.tasks), count + 1)
-
-    def test_poll_refreshes_all_loaded_pages_preserving_selection_and_scroll(self):
-        self.load_page(tuple(range(1, 41)), "old-next")
-        APP.processEvents()
-        view = self.dialog.ordersListView
-        view.setCurrentIndex(self.dialog.orders_model.index(5, 0))
-        view.verticalScrollBar().setValue(250)
-        position = view.verticalScrollBar().value()
-        resets = Mock()
-        self.dialog.orders_model.modelReset.connect(resets)
-        self.controller._refresh_timer.timeout.emit()
-        self.assertIsNone(self.manager.tasks[-1]._cursor)
-        self.manager.finish(
-            models.OrderPage(
-                [
-                    models.OrderSummary.from_json(order_json(i, status="SHIPPED"))
-                    for i in range(1, 21)
-                ],
-                "fresh-page-2",
-            )
-        )
-        self.assertEqual(self.manager.tasks[-1]._cursor, "fresh-page-2")
-        self.assertEqual(self.dialog.orders_model.orders[0].status, models.OrderStatus.PAID)
-        self.manager.finish(
-            models.OrderPage(
-                [models.OrderSummary.from_json(order_json(i)) for i in range(21, 41)], "fresh-next"
-            )
-        )
-        APP.processEvents()
-        self.assertEqual(self.dialog.orders_model.rowCount(), 40)
-        self.assertEqual(self.dialog.orders_model.orders[0].status, models.OrderStatus.SHIPPED)
-        self.assertEqual(
-            view.currentIndex().data(Qt.ItemDataRole.UserRole), order_json(6)["publicOrderId"]
-        )
-        self.assertEqual(view.verticalScrollBar().value(), position)
-        self.assertEqual(self.controller._cursor, "fresh-next")
-        resets.assert_not_called()
-
-    def test_poll_later_page_failure_keeps_previous_rows_and_cursor(self):
-        self.load_page(tuple(range(1, 41)), "original-next")
-        self.controller._refresh_timer.timeout.emit()
-        self.manager.finish(
-            models.OrderPage(
-                [
-                    models.OrderSummary.from_json(order_json(i, status="SHIPPED"))
-                    for i in range(1, 21)
-                ],
-                "new-page-2",
-            )
-        )
-        self.manager.finish(failure=error(500))
-        self.assertEqual(self.dialog.orders_model.rowCount(), 40)
-        self.assertEqual(self.dialog.orders_model.orders[0].status, models.OrderStatus.PAID)
-        self.assertEqual(self.controller._cursor, "original-next")
-
-    def test_poll_removes_unavailable_rows_and_handles_empty_history(self):
-        self.load_page((1, 2, 3))
-        self.controller._refresh_timer.timeout.emit()
-        self.load_page((2,))
-        self.assertEqual(self.dialog.orders_model.rowCount(), 1)
-        self.assertEqual(
-            self.dialog.orders_model.orders[0].public_order_id, order_json(2)["publicOrderId"]
-        )
-        self.controller._refresh_timer.timeout.emit()
-        self.load_page(())
-        self.assertEqual(self.dialog.orders_model.rowCount(), 0)
-        self.assertIs(self.dialog.listStackedWidget.currentWidget(), self.dialog.listEmptyPage)
-
-    def test_poll_inserts_new_orders_in_server_order_without_reset(self):
-        self.load_page((1, 2))
-        self.dialog.ordersListView.setCurrentIndex(self.dialog.orders_model.index(0, 0))
-        self.controller._refresh_timer.timeout.emit()
-        self.load_page((3, 2, 1))
-        self.assertEqual(
-            [order.public_order_id for order in self.dialog.orders_model.orders],
-            [order_json(i)["publicOrderId"] for i in (3, 2, 1)],
-        )
-        self.assertEqual(
-            self.dialog.ordersListView.currentIndex().data(Qt.ItemDataRole.UserRole),
-            order_json(1)["publicOrderId"],
-        )
-
-    def test_poll_error_preserves_data_and_cursor_and_recovers_next_tick(self):
-        self.load_page(tuple(range(1, 21)), "next")
-        self.controller._refresh_timer.timeout.emit()
-        self.manager.finish(failure=error(500))
-        self.assertEqual(self.dialog.orders_model.rowCount(), 20)
-        self.assertEqual(self.controller._cursor, "next")
-        self.assertFalse(self.dialog.refreshStatusLabel.isHidden())
-        self.assertNotIn("SENSITIVE", self.dialog.refreshStatusLabel.text())
-        self.assertTrue(self.controller._refresh_timer.isActive())
-        self.controller._refresh_timer.timeout.emit()
-        self.load_page(tuple(range(1, 21)), "next")
-        self.assertTrue(self.dialog.refreshStatusLabel.isHidden())
 
     def test_detail_refresh_updates_status_without_loading_page_or_preview_retry(self):
         self.controller._network = Mock()
@@ -633,24 +567,6 @@ class DialogTests(unittest.TestCase):
         self.dialog.refreshOrdersButton.click()
         self.manager.finish(failure=error(404))
         self.assertIs(self.dialog.detailStackedWidget.currentWidget(), self.dialog.detailErrorPage)
-
-    def test_poll_stops_on_auth_error_and_close_and_ignores_delayed_result(self):
-        self.load_page()
-        self.controller._refresh_timer.timeout.emit()
-        self.manager.finish(failure=error(401))
-        self.assertFalse(self.controller._refresh_timer.isActive())
-        self.assertEqual(self.dialog.orders_model.rowCount(), 0)
-        self.controller.refresh_orders()
-        self.load_page()
-        self.controller._refresh_timer.timeout.emit()
-        task = self.manager.tasks[-1]
-        self.dialog.close()
-        self.assertFalse(self.controller._refresh_timer.isActive())
-        self.assertTrue(task.isCanceled())
-        task._callback(models.OrderPage([models.OrderSummary.from_json(order_json())], None), None)
-        self.assertEqual(self.dialog.orders_model.rowCount(), 0)
-        self.controller.show()
-        self.assertTrue(self.controller._refresh_timer.isActive())
 
     def test_menu_single_instance_empty_and_close_cleanup(self):
         self.assertEqual(self.controller.action.text(), "My Orders")
@@ -692,7 +608,7 @@ class DialogTests(unittest.TestCase):
         self.assertEqual(self.dialog.totalValueLabel.text(), "USD 58.00")
         self.assertEqual(self.dialog.paidAtLabel.text(), "Not available")
         self.controller.back_to_orders()
-        self.assertEqual(len(self.manager.tasks), count + 2)
+        self.assertEqual(len(self.manager.tasks), count + 1)
         self.assertEqual(len(self.dialog.orders_model.orders), 3)
 
     def test_native_list_fetches_next_page_when_scrolled(self):
@@ -738,8 +654,10 @@ class DialogTests(unittest.TestCase):
         self.dialog.ordersListView.activated.emit(self.dialog.orders_model.index(19, 0))
         self.assertEqual(self.manager.tasks[-1]._public_order_id, order_json(20)["publicOrderId"])
         self.manager.finish(models.OrderDetail.from_json(order_json(20)))
+        count = len(self.manager.tasks)
         self.controller.back_to_orders()
         APP.processEvents()
+        self.assertEqual(len(self.manager.tasks), count)
         self.assertEqual(self.dialog.ordersListView.verticalScrollBar().value(), position)
 
     def test_clicking_card_details_action_opens_the_order(self):
