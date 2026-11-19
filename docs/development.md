@@ -57,9 +57,31 @@ closing and reopening My Orders restores the defaults. Check that an order whose
 status leaves the selected filter disappears from the list but its open details
 remain readable.
 
-While My Orders is open, the visible list or detail view refreshes every 30
-seconds. List refreshes re-read enough cursor pages to cover the loaded rows;
+While My Orders is open, the visible orders list refreshes every 30 seconds.
+List refreshes re-read enough cursor pages to cover the loaded rows;
 updates preserve selection and scroll position. Temporary refresh failures keep
 existing information visible and retry on the next interval. Polling stops on
-close, plugin unload, or HTTP 401. Status refreshes do not repeatedly download
-previews or bypass their bounded retry action.
+close, plugin unload, or HTTP 401. Order details are fetched on each opening and
+through Refresh Details, not periodically. Manual refresh retains displayed
+information during the request and temporary failures. It does not repeatedly
+download previews or bypass their bounded retry action.
+
+## Shipping And Tracking Verification
+
+Use the backend tracking branch and its migration for fixtures containing null
+tracking, multiple packages, nullable fields, and reshipments. The plugin reads
+the stored `tracking.shipments` collection through the existing authenticated
+order-detail endpoint. It never calls Printful or protected reconciliation routes
+and does not need webhook, worker, or provider secrets.
+
+Verify carrier, service, leading-zero tracking numbers, locally formatted shipped
+dates, and reshipment markers. Track Package opens only HTTP/HTTPS links after a
+click, using the system browser without backend authorization headers. Check
+missing links and browser-opening failures without hiding the order details.
+
+Refresh Details should replace changed packages without duplicating unchanged
+ones, retain payment and preview information, and leave list filters unchanged.
+Check that closing, Back to Orders, expired credentials, and plugin unload clear
+tracking data and prevent delayed responses from restoring it. Missing tracking
+does not mean an order is unshipped; SHIPPED can mean only part of an order shipped
+and never implies delivery. No real Printful order confirmation is required.
