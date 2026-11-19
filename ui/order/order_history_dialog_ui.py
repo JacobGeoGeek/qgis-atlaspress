@@ -563,7 +563,7 @@ class Ui_AtlasPressOrderHistoryDialog(object):
         )
         self.productGroupBox.setTitle(_translate("AtlasPressOrderHistoryDialog", "Product"))
         self.trackingGroupBox.setTitle(
-            _translate("AtlasPressOrderHistoryDialog", "Shipping & Tracking")
+            _translate("AtlasPressOrderHistoryDialog", "Shipping && Tracking")
         )
         self.trackingUnavailableLabel.setText(
             _translate("AtlasPressOrderHistoryDialog", "Tracking information is not available yet.")

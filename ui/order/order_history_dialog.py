@@ -6,6 +6,7 @@ from ..common.spinner_widget import SpinnerWidget
 from .order_history_dialog_ui import Ui_AtlasPressOrderHistoryDialog
 from .order_item_delegate import OrderItemDelegate
 from .order_list_model import OrderListModel
+from .order_shipment_widget import OrderShipmentWidget
 
 
 def date_text(value):
@@ -30,6 +31,8 @@ class OrderHistoryDialog(QDialog, Ui_AtlasPressOrderHistoryDialog):
         self.sortOrderComboBox.setItemData(0, OrderSort.NEWEST)
         self.sortOrderComboBox.setItemData(1, OrderSort.OLDEST)
         self._pixmap = None
+        self._tracking = None
+        self._shipment_widgets = []
         self.previewImageLabel.installEventFilter(self)
         self.orders_model = OrderListModel(self)
         self.ordersListView.setModel(self.orders_model)
@@ -67,6 +70,18 @@ class OrderHistoryDialog(QDialog, Ui_AtlasPressOrderHistoryDialog):
 
         if public_id:
             self.order_selected.emit(public_id)
+
+    def _render_tracking(self, tracking):
+        if tracking == self._tracking:
+            return
+        self.clear_tracking()
+        self._tracking = tracking
+        shipments = tracking.shipments if tracking is not None else []
+        self.trackingUnavailableLabel.setVisible(not shipments)
+        for number, shipment in enumerate(shipments, 1):
+            widget = OrderShipmentWidget(shipment, number, self.trackingGroupBox)
+            self.trackingGroupLayout.addWidget(widget)
+            self._shipment_widgets.append(widget)
 
     def event(self, event):
         if event.type() == QEvent.Type.WindowActivate:
@@ -106,6 +121,9 @@ class OrderHistoryDialog(QDialog, Ui_AtlasPressOrderHistoryDialog):
             label.clear()
 
         self.clear_preview()
+        self.clear_tracking()
+        self.refreshOrdersButton.setText("Refresh Orders")
+        self.refreshOrdersButton.setEnabled(True)
         self.loadingMoreLabel.hide()
         self.pageRetryButton.hide()
         self.screenStackedWidget.setCurrentWidget(self.listScreenPage)
@@ -132,6 +150,15 @@ class OrderHistoryDialog(QDialog, Ui_AtlasPressOrderHistoryDialog):
         self.mockupOuterStackedWidget.setMaximumHeight(
             max(60, self.mockupAbsentPage.sizeHint().height())
         )
+
+    def clear_tracking(self):
+        for widget in self._shipment_widgets:
+            widget.clear_tracking()
+            self.trackingGroupLayout.removeWidget(widget)
+            widget.deleteLater()
+        self._shipment_widgets.clear()
+        self._tracking = None
+        self.trackingUnavailableLabel.show()
 
     def set_loading(self, list_loading=False, detail_loading=False, preview_loading=False):
         for spinner, active in zip(self._spinners, (list_loading, detail_loading, preview_loading)):
@@ -165,6 +192,7 @@ class OrderHistoryDialog(QDialog, Ui_AtlasPressOrderHistoryDialog):
             set_text(label, value)
 
         self.orderIdLabel.setToolTip(order.public_order_id)
+        self._render_tracking(detail.tracking)
 
     def preview_error(self, can_refresh):
         self.clear_preview()

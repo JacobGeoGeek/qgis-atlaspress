@@ -52,14 +52,40 @@ not only the loaded rows. Existing backend versions reject these new parameters;
 the plugin displays that request failure rather than silently filtering locally.
 
 Verify status/sort combinations across several pages, rapid selection changes,
-Reset, and manual/automatic refresh. Back from details retains the selections;
+Reset, and manual refresh. Back from details retains the selections;
 closing and reopening My Orders restores the defaults. Check that an order whose
 status leaves the selected filter disappears from the list but its open details
 remain readable.
 
-While My Orders is open, the visible list or detail view refreshes every 30
-seconds. List refreshes re-read enough cursor pages to cover the loaded rows;
-updates preserve selection and scroll position. Temporary refresh failures keep
-existing information visible and retry on the next interval. Polling stops on
-close, plugin unload, or HTTP 401. Status refreshes do not repeatedly download
-previews or bypass their bounded retry action.
+The orders list loads when My Orders opens. Refresh Orders starts a new request
+from page one, preserving the selected status and sort but clearing the old rows
+and cursor. Pagination loads subsequent pages; it does not refresh existing rows.
+Neither the list nor order details are polled periodically. Returning from details
+preserves the loaded list and scroll position without requesting a refresh.
+
+Order details are fetched on each opening and through Refresh Details. Detail
+refresh retains displayed information during the request and temporary failures.
+It does not repeatedly download previews or bypass their bounded retry action.
+The preview-download timeout and expired-preview URL handling remain in place;
+they are independent of order refresh. Closing, plugin unload, and HTTP 401 still
+cancel requests and prevent stale callbacks from restoring data.
+
+## Shipping And Tracking Verification
+
+Use the backend tracking branch and its migration for fixtures containing null
+tracking, multiple packages, nullable fields, and reshipments. The plugin reads
+the stored `tracking.shipments` collection through the existing authenticated
+order-detail endpoint. It never calls Printful or protected reconciliation routes
+and does not need webhook, worker, or provider secrets.
+
+Verify carrier, service, leading-zero tracking numbers, locally formatted shipped
+dates, and reshipment markers. Track Package opens only HTTP/HTTPS links after a
+click, using the system browser without backend authorization headers. Check
+missing links and browser-opening failures without hiding the order details.
+
+Refresh Details should replace changed packages without duplicating unchanged
+ones, retain payment and preview information, and leave list filters unchanged.
+Check that closing, Back to Orders, expired credentials, and plugin unload clear
+tracking data and prevent delayed responses from restoring it. Missing tracking
+does not mean an order is unshipped; SHIPPED can mean only part of an order shipped
+and never implies delivery. No real Printful order confirmation is required.

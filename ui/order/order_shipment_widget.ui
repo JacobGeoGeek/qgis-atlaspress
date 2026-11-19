@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>OrderShipmentWidget</class>
+ <widget class="QGroupBox" name="OrderShipmentWidget">
+  <property name="title"><string>Package</string></property>
+  <layout class="QVBoxLayout" name="shipmentLayout">
+   <item>
+    <widget class="QLabel" name="reshipmentLabel">
+     <property name="font"><font><bold>true</bold></font></property>
+     <property name="text"><string>Reshipment</string></property>
+     <property name="wordWrap"><bool>true</bool></property>
+    </widget>
+   </item>
+   <item>
+    <layout class="QFormLayout" name="shipmentFieldsLayout">
+     <property name="fieldGrowthPolicy"><enum>QFormLayout::FieldGrowthPolicy::AllNonFixedFieldsGrow</enum></property>
+     <property name="rowWrapPolicy"><enum>QFormLayout::RowWrapPolicy::WrapLongRows</enum></property>
+     <item row="0" column="0"><widget class="QLabel" name="carrierCaptionLabel"><property name="text"><string>Carrier</string></property></widget></item>
+     <item row="0" column="1">
+      <widget class="QLabel" name="carrierValueLabel">
+       <property name="sizePolicy"><sizepolicy hsizetype="Ignored" vsizetype="Preferred"><horstretch>0</horstretch><verstretch>0</verstretch></sizepolicy></property>
+       <property name="text"><string /></property>
+       <property name="textFormat"><enum>Qt::TextFormat::PlainText</enum></property>
+       <property name="wordWrap"><bool>true</bool></property>
+      </widget>
+     </item>
+     <item row="1" column="0"><widget class="QLabel" name="serviceCaptionLabel"><property name="text"><string>Service</string></property></widget></item>
+     <item row="1" column="1">
+      <widget class="QLabel" name="serviceValueLabel">
+       <property name="sizePolicy"><sizepolicy hsizetype="Ignored" vsizetype="Preferred"><horstretch>0</horstretch><verstretch>0</verstretch></sizepolicy></property>
+       <property name="text"><string /></property>
+       <property name="textFormat"><enum>Qt::TextFormat::PlainText</enum></property>
+       <property name="wordWrap"><bool>true</bool></property>
+      </widget>
+     </item>
+     <item row="2" column="0"><widget class="QLabel" name="trackingNumberCaptionLabel"><property name="text"><string>Tracking number</string></property></widget></item>
+     <item row="2" column="1">
+      <widget class="QLabel" name="trackingNumberValueLabel">
+       <property name="sizePolicy"><sizepolicy hsizetype="Ignored" vsizetype="Preferred"><horstretch>0</horstretch><verstretch>0</verstretch></sizepolicy></property>
+       <property name="text"><string /></property>
+       <property name="textFormat"><enum>Qt::TextFormat::PlainText</enum></property>
+       <property name="wordWrap"><bool>true</bool></property>
+       <property name="textInteractionFlags"><set>Qt::TextInteractionFlag::TextSelectableByMouse|Qt::TextInteractionFlag::TextSelectableByKeyboard</set></property>
+      </widget>
+     </item>
+     <item row="3" column="0"><widget class="QLabel" name="shippedAtCaptionLabel"><property name="text"><string>Shipped date</string></property></widget></item>
+     <item row="3" column="1">
+      <widget class="QLabel" name="shippedAtValueLabel">
+       <property name="sizePolicy"><sizepolicy hsizetype="Ignored" vsizetype="Preferred"><horstretch>0</horstretch><verstretch>0</verstretch></sizepolicy></property>
+       <property name="text"><string /></property>
+       <property name="textFormat"><enum>Qt::TextFormat::PlainText</enum></property>
+       <property name="wordWrap"><bool>true</bool></property>
+      </widget>
+     </item>
+    </layout>
+   </item>
+   <item alignment="Qt::AlignmentFlag::AlignLeft">
+    <widget class="QPushButton" name="trackPackageButton">
+     <property name="text"><string>Track Package</string></property>
+     <property name="autoDefault"><bool>false</bool></property>
+    </widget>
+   </item>
+   <item>
+    <widget class="QLabel" name="trackingLinkUnavailableLabel">
+     <property name="text"><string>Tracking link is not available.</string></property>
+     <property name="wordWrap"><bool>true</bool></property>
+    </widget>
+   </item>
+   <item>
+    <widget class="QLabel" name="browserErrorLabel">
+     <property name="text"><string>Could not open your browser. Please try again.</string></property>
+     <property name="wordWrap"><bool>true</bool></property>
+    </widget>
+   </item>
+  </layout>
+ </widget>
+ <resources />
+ <connections />
+</ui>

@@ -20,6 +20,7 @@ UI_FILES := $(shell find ui -name "*.ui")
 UI_PY_FILES := $(UI_FILES:.ui=_ui.py)
 
 PACKAGE_EXCLUDES := \
+	--exclude "docs" \
 	--exclude ".DS_Store" \
 	--exclude "__MACOSX" \
 	--exclude "__pycache__" \

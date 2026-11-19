@@ -39,9 +39,6 @@ class OrderHistoryController(QObject):
         self._preview_timeout.setSingleShot(True)
         self._preview_timeout.setInterval(30000)
         self._preview_timeout.timeout.connect(self._preview_timed_out)
-        self._refresh_timer = QTimer(self)
-        self._refresh_timer.setInterval(30000)
-        self._refresh_timer.timeout.connect(self._poll_orders)
         self.action = QAction("My Orders", self)
         self.action.triggered.connect(self.show)
 
@@ -56,6 +53,13 @@ class OrderHistoryController(QObject):
         self._dialog.reset_query_controls()
         self._on_query_changed()
 
+    def _refresh_current_view(self):
+        if self._dialog.screenStackedWidget.currentWidget() is self._dialog.detailScreenPage:
+            if self._public_id is not None:
+                self._fetch_detail(refresh=self._detail is not None)
+        else:
+            self.refresh_orders()
+
     def _activated(self):
         if (
             self._detail_task is None
@@ -66,7 +70,6 @@ class OrderHistoryController(QObject):
                 self._ensure_preview()
 
     def _cancel_all(self):
-        self._refresh_timer.stop()
         self._generation += 1
         self._cancel_detail()
 
@@ -74,79 +77,6 @@ class OrderHistoryController(QObject):
             self._list_task.cancel()
             self._list_task = None
         self._cursor = None
-
-    def _poll_orders(self):
-        if (
-            self._dialog is None
-            or not self._dialog.isVisible()
-            or self._service is None
-            or self._list_task is not None
-            or self._detail_task is not None
-        ):
-            return
-        dialog = self._dialog
-        if dialog.screenStackedWidget.currentWidget() is dialog.detailScreenPage:
-            if self._detail is not None and self._reply is None:
-                self._fetch_detail(background=True)
-        elif dialog.listStackedWidget.currentWidget() in (
-            dialog.listContentPage,
-            dialog.listEmptyPage,
-        ):
-            self._refresh_list()
-
-    def _refresh_list(self):
-        dialog = self._dialog
-        generation = self._generation
-        status, sort = self._status_filter, self._sort_order
-        target_count = dialog.orders_model.rowCount()
-        refreshed = []
-        seen_ids = set()
-        seen_cursors = set()
-        dialog.orders_model.begin_fetch()
-
-        def request_page(cursor=None):
-            seen_cursors.add(cursor)
-            self._list_task = ListOrdersTask(
-                self._service, cursor, finished, status=status, sort=sort
-            )
-            self._task_manager.addTask(self._list_task)
-
-        def finished(page, error):
-            if not self._valid(generation):
-                return
-            self._list_task = None
-            if error is not None:
-                if self._auth_error(error):
-                    return
-                dialog.refreshStatusLabel.setText(self._error_message(error))
-                dialog.refreshStatusLabel.show()
-                dialog.orders_model.finish_fetch(self._cursor is not None, failed=True)
-                return
-            for order in page.orders:
-                if order.public_order_id not in seen_ids:
-                    seen_ids.add(order.public_order_id)
-                    refreshed.append(order)
-            if (
-                len(refreshed) < target_count
-                and page.next_cursor is not None
-                and page.next_cursor not in seen_cursors
-            ):
-                request_page(page.next_cursor)
-                return
-            dialog.refreshStatusLabel.hide()
-            dialog.loadMoreErrorLabel.clear()
-            dialog.pageRetryButton.hide()
-            scroll = dialog.ordersListView.verticalScrollBar()
-            position = scroll.value()
-            dialog.orders_model.update_orders(refreshed, replace=True)
-            self._cursor = page.next_cursor
-            dialog.listStackedWidget.setCurrentWidget(
-                dialog.listContentPage if refreshed else dialog.listEmptyPage
-            )
-            dialog.orders_model.finish_fetch(self._cursor is not None)
-            scroll.setValue(position)
-
-        request_page()
 
     def _cancel_detail(self):
         self._detail_generation += 1
@@ -158,6 +88,10 @@ class OrderHistoryController(QObject):
         self._cancel_image()
         self._detail = None
         self._public_id = None
+        if self._dialog is not None:
+            self._dialog.clear_tracking()
+            self._dialog.refreshOrdersButton.setText("Refresh Orders")
+            self._dialog.refreshOrdersButton.setEnabled(True)
 
     def _cancel_image(self):
         self._preview_timeout.stop()
@@ -232,17 +166,20 @@ class OrderHistoryController(QObject):
         )
         self._task_manager.addTask(self._list_task)
 
-    def _fetch_detail(self, preview_only=False, background=False):
+    def _fetch_detail(self, preview_only=False, refresh=False):
         if self._detail_task is not None or self._service is None:
             return
 
-        if not background:
+        if not refresh:
             self._cancel_image()
         generation, detail_generation = self._generation, self._detail_generation
         dialog = self._dialog
+        dialog.refreshOrdersButton.setText("Refresh Details")
+        dialog.refreshOrdersButton.setEnabled(False)
 
-        if background:
-            pass
+        if refresh:
+            dialog.refreshStatusLabel.setText("Refreshing order details...")
+            dialog.refreshStatusLabel.show()
         elif preview_only:
             dialog.clear_preview()
             dialog.mockupOuterStackedWidget.setCurrentWidget(dialog.mockupPresentPage)
@@ -258,13 +195,14 @@ class OrderHistoryController(QObject):
                 return
 
             self._detail_task = None
-            if not background:
+            dialog.refreshOrdersButton.setEnabled(True)
+            if not refresh:
                 dialog.set_loading()
 
             if error is not None:
                 if self._auth_error(error):
                     return
-                if background and error.status_code not in (403, 404):
+                if refresh and error.status_code not in (403, 404):
                     dialog.refreshStatusLabel.setText(self._error_message(error, detail=True))
                     dialog.refreshStatusLabel.show()
                     return
@@ -273,6 +211,8 @@ class OrderHistoryController(QObject):
                 else:
                     self._detail = None
                     dialog.clear_preview()
+                    dialog.clear_tracking()
+                    dialog.refreshStatusLabel.hide()
                     dialog.detailErrorMessageLabel.setText(self._error_message(error, detail=True))
                     dialog.detailStackedWidget.setCurrentWidget(dialog.detailErrorPage)
                 return
@@ -291,10 +231,14 @@ class OrderHistoryController(QObject):
                     ],
                     replace=True,
                 )
+            scroll = dialog.detailScrollArea.verticalScrollBar()
+            position = scroll.value()
             dialog.show_detail(detail)
-            if background:
-                # Status polling must not bypass the bounded preview retry policy.
+            if refresh:
+                scroll.setValue(position)
+                # Refreshing order data must not bypass bounded preview retries.
                 if detail.mockup is None:
+                    self._cancel_image()
                     dialog.clear_preview()
                 elif previous is None or previous.mockup is None:
                     self._ensure_preview()
@@ -416,7 +360,7 @@ class OrderHistoryController(QObject):
         if self._dialog is None:
             dialog = OrderHistoryDialog(self._iface.mainWindow())
             self._dialog = dialog
-            dialog.refreshOrdersButton.clicked.connect(self.refresh_orders)
+            dialog.refreshOrdersButton.clicked.connect(self._refresh_current_view)
             dialog.statusFilterComboBox.currentIndexChanged.connect(self._on_query_changed)
             dialog.sortOrderComboBox.currentIndexChanged.connect(self._on_query_changed)
             dialog.resetFiltersButton.clicked.connect(self._reset_filters)
@@ -451,7 +395,6 @@ class OrderHistoryController(QObject):
 
         if self._has_access_token and self._dialog.isVisible():
             self._service = self._configured_service
-            self._refresh_timer.start()
             self._load_page()
 
     def load_more(self):
@@ -479,11 +422,17 @@ class OrderHistoryController(QObject):
         self._dialog.clear_preview()
         self._dialog.set_loading()
         self._dialog.screenStackedWidget.setCurrentWidget(self._dialog.listScreenPage)
+        if self._dialog.orders_model.rowCount() == 0:
+            self._dialog.listStackedWidget.setCurrentWidget(self._dialog.listEmptyPage)
         self._dialog.orders_model.set_active(True)
-        self._poll_orders()
 
     def refresh_preview(self):
-        if self._detail is None or self._manual_refreshed or self._service is None:
+        if (
+            self._detail is None
+            or self._manual_refreshed
+            or self._service is None
+            or self._detail_task is not None
+        ):
             return
 
         self._manual_refreshed = True
